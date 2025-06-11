@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hao.datacollector.dal.dao.BaseDataMapper">
+    <select id="getAllAStockCode" resultType="string">
+        SELECT `wind_code`
+        FROM tb_product_stock_basic_info;
+    </select>
+
+    <insert id="batchInsertStockFinancialMetrics" parameterType="java.util.List">
+        INSERT INTO tb_product_stock_financial_metrics (
+        wind_code,
+        trade_date,
+        shareholder_holdings_change,
+        total_market_cap,
+        top10_float_holders_ratio,
+        inst_buy_times,
+        inst_holder_names,
+        inst_holdings_total,
+        inst_holder_types,
+        pe_ttm,
+        rating_score,
+        rating_text,
+        rating_agency_count,
+        target_price,
+        pb,
+        pe,
+        ps,
+        net_profit_ttm,
+        roe_growth_3y,
+        dividend_yield,
+        esg_score,
+        patent_count,
+        esg_controversy_score,
+        roa,
+        net_profit_margin,
+        ma_trend,
+        rsi_6
+        )
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.windCode},
+            #{item.tradeDate},
+            #{item.shareholderHoldingsChange},
+            #{item.totalMarketCap},
+            #{item.top10FloatHoldersRatio},
+            #{item.instBuyTimes},
+            #{item.instHolderNames},
+            #{item.instHoldingsTotal},
+            #{item.instHolderTypes},
+            #{item.peTtm},
+            #{item.ratingScore},
+            #{item.ratingText},
+            #{item.ratingAgencyCount},
+            #{item.targetPrice},
+            #{item.pb},
+            #{item.pe},
+            #{item.ps},
+            #{item.netProfitTtm},
+            #{item.roeGrowth3y},
+            #{item.dividendYield},
+            #{item.esgScore},
+            #{item.patentCount},
+            #{item.esgControversyScore},
+            #{item.roa},
+            #{item.netProfitMargin},
+            #{item.maTrend},
+            #{item.rsi6}
+            )
+        </foreach>
+    </insert>
+
+    <insert id="batchInsertStockBasicInfo" parameterType="java.util.List">
+        INSERT INTO tb_product_stock_basic_info (
+        wind_code,
+        sec_name,
+        listing_date,
+        status_existence,
+        concept_plates,
+        hot_concepts,
+        industry_chain,
+        is_long_below_net_asset,
+        company_profile,
+        business_scope,
+        sw_industry_code,
+        sw_industry_name,
+        citic_industry_code,
+        citic_industry_name,
+        total_shares,
+        float_shares
+        )
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.windCode},
+            #{item.secName},
+            STR_TO_DATE(NULLIF(#{item.listingDate}, ''), '%Y-%m-%d'),
+            #{item.statusExistence},
+            #{item.conceptPlates},
+            #{item.hotConcepts},
+            #{item.industryChain},
+            #{item.isLongBelowNetAsset},
+            #{item.companyProfile},
+            #{item.businessScope},
+            #{item.swIndustryCode},
+            #{item.swIndustryName},
+            #{item.citicIndustryCode},
+            #{item.citicIndustryName},
+            #{item.totalShares},
+            #{item.floatShares}
+            )
+        </foreach>
+    </insert>
+
+
+    <insert id="batchInsertStockMarketData" parameterType="java.util.List" useGeneratedKeys="false">
+        insert into tb_product_stock_daiy_metrics (
+        trade_date,
+        windcode,
+        sec_name,
+        latestconcept,
+        CHAIN,
+        OPEN,
+        high,
+        low,
+        CLOSE,
+        vwap,
+        volume_btin,
+        amount_btin,
+        pct_chg,
+        turn,
+        free_turn,
+        maxup,
+        maxdown,
+        trade_status,
+        ev,
+        mkt_freeshares,
+        open_auction_price,
+        open_auction_volume,
+        open_auction_amount,
+        mfd_buyamt_at,
+        mfd_sellamt_at,
+        mfd_buyvol_at,
+        mfd_sellvol_at,
+        mfd_inflow_m,
+        mfd_inflowproportion_m,
+        tech_turnoverrate5,
+        tech_turnoverrate10,
+        esg_rating_wind
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.tradeDate},
+            #{item.windcode},
+            #{item.secName},
+            #{item.latestconcept},
+            #{item.chain},
+            #{item.open},
+            #{item.high},
+            #{item.low},
+            #{item.close},
+            #{item.vwap},
+            #{item.volumeBtin},
+            #{item.amountBtin},
+            #{item.pctChg},
+            #{item.turn},
+            #{item.freeTurn},
+            #{item.maxup},
+            #{item.maxdown},
+            #{item.tradeStatus},
+            #{item.ev},
+            #{item.mktFreeshares},
+            #{item.openAuctionPrice},
+            #{item.openAuctionVolume},
+            #{item.openAuctionAmount},
+            #{item.mfdBuyamtAt},
+            #{item.mfdSellamtAt},
+            #{item.mfdBuyvolAt},
+            #{item.mfdSellvolAt},
+            #{item.mfdInflowM},
+            #{item.mfdInflowproportionM},
+            #{item.techTurnoverrate5},
+            #{item.techTurnoverrate10},
+            #{item.esgRatingWind}
+            )
+        </foreach>
+    </insert>
+
+    <select id="getInsertMarketCode" resultType="string">
+        SELECT `windcode`
+        FROM tb_product_stock_daiy_metrics
+        WHERE `trade_date` = #{tradeDate}
+    </select>
+</mapper>
