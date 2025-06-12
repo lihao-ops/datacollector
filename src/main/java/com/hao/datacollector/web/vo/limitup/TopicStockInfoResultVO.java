@@ -13,6 +13,9 @@ public class TopicStockInfoResultVO {
     //@ApiModelProperty(value = "股票数量对象:Key表示对应的functionId,value表示对于的数量", required = true)
     private Map<String, String> stockNums;
 
+    //@ApiModelProperty(value = "股票总数量", required = true)
+    private Integer totalNum;
+
     //@ApiModelProperty(value = "股票列表对象", required = true)
     private List<TopicStockVO> stockDetail;
 
