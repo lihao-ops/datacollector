@@ -19,8 +19,7 @@ public interface LimitUpService {
     
     /**
      * 获取涨停转档数据并转档到MySQL数据库
-     * @param dateTime 查询日期，格式：yyyyMMdd
      * @return 转档结果信息
      */
-    String transferLimitUpDataToDatabase(String dateTime);
+    Boolean transferLimitUpDataToDatabase();
 }
