@@ -121,14 +121,12 @@ class IdGeneratorUtilTest {
         final int IDS_PER_THREAD = 1000;
         // 计算总共需要生成的ID数量
         final int TOTAL_IDS = THREAD_COUNT * IDS_PER_THREAD;
-
         // 创建一个线程安全的HashSet，用于存储并发生成的ID，验证唯一性
         Set<Long> idSet = Collections.synchronizedSet(new HashSet<>());
         // 创建一个CountDownLatch，计数器初始化为线程数量，用于等待所有线程完成
         CountDownLatch latch = new CountDownLatch(THREAD_COUNT);
         // 创建一个固定大小的线程池，线程数量为THREAD_COUNT
         ExecutorService executorService = Executors.newFixedThreadPool(THREAD_COUNT);
-
         // 循环启动THREAD_COUNT个线程
         for (int i = 0; i < THREAD_COUNT; i++) {
             // 提交一个Runnable任务到线程池
@@ -149,12 +147,10 @@ class IdGeneratorUtilTest {
                 }
             });
         }
-
         // 主线程调用await()方法，阻塞直到CountDownLatch计数器归零
         latch.await();
         // 关闭线程池，不再接受新任务，但会执行完已提交的任务
         executorService.shutdown();
-
         // 断言idSet的大小等于预期的TOTAL_IDS，验证并发生成的ID数量是否正确（即没有重复）
         assertEquals(TOTAL_IDS, idSet.size(),
                 // 断言失败时输出的错误信息
@@ -180,14 +176,11 @@ class IdGeneratorUtilTest {
     public void testIdStructure() {
         // 调用IdGeneratorUtil.nextId()方法生成一个ID
         long id = IdGeneratorUtil.nextId();
-
         // 断言生成的ID大于0
         assertTrue(id > 0, "生成的ID不是正数");
-
         // 检查ID的位数不超过63位(不包括符号位)
         // assertTrue(id < (1L << 63), "ID超出了63位的范围"); // Incorrect assertion
         // 注释掉的错误断言，雪花算法ID是64位，最高位是符号位，通常为0表示正数，所以ID会小于2^63
-
         // 打印生成的ID的十进制形式
         System.out.println("ID: " + id);
         // 打印生成的ID的二进制形式，用于人工检查其结构是否符合雪花算法定义
@@ -214,12 +207,10 @@ class IdGeneratorUtilTest {
     public void testStringIdGeneration() {
         // 调用IdGeneratorUtil.nextIdStr()方法生成字符串形式的ID
         String idStr = IdGeneratorUtil.nextIdStr();
-
         // 断言生成的字符串对象不为null
         assertNotNull(idStr);
         // 断言生成的字符串不为空串
         assertFalse(idStr.isEmpty());
-
         // 尝试将生成的字符串解析为Long类型
         long id = Long.parseLong(idStr);
         // 断言解析后的Long值大于0
@@ -260,14 +251,12 @@ class IdGeneratorUtilTest {
         }
         // 获取当前时间戳作为结束时间
         long endTime = System.currentTimeMillis();
-
         // 计算总耗时（毫秒）
         long duration = endTime - startTime;
         // 打印总耗时
         System.out.println("生成 " + COUNT + " 个ID耗时: " + duration + " 毫秒");
         // 计算并打印平均每秒生成的ID数量
         System.out.println("平均每秒生成ID数: " + (COUNT * 1000L / duration));
-
         // 断言平均每秒生成ID数大于100000，验证性能是否达标
         assertTrue((COUNT * 1000L / duration) > 100000, "ID生成性能不达标");
     }
@@ -296,7 +285,6 @@ class IdGeneratorUtilTest {
             long id = IdGeneratorUtil.nextId();
             idSet.add(id);
         }
-
         // 断言idSet的大小等于预期的COUNT，验证生成的ID数量是否正确，即没有重复
         assertEquals(COUNT, idSet.size(), "生成的百万个ID有重复");
     }

@@ -48,52 +48,39 @@ public class SnowflakeIdGenerator {
     // 开始时间截 (2023-01-01 00:00:00.000)，用于计算时间差
     // 这个时间戳是固定的，作为ID生成的时间基准，可以根据实际项目上线时间进行调整，但一旦确定不能修改。
     private final long twepoch = 1672531200000L;
-
     // 数据中心ID所占的位数 (5位，最大支持2^5 - 1 = 31个数据中心，加上0共32个)
     private final long datacenterIdBits = 5L;
-
     // 工作机器ID所占的位数 (5位，最大支持2^5 - 1 = 31个工作机器，加上0共32个)
     private final long workerIdBits = 5L;
-
     // 支持的最大数据中心ID，结果是31 (0b11111)
     // 通过位运算计算出5位能表示的最大十进制数。
     private final long maxDatacenterId = -1L ^ (-1L << datacenterIdBits);
-
     // 支持的最大工作机器ID，结果是31 (0b11111)
     // 通过位运算计算出5位能表示的最大十进制数。
     private final long maxWorkerId = -1L ^ (-1L << workerIdBits);
-
     // 序列号ID所占的位数 (12位，每毫秒内最大支持2^12 - 1 = 4095个序列号，加上0共4096个)
     private final long sequenceBits = 12L;
-
     // 工作机器ID向左移12位 (序列号位数)
     // 这是为了在最终的64位ID中为工作机器ID腾出位置。
     private final long workerIdShift = sequenceBits;
-
     // 数据中心ID向左移17位 (序列号位数 + 工作机器ID位数)
     // 这是为了在最终的64位ID中为数据中心ID腾出位置。
     private final long datacenterIdShift = sequenceBits + workerIdBits;
-
     // 时间截向左移22位 (序列号位数 + 工作机器ID位数 + 数据中心ID位数)
     // 这是为了在最终的64位ID中为时间戳腾出最高位（符号位之后）的位置。
     private final long timestampLeftShift = sequenceBits + workerIdBits + datacenterIdBits;
-
     // 生成序列的掩码，这里为4095 (0b111111111111=0xfff=4095)，用于取序列号的低12位
     // 通过与这个掩码进行位与运算，可以确保序列号不会超过12位所能表示的最大值。
     private final long sequenceMask = -1L ^ (-1L << sequenceBits);
-
     // 数据中心ID(0~31)，运行时确定
     // 用于标识当前ID生成器所在的数据中心。
     private long datacenterId;
-
     // 工作机器ID(0~31)，运行时确定
     // 用于标识当前ID生成器所在的工作机器。
     private long workerId;
-
     // 毫秒内序列(0~4095)，同一毫秒内递增
     // 用于在同一毫秒内生成多个唯一ID。
     private long sequence = 0L;
-
     // 上次生成ID的时间截，用于判断是否是同一毫秒
     // 记录上一次生成ID时的时间戳，用于检测时钟回退和判断是否进入新的毫秒。
     private long lastTimestamp = -1L;
