@@ -3,6 +3,7 @@ package com.hao.datacollector.service;
 import com.hao.datacollector.dto.table.base.StockDailyMetricsDTO;
 
 import java.io.File;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface BaseDataService {
@@ -62,5 +63,14 @@ public interface BaseDataService {
      * @return 转档结果
      */
     Boolean setTradeDateList(String startTime, String endTime);
+
+    /**
+     * 根据时间区间获取交易日历
+     *
+     * @param startTime 起始日期
+     * @param endTime   结束日期
+     * @return 交易日历
+     */
+    List<LocalDate> getTradeDateListByTime(String startTime, String endTime);
 }
 

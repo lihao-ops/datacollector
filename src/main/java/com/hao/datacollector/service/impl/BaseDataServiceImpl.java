@@ -316,4 +316,20 @@ public class BaseDataServiceImpl implements BaseDataService {
         log.info("BaseDataServiceImpl_setTradeDateList,tradeDateList.size={},clearTradeDateResult={},insertTradeDateListResult={}", tradeDateList.size(), clearTradeDateResult, insertTradeDateListResult);
         return clearTradeDateResult && insertTradeDateListResult;
     }
+
+    /**
+     * 根据时间区间获取交易日历
+     *
+     * @param startTime 起始日期
+     * @param endTime   结束日期
+     * @return 交易日历
+     */
+    @Override
+    public List<LocalDate> getTradeDateListByTime(String startTime, String endTime) {
+        List<String> listByTime = baseDataMapper.getTradeDateListByTime(startTime, endTime);
+        //转换为通用的LocalDate提供自由日期格式转换
+        return listByTime.stream()
+                .map(LocalDate::parse) // 默认是 yyyy-MM-dd 格式
+                .collect(Collectors.toList());
+    }
 }

@@ -13,8 +13,10 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * @author LiHao
@@ -577,5 +579,44 @@ public final class DateUtil {
     @Deprecated
     public static String getNewFormatDateDayString(Date date) {
         return formatDateOnly(date);
+    }
+
+    /**
+     * 将 LocalDate 列表按指定格式转换为字符串列表
+     *
+     * @param localDates  List<LocalDate> 日期列表
+     * @param pattern     日期格式，如 "yyyy-MM-dd" 或 "yyyyMMdd"
+     * @return List<String> 格式化后的日期字符串列表
+     */
+    public static List<String> formatLocalDateList(List<LocalDate> localDates, String pattern) {
+        if (localDates == null || localDates.isEmpty()) {
+            return List.of();
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+        return localDates.stream()
+                .map(date -> date.format(formatter))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 获取指定格式下的今年第一天
+     *
+     * @param pattern 日期格式，例如：yyyyMMdd
+     * @return 今年第一天的字符串
+     */
+    public static String getFirstDayOfYear(String pattern) {
+        LocalDate firstDay = LocalDate.now().withDayOfYear(1);
+        return firstDay.format(DateTimeFormatter.ofPattern(pattern));
+    }
+
+    /**
+     * 获取指定格式下的今年最后一天
+     *
+     * @param pattern 日期格式，例如：yyyyMMdd
+     * @return 今年最后一天的字符串
+     */
+    public static String getLastDayOfYear(String pattern) {
+        LocalDate lastDay = LocalDate.now().withMonth(12).withDayOfMonth(31);
+        return lastDay.format(DateTimeFormatter.ofPattern(pattern));
     }
 }

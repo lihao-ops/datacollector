@@ -68,4 +68,13 @@ public interface BaseDataMapper {
      * @return 操作结果
      */
     Boolean insertTradeDate(@Param("list") List<LocalDate> tradeDateList);
+
+    /**
+     * 根据时间区间获取交易日历
+     *
+     * @param startTime 起始日期
+     * @param endTime   结束日期
+     * @return 交易日历
+     */
+    List<String> getTradeDateListByTime(String startTime, String endTime);
 }

@@ -208,4 +208,11 @@
         </foreach>
     </insert>
 
+    <select id="getTradeDateListByTime" resultType="string">
+        SELECT `trade_date`
+        FROM `tb_base_trade_date_info`
+        WHERE `trade_date` <![CDATA[ >= ]]> #{startTime}
+          AND `trade_date` <![CDATA[ <= ]]> #{endTime}
+        ORDER BY `trade_date`
+    </select>
 </mapper>
