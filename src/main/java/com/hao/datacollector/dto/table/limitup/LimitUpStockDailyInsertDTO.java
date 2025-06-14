@@ -116,5 +116,5 @@ public class LimitUpStockDailyInsertDTO {
     private Double sellAvgAmount;
 
     @Schema(description = "数据状态：0无效,1有效", example = "1")
-    private Integer status;
+    private Integer status = 1;
 }
