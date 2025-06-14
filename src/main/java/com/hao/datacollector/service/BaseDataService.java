@@ -1,6 +1,6 @@
 package com.hao.datacollector.service;
 
-import com.hao.datacollector.dto.table.StockDailyMetricsDTO;
+import com.hao.datacollector.dto.table.base.StockDailyMetricsDTO;
 
 import java.io.File;
 import java.util.List;
@@ -54,5 +54,13 @@ public interface BaseDataService {
      */
     List<StockDailyMetricsDTO> getInsertStockMarketData(String windCode, String startTime, String endTime);
 
+    /**
+     * 转档交易日期
+     *
+     * @param startTime 起始日期
+     * @param endTime   结束日期
+     * @return 转档结果
+     */
+    Boolean setTradeDateList(String startTime, String endTime);
 }
 

@@ -1,14 +1,22 @@
 package com.hao.datacollector.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hao.datacollector.common.constant.DataSourceConstant;
+import com.hao.datacollector.common.constant.DateTimeFormatConstant;
+import com.hao.datacollector.common.utils.DateUtil;
 import com.hao.datacollector.common.utils.HttpUtil;
+import com.hao.datacollector.dal.dao.LimitUpMapper;
 import com.hao.datacollector.service.LimitUpService;
+import com.hao.datacollector.web.config.JacksonConfig;
 import com.hao.datacollector.web.vo.limitup.LimitResultVO;
 import com.hao.datacollector.web.vo.limitup.TopicStockInfoResultVO;
 import com.hao.datacollector.web.vo.limitup.TopicStockVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 /**
  * @author hli
@@ -21,21 +29,21 @@ import org.springframework.stereotype.Service;
 public class LimitUpServiceImpl implements LimitUpService {
 
     @Autowired
-    private LimitUpMapper  limitUpMapper;
+    private LimitUpMapper limitUpMapper;
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
+    @Autowired
+    private JacksonConfig jacksonConfig;
     @Override
-    public LimitResultVO<TopicStockInfoResultVO> getLimitUpData() {
+    public LimitResultVO<TopicStockInfoResultVO> getLimitUpData(String tradeTime) {
         try {
             log.info("开始调用涨停转档接口");
-
             // 调用Wind接口获取数据
             String url = "https://t.wind.com.cn/strategyservice/limitupbogy/topicstockinfo?dateTime=20250609&stockFilterIds=4&functionId=1&topicIds=-1&sortFieldId=2&sortType=1&pageFlag=true&currentPage=1&pageSize=1000";
-
             // 设置请求头，包含必需的windsessionid
             org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
-            headers.set("windsessionid", "a2930cde765c47fcb7625cc05b5802a8");
+            headers.set(DataSourceConstant.WIND_SESSION_NAME, "a2930cde765c47fcb7625cc05b5802a8");
 
             String response = HttpUtil.sendGetRequest(url, headers, 10000, 30000).getBody();
 
@@ -54,31 +62,30 @@ public class LimitUpServiceImpl implements LimitUpService {
             return result;
         } catch (Exception e) {
             log.error("调用涨停转档接口失败", e);
-            // 返回错误结果
-            LimitResultVO<TopicStockInfoResultVO> errorResult = new LimitResultVO<>();
-            errorResult.setResultCode("ERROR");
-            errorResult.setResultObject(null);
-            errorResult.setReturnTime(String.valueOf(System.currentTimeMillis()));
-            return errorResult;
+            return null;
         }
     }
 
     @Override
-    public Boolean transferLimitUpDataToDatabase() {
+    public Boolean transferLimitUpDataToDatabase(String tradeTime) {
+        //如果tradeTime为空，则使用当前时间
+        if (!StringUtils.hasLength(tradeTime)){
+            tradeTime = DateUtil.getCurrentDateTime(DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT);
+        }
         try {
             log.info("开始执行涨停数据转档任务");
             // 获取涨停数据
-            LimitResultVO<TopicStockInfoResultVO> limitData = getLimitUpData();
+            LimitResultVO<TopicStockInfoResultVO> limitData = getLimitUpData(tradeTime);
             if (limitData == null || !"200".equals(limitData.getResultCode())) {
                 throw new RuntimeException("获取涨停数据失败: " + (limitData != null ? limitData.getResultCode() : "null"));
             }
             TopicStockInfoResultVO resultData = limitData.getResultObject();
-            if (resultData == null || resultData.getStockDetail() == null) {
+            if (resultData == null || resultData.getStockList() == null) {
                 log.error("转档完成，但无有效数据");
                 return false;
             }
             // 获取股票详情数据
-            java.util.List<TopicStockVO> stockDetails = resultData.getStockDetail();
+            List<TopicStockVO> stockDetails = resultData.getStockList();
             log.info("获取到 {} 条涨停股票数据，开始转档到数据库", stockDetails.size());
 
             // TODO: 这里需要添加数据库操作逻辑
@@ -92,9 +99,9 @@ public class LimitUpServiceImpl implements LimitUpService {
                 // 这里应该调用DAO层保存数据
             }
 
-            String result = String.format("涨停数据转档成功，共处理 %d 条记录，总数量: %d",
-                    stockDetails.size(), resultData.getTotalNum());
-            log.info(result);
+//            String result = String.format("涨停数据转档成功，共处理 %d 条记录，总数量: %d",
+//                    stockDetails.size(), resultData.getTotalNum());
+//            log.info(result);
 
             return true;
 

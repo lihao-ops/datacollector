@@ -15,11 +15,11 @@ public interface LimitUpService {
      * 获取涨停转档数据
      * @return 涨停转档数据结果
      */
-    LimitResultVO<TopicStockInfoResultVO> getLimitUpData();
+    LimitResultVO<TopicStockInfoResultVO> getLimitUpData(String tradeTime);
     
     /**
      * 获取涨停转档数据并转档到MySQL数据库
      * @return 转档结果信息
      */
-    Boolean transferLimitUpDataToDatabase();
+    Boolean transferLimitUpDataToDatabase(String tradeTime);
 }

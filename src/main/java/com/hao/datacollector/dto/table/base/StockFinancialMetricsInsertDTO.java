@@ -1,4 +1,4 @@
-package com.hao.datacollector.dto.table;
+package com.hao.datacollector.dto.table.base;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

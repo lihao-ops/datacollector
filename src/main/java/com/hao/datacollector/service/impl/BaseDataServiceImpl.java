@@ -2,22 +2,30 @@ package com.hao.datacollector.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hao.datacollector.common.constant.DataSourceConstant;
+import com.hao.datacollector.common.constant.DateTimeFormatConstant;
 import com.hao.datacollector.common.utils.ExcelReaderUtil;
 import com.hao.datacollector.common.utils.ExcelToDtoConverter;
+import com.hao.datacollector.common.utils.HttpUtil;
 import com.hao.datacollector.dal.dao.BaseDataMapper;
-import com.hao.datacollector.dto.table.StockBasicInfoInsertDTO;
-import com.hao.datacollector.dto.table.StockDailyMetricsDTO;
-import com.hao.datacollector.dto.table.StockFinancialMetricsInsertDTO;
+import com.hao.datacollector.dto.table.base.StockBasicInfoInsertDTO;
+import com.hao.datacollector.dto.table.base.StockDailyMetricsDTO;
+import com.hao.datacollector.dto.table.base.StockFinancialMetricsInsertDTO;
 import com.hao.datacollector.service.BaseDataService;
+import com.hao.datacollector.web.vo.result.ResultVO;
 import com.wind.api.W;
 import com.wind.api.struct.WindData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +46,16 @@ import static com.hao.datacollector.common.utils.ExcelReaderUtil.readHeaders;
 @Slf4j
 @Service
 public class BaseDataServiceImpl implements BaseDataService {
+
+    @Value("${wind_base.session_id}")
+    private String windSessionId;
+
+    /**
+     * 交易日历url
+     */
+    @Value("${wind_base.trade.date.url}")
+    private String tradeDateBaseUrl;
+
     @Autowired
     private BaseDataMapper baseDataMapper;
 
@@ -178,6 +196,7 @@ public class BaseDataServiceImpl implements BaseDataService {
         return convert(wsd.getData().toString().replace("[", "").replace("]", ""));
     }
 
+
     public List<StockDailyMetricsDTO> convert(String csvLine) {
         List<StockDailyMetricsDTO> insertDataDTOList = new ArrayList<>();
         boolean statusFlag = false;
@@ -250,5 +269,51 @@ public class BaseDataServiceImpl implements BaseDataService {
         }
         log.info("BaseDataServiceImpl_convert_insertDataDTOList.size={}", insertDataDTOList.size());
         return insertDataDTOList;
+    }
+
+    /**
+     * 转档交易日期
+     *
+     * @param startTime 起始日期
+     * @param endTime   结束日期
+     * @return 转档结果
+     */
+    @Override
+    public Boolean setTradeDateList(String startTime, String endTime) {
+        String requestTradeDateUrl = String.format(tradeDateBaseUrl, startTime, endTime);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(DataSourceConstant.WIND_SESSION_NAME, windSessionId);
+        String response = HttpUtil.sendGetRequest(DataSourceConstant.WIND_PROD_WGQ + requestTradeDateUrl, headers, 10000, 30000).getBody();
+        // 解析JSON响应为LimitResultVO对象
+        // 配置忽略未知字段，避免反序列化错误
+        objectMapper.configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        List<Integer> tradeDateList = null;
+        try {
+            //List<String>，格式为 yyyyMMdd
+            ResultVO<List<Integer>> result = objectMapper.readValue(
+                    response,
+                    objectMapper.getTypeFactory().constructParametricType(
+                            ResultVO.class,
+                            List.class
+                    )
+            );
+            tradeDateList = result.getData();
+        } catch (Exception e) {
+            log.error("BaseDataServiceImpl_setTradeDateList_tradeDateList_parse_error,response={}", e.getMessage(), response);
+            throw new RuntimeException("BaseDataServiceImpl_setTradeDateList_tradeDateList_parse_error");
+        }
+        if (tradeDateList.isEmpty()) {
+            throw new RuntimeException("BaseDataServiceImpl_setTradeDateList_tradeDateList_isEmpty");
+        }
+        //先清空再插入
+        Integer tradeDate = baseDataMapper.clearTradeDate();
+        Boolean clearTradeDateResult = tradeDate >= 0;
+        // 将其转为 LocalDate 格式
+        List<LocalDate> dateList = tradeDateList.stream()
+                .map(i -> LocalDate.parse(String.valueOf(i), DateTimeFormatter.ofPattern(DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT)))
+                .collect(Collectors.toList());
+        Boolean insertTradeDateListResult = baseDataMapper.insertTradeDate(dateList);
+        log.info("BaseDataServiceImpl_setTradeDateList,tradeDateList.size={},clearTradeDateResult={},insertTradeDateListResult={}", tradeDateList.size(), clearTradeDateResult, insertTradeDateListResult);
+        return clearTradeDateResult && insertTradeDateListResult;
     }
 }

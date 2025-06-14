@@ -1,9 +1,11 @@
 package com.hao.datacollector.dal.dao;
 
-import com.hao.datacollector.dto.table.StockBasicInfoInsertDTO;
-import com.hao.datacollector.dto.table.StockDailyMetricsDTO;
-import com.hao.datacollector.dto.table.StockFinancialMetricsInsertDTO;
+import com.hao.datacollector.dto.table.base.StockBasicInfoInsertDTO;
+import com.hao.datacollector.dto.table.base.StockDailyMetricsDTO;
+import com.hao.datacollector.dto.table.base.StockFinancialMetricsInsertDTO;
+import org.apache.ibatis.annotations.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface BaseDataMapper {
@@ -51,4 +53,19 @@ public interface BaseDataMapper {
      * @return 已插入市场的代码列表，每个代码作为字符串提供
      */
     List<String> getInsertMarketCode(String tradeDate);
+
+    /**
+     * 清空交易日历表数据
+     *
+     * @return 操作结果
+     */
+    Integer clearTradeDate();
+
+    /**
+     * 插入交易日历数据
+     *
+     * @param tradeDateList 交易日历列表
+     * @return 操作结果
+     */
+    Boolean insertTradeDate(@Param("list") List<LocalDate> tradeDateList);
 }

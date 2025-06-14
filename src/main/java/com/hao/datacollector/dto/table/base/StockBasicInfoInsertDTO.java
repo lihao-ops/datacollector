@@ -1,9 +1,7 @@
-package com.hao.datacollector.dto.table;
+package com.hao.datacollector.dto.table.base;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-
-import java.time.LocalDate;
 
 @Data
 @Schema(description = "上市公司基础信息插入对象")

@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +27,6 @@ import java.util.Map;
 @RequestMapping("/data_collection")
 @Tag(name = "数据采集", description = "股票、期货、基金等金融数据采集接口")
 public class DataCollectionController {
-
     @Operation(
         summary = "获取股票实时数据",
         description = "根据股票代码获取实时股票数据，包括价格、成交量等信息"

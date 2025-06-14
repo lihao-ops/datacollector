@@ -1,7 +1,7 @@
 package com.hao.datacollector.common.utils;
 
-import com.hao.datacollector.dto.table.StockBasicInfoInsertDTO;
-import com.hao.datacollector.dto.table.StockFinancialMetricsInsertDTO;
+import com.hao.datacollector.dto.table.base.StockBasicInfoInsertDTO;
+import com.hao.datacollector.dto.table.base.StockFinancialMetricsInsertDTO;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;

@@ -195,4 +195,17 @@
         FROM tb_product_stock_daiy_metrics
         WHERE `trade_date` = #{tradeDate}
     </select>
+
+    <update id="clearTradeDate">
+        TRUNCATE TABLE tb_base_trade_date_info
+    </update>
+
+    <insert id="insertTradeDate">
+        INSERT IGNORE INTO tb_base_trade_date_info (trade_date)
+        VALUES
+        <foreach collection="list" item="date" separator=",">
+            (#{date})
+        </foreach>
+    </insert>
+
 </mapper>

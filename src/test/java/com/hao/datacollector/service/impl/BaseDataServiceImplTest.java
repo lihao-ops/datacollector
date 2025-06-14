@@ -1,7 +1,7 @@
 package com.hao.datacollector.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.hao.datacollector.dto.table.StockDailyMetricsDTO;
+import com.hao.datacollector.dto.table.base.StockDailyMetricsDTO;
 import com.hao.datacollector.service.BaseDataService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
