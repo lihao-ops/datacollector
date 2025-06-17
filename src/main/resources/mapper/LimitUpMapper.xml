@@ -5,66 +5,77 @@
 
 <mapper namespace="com.hao.datacollector.dal.dao.LimitUpMapper">
 
-    <!-- 批量插入每日股票功能数量汇总数据 -->
-    <insert id="batchInsertDailyStockSummary" parameterType="java.util.List">
-        INSERT INTO tb_product_daily_stock_summary (trade_date, function_id, stock_num, status)
+    <!-- 插入基础标签数据(存在即更新) -->
+    <insert id="insertBaseTopic">
+        INSERT INTO tb_base_topic (topic_id, topic_name)
         VALUES
-        <foreach collection="list" item="item" separator=",">
-            (#{item.tradeDate}, #{item.functionId}, #{item.stockNum}, #{item.status})
-        </foreach>
-    </insert>
-
-    <!-- 批量插入每日涨停股票明细数据 -->
-    <insert id="batchInsertLimitUpStockDaily" parameterType="java.util.List">
-        INSERT INTO tb_product_limit_up_stock_daily (
-            trade_date, wind_code, name, first_time, status_desc, order_total, volume_netin, 
-            listed_stock, price, turnover_rate, open_time, open_times, change_range, 
-            change_range5, change_range5_max, change_range1, change_range1_max, 
-            call_auction_order_total, limit_up_x, limit_up_n, limit_up_m, topic_hot_sum, 
-            low_range, main_forces, cost, profit, main_forces_in, divergency, main_forces_time, 
-            main_forces_cb, main_forces_cs, main_forces_btimes, main_forces_stimes, 
-            direction, buy_avg_amount, sell_avg_amount, status
-        )
-        VALUES
-        <foreach collection="list" item="item" separator=",">
-            (
-            #{item.tradeDate}, #{item.windCode}, #{item.name}, #{item.firstTime}, #{item.statusDesc}, 
-            #{item.orderTotal}, #{item.volumeNetin}, #{item.listedStock}, #{item.price}, 
-            #{item.turnoverRate}, #{item.openTime}, #{item.openTimes}, #{item.changeRange}, 
-            #{item.changeRange5}, #{item.changeRange5Max}, #{item.changeRange1}, #{item.changeRange1Max}, 
-            #{item.callAuctionOrderTotal}, #{item.limitUpX}, #{item.limitUpN}, #{item.limitUpM}, 
-            #{item.topicHotSum}, #{item.lowRange}, #{item.mainForces}, #{item.cost}, #{item.profit}, 
-            #{item.mainForcesIn}, #{item.divergency}, #{item.mainForcesTime}, #{item.mainForcesCb}, 
-            #{item.mainForcesCs}, #{item.mainForcesBtimes}, #{item.mainForcesStimes}, 
-            #{item.direction}, #{item.buyAvgAmount}, #{item.sellAvgAmount}, #{item.status}
-            )
-        </foreach>
+        <![CDATA[
+        INSERT INTO `tb_base_topic` (topic_id, topic_name)
+        VALUES (#{baseTopicDTO.topicId}, #{baseTopicDTO.topicName}) ON DUPLICATE KEY
+        update `topic_name` = #{baseTopicDTO.topicName},
+            `update_time` = NOW()
+        ]]>;
     </insert>
 
     <!-- 批量插入股票标签关联数据 -->
     <insert id="batchInsertStockTopicRelation" parameterType="java.util.List">
-        INSERT INTO tb_product_stock_topic_relation (trade_date, wind_code, topic_id, color, topic, topic_hot, topic_order, status)
+        INSERT INTO tb_limit_up_stock_topic_relation (trade_date, wind_code, topic_id, color, stock_num, topic_hot)
         VALUES
         <foreach collection="list" item="item" separator=",">
-            (#{item.tradeDate}, #{item.windCode}, #{item.topicId}, #{item.color}, #{item.topic}, #{item.topicHot}, #{item.topicOrder}, #{item.status})
+            (#{item.tradeDate}, #{item.windCode}, #{item.topicId}, #{item.color}, #{item.stock_num}, #{item.topicHot})
         </foreach>
     </insert>
 
-    <!-- 根据交易日和功能ID删除每日股票功能数量汇总数据 -->
-    <delete id="deleteDailyStockSummaryByTradeDateAndFunctionId">
-        DELETE FROM tb_product_daily_stock_summary
-        WHERE trade_date = #{tradeDate} AND function_id = #{functionId}
-    </delete>
+    <!-- 批量插入涨停股票详细信息 -->
+    <insert id="batchInsertLimitUpStockInfo" parameterType="java.util.List">
+        INSERT INTO tb_limit_up_stock_info (
+        wind_code, trade_date, wind_name, first_time, limit_status,
+        listed_stock, order_total, volume_net_in, price,
+        limit_up_x, limit_up_n, limit_up_m,
+        main_forces, cost, profit, main_forces_in, divergency,
+        main_forces_c_b, main_forces_c_s, main_forces_ntimes, main_forces_stimes,
+        buy_avg_amount, sell_avg_amount
+        )
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.windCode},
+            #{item.tradeDate},
+            #{item.windName},
+            #{item.firstTime},
+            #{item.limitStatus},
+            #{item.listedStock},
+            #{item.orderTotal},
+            #{item.volumeNetIn},
+            #{item.price},
+            #{item.limitUpX},
+            #{item.limitUpN},
+            #{item.limitUpM},
+            #{item.mainForces},
+            #{item.cost},
+            #{item.profit},
+            #{item.mainForcesIn},
+            #{item.divergency},
+            #{item.mainForcesCB},
+            #{item.mainForcesCS},
+            #{item.mainForcesNtimes},
+            #{item.mainForcesStimes},
+            #{item.buyAvgAmount},
+            #{item.sellAvgAmount}
+            )
+        </foreach>
+    </insert>
+
 
     <!-- 根据交易日删除每日涨停股票明细数据 -->
-    <delete id="deleteLimitUpStockDailyByTradeDate">
-        DELETE FROM tb_product_limit_up_stock_daily
+    <delete id="deleteLimitUpStockInfoByTradeDate">
+        DELETE FROM tb_limit_up_stock_info
         WHERE trade_date = #{tradeDate}
     </delete>
 
     <!-- 根据交易日删除股票标签关联数据 -->
     <delete id="deleteStockTopicRelationByTradeDate">
-        DELETE FROM tb_product_stock_topic_relation
+        DELETE FROM tb_limit_up_stock_topic_relation
         WHERE trade_date = #{tradeDate}
     </delete>
 

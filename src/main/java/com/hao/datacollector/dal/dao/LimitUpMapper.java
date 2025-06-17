@@ -1,5 +1,8 @@
 package com.hao.datacollector.dal.dao;
 
+import com.hao.datacollector.dto.table.limitup.BaseTopicInsertDTO;
+import com.hao.datacollector.dto.table.limitup.LimitUpStockInfoInsertDTO;
+import com.hao.datacollector.dto.table.limitup.LimitUpStockTopicRelationInsertDTO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -7,41 +10,39 @@ import java.util.List;
 public interface LimitUpMapper {
 
     /**
-     * 批量插入每日股票功能数量汇总数据
-     * @param dailyStockSummaryList 每日股票功能数量汇总数据列表
+     * 批量插入基础标签信息表(存在即更新)
+     *
+     * @param baseTopicDTO 基础标签对象
      * @return 影响行数
      */
-    int batchInsertDailyStockSummary(@Param("list") List<DailyStockSummaryInsertDTO> dailyStockSummaryList);
-
-    /**
-     * 批量插入每日涨停股票明细数据
-     * @param limitUpStockDailyList 每日涨停股票明细数据列表
-     * @return 影响行数
-     */
-    int batchInsertLimitUpStockDaily(@Param("list") List<LimitUpStockDailyInsertDTO> limitUpStockDailyList);
+    Boolean insertBaseTopic(@Param("baseTopicDTO") BaseTopicInsertDTO baseTopicDTO);
 
     /**
      * 批量插入股票标签关联数据
-     * @param stockTopicRelationList 股票标签关联数据列表
+     *
+     * @param relationInsertList 股票标签关联数据列表
      * @return 影响行数
      */
-    int batchInsertStockTopicRelation(@Param("list") List<StockTopicRelationInsertDTO> stockTopicRelationList);
+    int batchInsertStockTopicRelation(@Param("list") List<LimitUpStockTopicRelationInsertDTO> relationInsertList);
 
     /**
-     * 根据交易日和功能ID删除每日股票功能数量汇总数据
-     * @param tradeDate 交易日
-     * @param functionId 功能ID
+     * 批量插入每日涨停股票数据
+     *
+     * @param limitUpStockDailyList 每日涨停股票明细数据列表
+     * @return 影响行数
      */
-    void deleteDailyStockSummaryByTradeDateAndFunctionId(@Param("tradeDate") String tradeDate, @Param("functionId") String functionId);
+    int batchInsertLimitUpStockInfo(@Param("list") List<LimitUpStockInfoInsertDTO> limitUpStockDailyList);
 
     /**
      * 根据交易日删除每日涨停股票明细数据
+     *
      * @param tradeDate 交易日
      */
-    void deleteLimitUpStockDailyByTradeDate(@Param("tradeDate") String tradeDate);
+    void deleteLimitUpStockInfoByTradeDate(@Param("tradeDate") String tradeDate);
 
     /**
      * 根据交易日删除股票标签关联数据
+     *
      * @param tradeDate 交易日
      */
     void deleteStockTopicRelationByTradeDate(@Param("tradeDate") String tradeDate);
