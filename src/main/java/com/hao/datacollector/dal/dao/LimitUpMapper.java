@@ -1,8 +1,5 @@
 package com.hao.datacollector.dal.dao;
 
-import com.hao.datacollector.dto.table.limitup.DailyStockSummaryInsertDTO;
-import com.hao.datacollector.dto.table.limitup.LimitUpStockDailyInsertDTO;
-import com.hao.datacollector.dto.table.limitup.StockTopicRelationInsertDTO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
