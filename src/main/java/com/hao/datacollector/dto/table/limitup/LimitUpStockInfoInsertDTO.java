@@ -80,13 +80,4 @@ public class LimitUpStockInfoInsertDTO implements Serializable {
 
     @Schema(description = "卖出体量")
     private Double sellAvgAmount;
-
-    @Schema(description = "数据状态:0.无效,1.有效(默认)")
-    private Byte status;
-
-    @Schema(description = "创建时间")
-    private Timestamp createTime;
-
-    @Schema(description = "更新时间")
-    private Timestamp updateTime;
 }

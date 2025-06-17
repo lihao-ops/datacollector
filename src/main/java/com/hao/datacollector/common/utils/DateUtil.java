@@ -11,10 +11,7 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -584,8 +581,8 @@ public final class DateUtil {
     /**
      * 将 LocalDate 列表按指定格式转换为字符串列表
      *
-     * @param localDates  List<LocalDate> 日期列表
-     * @param pattern     日期格式，如 "yyyy-MM-dd" 或 "yyyyMMdd"
+     * @param localDates List<LocalDate> 日期列表
+     * @param pattern    日期格式，如 "yyyy-MM-dd" 或 "yyyyMMdd"
      * @return List<String> 格式化后的日期字符串列表
      */
     public static List<String> formatLocalDateList(List<LocalDate> localDates, String pattern) {
@@ -618,5 +615,51 @@ public final class DateUtil {
     public static String getLastDayOfYear(String pattern) {
         LocalDate lastDay = LocalDate.now().withMonth(12).withDayOfMonth(31);
         return lastDay.format(DateTimeFormatter.ofPattern(pattern));
+    }
+
+    /**
+     * 通用日期格式转换方法（支持日期和时间）
+     *
+     * @param inputDate     输入的日期字符串
+     * @param inputPattern  输入的日期格式
+     * @param outputPattern 输出的目标格式
+     * @return 转换后的日期字符串，失败返回 null
+     */
+    public static String convertDateFormat(String inputDate, String inputPattern, String outputPattern) {
+        if (Objects.isNull(inputDate) || Objects.isNull(inputPattern) || Objects.isNull(outputPattern)) {
+            throw new RuntimeException("参数不能为空");
+        }
+        try {
+            // 首先尝试解析为 LocalDateTime（支持带时间格式）
+            DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern(inputPattern);
+            DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern(outputPattern);
+
+            if (inputPattern.contains("H") || inputPattern.contains("m") || inputPattern.contains("s")) {
+                LocalDateTime dateTime = LocalDateTime.parse(inputDate, inputFormatter);
+                return dateTime.format(outputFormatter);
+            } else {
+                LocalDate date = LocalDate.parse(inputDate, inputFormatter);
+                return date.format(outputFormatter);
+            }
+        } catch (DateTimeParseException e) {
+            throw new RuntimeException("日期格式转换失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 将指定格式的日期字符串转换为 LocalDate
+     *
+     * @param dateStr      日期字符串（如 20250614）
+     * @param inputPattern 输入格式（如 yyyyMMdd）
+     * @return 转换后的 LocalDate，失败返回 null
+     */
+    public static LocalDate parseToLocalDate(String dateStr, String inputPattern) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(inputPattern);
+            return LocalDate.parse(dateStr, formatter);
+        } catch (DateTimeParseException e) {
+            System.err.println("转换为 LocalDate 失败：" + e.getMessage());
+            return null;
+        }
     }
 }

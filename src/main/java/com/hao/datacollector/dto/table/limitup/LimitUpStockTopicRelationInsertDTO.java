@@ -29,13 +29,4 @@ public class LimitUpStockTopicRelationInsertDTO implements Serializable {
 
     @Schema(description = "标签热度")
     private Double topicHot;
-
-    @Schema(description = "数据状态:0.无效,1.有效(默认)")
-    private Byte status;
-
-    @Schema(description = "创建时间")
-    private Timestamp createTime;
-
-    @Schema(description = "更新时间")
-    private Timestamp updateTime;
 }
