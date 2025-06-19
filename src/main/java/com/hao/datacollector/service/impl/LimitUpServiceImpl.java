@@ -25,6 +25,7 @@ import org.springframework.util.StringUtils;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author hli
@@ -120,9 +121,14 @@ public class LimitUpServiceImpl implements LimitUpService {
             LocalDate localTradeTime = DateUtil.parseToLocalDate(tradeTime, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT);
             for (TopicStockVO stockDetail : stockDetails) {
                 for (TopicInfoVO stockDetailTopic : stockDetail.getTopics()) {
+                    if (stockDetailTopic == null) {
+                        log.error("LimitUpServiceImpl_transferLimitUpDataToDatabase:stockDetailTopic_is_null,tradeDate={},windCode={},", localTradeTime, stockDetail.getWindCode());
+                        continue;
+                    }
                     //基础标签
                     BaseTopicInsertDTO baseTopicInsertDTO = new BaseTopicInsertDTO();
-                    BeanUtils.copyProperties(stockDetailTopic, baseTopicInsertDTO);
+                    baseTopicInsertDTO.setTopicId(stockDetailTopic.getTopicId());
+                    baseTopicInsertDTO.setTopicName(stockDetailTopic.getTopic());
                     baseTopicInsertList.add(baseTopicInsertDTO);
                     //关联标签
                     LimitUpStockTopicRelationInsertDTO relationInsertDTO = new LimitUpStockTopicRelationInsertDTO();
@@ -133,6 +139,11 @@ public class LimitUpServiceImpl implements LimitUpService {
                 }
                 LimitUpStockInfoInsertDTO stockInfoInsertDTO = new LimitUpStockInfoInsertDTO();
                 BeanUtils.copyProperties(stockDetail, stockInfoInsertDTO);
+                stockInfoInsertDTO.setTradeDate(localTradeTime);
+                stockInfoInsertDTO.setWindName(stockDetail.getName());
+                stockInfoInsertDTO.setLimitStatus(stockDetail.getStatus());
+                stockInfoInsertDTO.setVolumeNetIn(stockDetail.getVolumeNetin());
+                stockInfoInsertDTO.setMainForcesNtimes(stockDetail.getMainForcesBtimes());
                 limitUpStockInfoList.add(stockInfoInsertDTO);
             }
             // 先删除当天旧数据
@@ -143,24 +154,33 @@ public class LimitUpServiceImpl implements LimitUpService {
             // 批量插入新数据
             log.info("开始批量插入新数据");
             if (!baseTopicInsertList.isEmpty()) {
-                //todo 还有去重
-
-                for (BaseTopicInsertDTO topicInsertDTO : baseTopicInsertList) {
+                //去重后的结果
+                List<BaseTopicInsertDTO> distinctList = baseTopicInsertList.stream()
+                        .filter(dto -> dto.getTopicId() != null) // 防止 NullPointerException
+                        .collect(Collectors.toMap(
+                                BaseTopicInsertDTO::getTopicId, // 以 topicId 为 key
+                                dto -> dto,                     // value 保留原对象
+                                (existing, replacement) -> existing // 若重复，保留第一个
+                        ))
+                        .values()
+                        .stream()
+                        .collect(Collectors.toList());
+                for (BaseTopicInsertDTO topicInsertDTO : distinctList) {
                     Boolean insertBaseTopicResult = limitUpMapper.insertBaseTopic(topicInsertDTO);
                     log.info("LimitUpServiceImpl_transferLimitUpDataToDatabase_insertBaseTopicResult={}", insertBaseTopicResult);
                 }
-                log.info("插入BaseTopic{} 条", baseTopicInsertList.size());
+                log.info("插入BaseTopic={}条", baseTopicInsertList.size());
             }
             if (!relationInsertList.isEmpty()) {
                 limitUpMapper.batchInsertStockTopicRelation(relationInsertList);
-                log.info("插入relationInsertList{} 条", relationInsertList.size());
+                log.info("插入relationInsertList={}条", relationInsertList.size());
             }
             if (!limitUpStockInfoList.isEmpty()) {
                 limitUpMapper.batchInsertLimitUpStockInfo(limitUpStockInfoList);
-                log.info("插入limitUpStockInfoList{} 条", limitUpStockInfoList.size());
+                log.info("插入limitUpStockInfoList={} 条", limitUpStockInfoList.size());
             }
             log.info("批量插入新数据完成");
-            log.info("涨停数据转档成功，交易日期: {}，共处理 {} 条记录", tradeTime, stockDetails.size());
+            log.info("涨停数据转档成功，交易日期={}，共处理={}条记录", tradeTime, stockDetails.size());
             return true;
         } catch (Exception e) {
             log.error("涨停数据转档失败，交易日期: {}", tradeTime, e);

@@ -7,8 +7,6 @@
 
     <!-- 插入基础标签数据(存在即更新) -->
     <insert id="insertBaseTopic">
-        INSERT INTO tb_base_topic (topic_id, topic_name)
-        VALUES
         <![CDATA[
         INSERT INTO `tb_base_topic` (topic_id, topic_name)
         VALUES (#{baseTopicDTO.topicId}, #{baseTopicDTO.topicName}) ON DUPLICATE KEY
@@ -22,7 +20,7 @@
         INSERT INTO tb_limit_up_stock_topic_relation (trade_date, wind_code, topic_id, color, stock_num, topic_hot)
         VALUES
         <foreach collection="list" item="item" separator=",">
-            (#{item.tradeDate}, #{item.windCode}, #{item.topicId}, #{item.color}, #{item.stock_num}, #{item.topicHot})
+            (#{item.tradeDate}, #{item.windCode}, #{item.topicId}, #{item.color}, #{item.stockNum}, #{item.topicHot})
         </foreach>
     </insert>
 
