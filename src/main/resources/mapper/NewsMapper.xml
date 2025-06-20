@@ -28,4 +28,9 @@
             )
         </foreach>
     </insert>
+
+    <select id="getJobEndWindCodeList" resultType="string">
+        SELECT DISTINCT(wind_code)
+        FROM tb_news_stock_relation
+    </select>
 </mapper>

@@ -28,4 +28,11 @@ public interface NewsMapper {
      * @return 操作行数
      */
     int insertNewsStockRelation(@Param("newsIdList") List<String> newsIdList, @Param("windCode") String windCode);
+
+    /**
+     * 获取近期已转档过新闻信息的windCodeList
+     *
+     * @return 已转档windCodeList
+     */
+    List<String> getJobEndWindCodeList();
 }
