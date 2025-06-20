@@ -35,7 +35,7 @@ public class NewsServiceImpl implements NewsService {
     @Value("${wind_base.session_id}")
     private String windSessionId;
 
-    @Value("wind_base.news.stock_news_url")
+    @Value("${wind_base.news.stock_news_url}")
     private String stockNewsUrl;
 
     /**
