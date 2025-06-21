@@ -33,4 +33,41 @@
         SELECT DISTINCT(wind_code)
         FROM tb_news_stock_relation
     </select>
+    
+    <!-- 查询新闻基础数据 -->
+    <select id="queryNewsBaseData" parameterType="com.hao.datacollector.dto.param.news.NewsQueryParam" 
+            resultType="com.hao.datacollector.web.vo.news.NewsQueryResultVO">
+        SELECT 
+            n.news_id as newsId,
+            n.title,
+            n.sitename,
+            n.publish_date as publishDate,
+            r.wind_code as windCode
+        FROM tb_news_base_info n
+        LEFT JOIN tb_news_stock_relation r ON n.news_id = r.news_id
+        <where>
+            <if test="queryParam.newsId != null and queryParam.newsId != ''">
+                AND n.news_id = #{queryParam.newsId}
+            </if>
+            <if test="queryParam.title != null and queryParam.title != ''">
+                AND n.title LIKE CONCAT('%', #{queryParam.title}, '%')
+            </if>
+            <if test="queryParam.sitename != null and queryParam.sitename != ''">
+                AND n.sitename = #{queryParam.sitename}
+            </if>
+            <if test="queryParam.publishDateStart != null">
+                AND n.publish_date <![CDATA[ >= ]]> #{queryParam.publishDateStart}
+            </if>
+            <if test="queryParam.publishDateEnd != null">
+                AND n.publish_date <![CDATA[ <= ]]> #{queryParam.publishDateEnd}
+            </if>
+            <if test="queryParam.windCode != null and queryParam.windCode != ''">
+                AND r.wind_code = #{queryParam.windCode}
+            </if>
+        </where>
+        ORDER BY n.publish_date DESC
+        <if test="queryParam.pageNo != null and queryParam.pageSize != null">
+            LIMIT #{queryParam.pageSize} OFFSET #{queryParam.pageNo}
+        </if>
+    </select>
 </mapper>

@@ -1,5 +1,10 @@
 package com.hao.datacollector.service;
 
+import com.hao.datacollector.dto.param.news.NewsQueryParam;
+import com.hao.datacollector.web.vo.news.NewsQueryResultVO;
+
+import java.util.List;
+
 /**
  * @author hli
  * @program: datacollector
@@ -15,4 +20,12 @@ public interface NewsService {
      * @return 操作结果
      */
     Boolean transferNewsStockData(String windCode);
+
+    /**
+     * 查询新闻基础数据
+     *
+     * @param queryParam 查询参数
+     * @return 新闻数据列表
+     */
+    List<NewsQueryResultVO> queryNewsBaseData(NewsQueryParam queryParam);
 }

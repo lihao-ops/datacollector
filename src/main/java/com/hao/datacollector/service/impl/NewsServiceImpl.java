@@ -5,10 +5,13 @@ import com.alibaba.fastjson.JSONArray;
 import com.hao.datacollector.common.constant.CommonConstant;
 import com.hao.datacollector.common.constant.DataSourceConstant;
 import com.hao.datacollector.common.utils.HttpUtil;
+import com.hao.datacollector.common.utils.PageUtil;
 import com.hao.datacollector.dal.dao.NewsMapper;
+import com.hao.datacollector.dto.param.news.NewsQueryParam;
 import com.hao.datacollector.dto.param.news.NewsRequestParams;
 import com.hao.datacollector.service.NewsService;
 import com.hao.datacollector.web.vo.news.NewsInfoVO;
+import com.hao.datacollector.web.vo.news.NewsQueryResultVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,7 +58,7 @@ public class NewsServiceImpl implements NewsService {
         String bodyStr = HttpUtil.sendPostRequestTimeOut(url, JSON.toJSONString(params), 3000, header);
         JSONArray jsonArray = JSON.parseArray(bodyStr);
         if (jsonArray == null || !CommonConstant.successCode.equals(jsonArray.get(0))) {
-            log.error("transferNewsStockData_error,windCode={}", windCode);
+            log.error("NewsServiceImpl_transferNewsStockData_error=windCode={}", windCode);
             throw new RuntimeException("数据异常");
         }
         JSONArray newsArray = JSON.parseArray(jsonArray.getJSONObject(3).getString("value")).getJSONObject(0).getJSONArray("news");
@@ -66,7 +69,26 @@ public class NewsServiceImpl implements NewsService {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         int relationResultCount = newsMapper.insertNewsStockRelation(newsIdList, params.getWindCode());
-        log.info("newsInfoResultCount={},relationResultCount={}", newsInfoResultCount, relationResultCount);
+        log.info("NewsServiceImpl_transferNewsStockData_result=newsInfoResultCount={}_relationResultCount={}", newsInfoResultCount, relationResultCount);
         return newsInfoResultCount >= 0;
+    }
+
+    /**
+     * 查询新闻基础数据
+     *
+     * @param queryParam 查询参数
+     * @return 新闻数据列表
+     */
+    @Override
+    public List<NewsQueryResultVO> queryNewsBaseData(NewsQueryParam queryParam) {
+        log.info("NewsServiceImpl_queryNewsBaseData_start=queryParam={}", JSON.toJSONString(queryParam));
+        // 处理分页参数，将pageNo转换为offset
+        if (queryParam.getPageNo() != null && queryParam.getPageSize() != null) {
+            int offset = PageUtil.calculateOffset(queryParam.getPageNo(), queryParam.getPageSize());
+            queryParam.setPageNo(offset);
+        }
+        List<NewsQueryResultVO> result = newsMapper.queryNewsBaseData(queryParam);
+        log.info("NewsServiceImpl_queryNewsBaseData_success=result_count={}", result.size());
+        return result;
     }
 }
