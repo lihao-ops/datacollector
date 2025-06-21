@@ -28,7 +28,7 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
-		<xxl-job-core.version>3.0.0</xxl-job-core.version>
+		<xxl-job-core.version>3.1.0</xxl-job-core.version>
 		<caffeine.version>2.7.0</caffeine.version>
 		<spring-boot-starter-cache.version>2.1.4.RELEASE</spring-boot-starter-cache.version>
 		<jakarta.annotation.version>2.1.0</jakarta.annotation.version>
