@@ -1,6 +1,10 @@
 package com.hao.datacollector.service;
 
+import com.hao.datacollector.dto.param.stock.StockBasicInfoQueryParam;
+import com.hao.datacollector.dto.param.stock.StockMarketDataQueryParam;
 import com.hao.datacollector.dto.table.base.StockDailyMetricsDTO;
+import com.hao.datacollector.web.vo.stock.StockBasicInfoQueryResultVO;
+import com.hao.datacollector.web.vo.stock.StockMarketDataQueryResultVO;
 
 import java.io.File;
 import java.time.LocalDate;
@@ -72,5 +76,29 @@ public interface BaseDataService {
      * @return 交易日历
      */
     List<LocalDate> getTradeDateListByTime(String startTime, String endTime);
+
+    /**
+     * 查询股票基本信息
+     * <p>
+     * 该方法用于根据查询条件获取股票基本信息数据，支持多种查询条件组合
+     * 包括股票代码、股票名称、交易所、行业分类、上市日期等条件的筛选
+     * 支持分页查询，提高查询效率和用户体验
+     *
+     * @param queryParam 股票基本信息查询参数，包含各种筛选条件和分页信息
+     * @return 返回符合条件的股票基本信息列表
+     */
+    List<StockBasicInfoQueryResultVO> queryStockBasicInfo(StockBasicInfoQueryParam queryParam);
+
+    /**
+     * 查询股票行情数据
+     * <p>
+     * 该方法用于根据查询条件获取股票行情指标数据，支持多种查询条件组合
+     * 包括股票代码、交易日期范围、价格区间、成交量区间等条件的筛选
+     * 支持分页查询，适用于大量历史行情数据的查询场景
+     *
+     * @param queryParam 股票行情数据查询参数，包含各种筛选条件和分页信息
+     * @return 返回符合条件的股票行情数据列表
+     */
+    List<StockMarketDataQueryResultVO> queryStockMarketData(StockMarketDataQueryParam queryParam);
 }
 

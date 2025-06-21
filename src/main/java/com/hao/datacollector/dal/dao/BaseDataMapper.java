@@ -1,8 +1,12 @@
 package com.hao.datacollector.dal.dao;
 
+import com.hao.datacollector.dto.param.stock.StockBasicInfoQueryParam;
+import com.hao.datacollector.dto.param.stock.StockMarketDataQueryParam;
 import com.hao.datacollector.dto.table.base.StockBasicInfoInsertDTO;
 import com.hao.datacollector.dto.table.base.StockDailyMetricsDTO;
 import com.hao.datacollector.dto.table.base.StockFinancialMetricsInsertDTO;
+import com.hao.datacollector.web.vo.stock.StockBasicInfoQueryResultVO;
+import com.hao.datacollector.web.vo.stock.StockMarketDataQueryResultVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDate;
@@ -77,4 +81,20 @@ public interface BaseDataMapper {
      * @return 交易日历
      */
     List<String> getTradeDateListByTime(String startTime, String endTime);
+
+    /**
+     * 查询股票基本信息
+     *
+     * @param queryParam 股票基本信息查询参数
+     * @return 股票基本信息列表
+     */
+    List<StockBasicInfoQueryResultVO> queryStockBasicInfo(StockBasicInfoQueryParam queryParam);
+
+    /**
+     * 查询股票行情数据
+     *
+     * @param queryParam 股票行情数据查询参数
+     * @return 股票行情数据列表
+     */
+    List<StockMarketDataQueryResultVO> queryStockMarketData(StockMarketDataQueryParam queryParam);
 }

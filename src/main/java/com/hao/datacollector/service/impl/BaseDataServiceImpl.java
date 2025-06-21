@@ -1,5 +1,6 @@
 package com.hao.datacollector.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hao.datacollector.common.constant.DataSourceConstant;
@@ -7,12 +8,17 @@ import com.hao.datacollector.common.constant.DateTimeFormatConstant;
 import com.hao.datacollector.common.utils.ExcelReaderUtil;
 import com.hao.datacollector.common.utils.ExcelToDtoConverter;
 import com.hao.datacollector.common.utils.HttpUtil;
+import com.hao.datacollector.common.utils.PageUtil;
 import com.hao.datacollector.dal.dao.BaseDataMapper;
+import com.hao.datacollector.dto.param.stock.StockBasicInfoQueryParam;
+import com.hao.datacollector.dto.param.stock.StockMarketDataQueryParam;
 import com.hao.datacollector.dto.table.base.StockBasicInfoInsertDTO;
 import com.hao.datacollector.dto.table.base.StockDailyMetricsDTO;
 import com.hao.datacollector.dto.table.base.StockFinancialMetricsInsertDTO;
 import com.hao.datacollector.service.BaseDataService;
 import com.hao.datacollector.web.vo.result.ResultVO;
+import com.hao.datacollector.web.vo.stock.StockBasicInfoQueryResultVO;
+import com.hao.datacollector.web.vo.stock.StockMarketDataQueryResultVO;
 import com.wind.api.W;
 import com.wind.api.struct.WindData;
 import lombok.extern.slf4j.Slf4j;
@@ -331,5 +337,43 @@ public class BaseDataServiceImpl implements BaseDataService {
         return listByTime.stream()
                 .map(LocalDate::parse) // 默认是 yyyy-MM-dd 格式
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 查询股票基本信息
+     *
+     * @param queryParam 股票基本信息查询参数
+     * @return 股票基本信息列表
+     */
+    @Override
+    public List<StockBasicInfoQueryResultVO> queryStockBasicInfo(StockBasicInfoQueryParam queryParam) {
+        log.info("BaseDataServiceImpl_queryStockBasicInfo_start=queryParam={}", JSON.toJSONString(queryParam));
+        // 处理分页参数，将pageNo转换为offset
+        if (queryParam.getPageNo() != null && queryParam.getPageSize() != null) {
+            int offset = PageUtil.calculateOffset(queryParam.getPageNo(), queryParam.getPageSize());
+            queryParam.setPageNo(offset);
+        }
+        List<StockBasicInfoQueryResultVO> result = baseDataMapper.queryStockBasicInfo(queryParam);
+        log.info("BaseDataServiceImpl_queryStockBasicInfo_success=result_count={}", result.size());
+        return result;
+    }
+
+    /**
+     * 查询股票行情数据
+     *
+     * @param queryParam 股票行情数据查询参数
+     * @return 股票行情数据列表
+     */
+    @Override
+    public List<StockMarketDataQueryResultVO> queryStockMarketData(StockMarketDataQueryParam queryParam) {
+        log.info("BaseDataServiceImpl_queryStockMarketData_start=queryParam={}", JSON.toJSONString(queryParam));
+        // 处理分页参数，将pageNo转换为offset
+        if (queryParam.getPageNo() != null && queryParam.getPageSize() != null) {
+            int offset = PageUtil.calculateOffset(queryParam.getPageNo(), queryParam.getPageSize());
+            queryParam.setPageNo(offset);
+        }
+        List<StockMarketDataQueryResultVO> result = baseDataMapper.queryStockMarketData(queryParam);
+        log.info("BaseDataServiceImpl_queryStockMarketData_success=result_count={}", result.size());
+        return result;
     }
 }
