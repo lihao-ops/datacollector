@@ -1,6 +1,5 @@
 package com.hao.datacollector.common.cache;
 
-import com.alibaba.fastjson.JSON;
 import com.hao.datacollector.common.constant.DateTimeFormatConstant;
 import com.hao.datacollector.common.utils.DateUtil;
 import com.hao.datacollector.service.BaseDataService;
@@ -31,6 +30,22 @@ public class DateCache {
      */
     public static List<LocalDate> CurrentYearTradeDateList;
 
+    /**
+     * 2022年的交易日历
+     */
+    public static List<LocalDate> Year2022TradeDateList;
+
+    /**
+     * 2023年的交易日历
+     */
+    public static List<LocalDate> Year2023TradeDateList;
+
+    /**
+     * 2024年的交易日历
+     */
+    public static List<LocalDate> Year2024TradeDateList;
+
+
     @Autowired
     private BaseDataService baseDataService;
 
@@ -43,6 +58,12 @@ public class DateCache {
         //年初至今的交易日历
         String currentDay = DateUtil.getCurrentDateTime(DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT);
         CurrentYearTradeDateList = baseDataService.getTradeDateListByTime(firstDayOfYear, currentDay);
-        log.info("DateCache_CurrentYearTradeDateList.size={},CurrentYearTradeDateList.size={}", ThisYearTradeDateList.size(), JSON.toJSONString(CurrentYearTradeDateList));
+        //2022年的交易日历
+        Year2022TradeDateList = baseDataService.getTradeDateListByTime(DateUtil.getFirstDayOfYear(2022, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT), DateUtil.getLastDayOfYear(2022, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT));
+        //2023年的交易日历
+        Year2023TradeDateList = baseDataService.getTradeDateListByTime(DateUtil.getFirstDayOfYear(2023, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT), DateUtil.getLastDayOfYear(2023, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT));
+        //2024年的交易日历
+        Year2024TradeDateList = baseDataService.getTradeDateListByTime(DateUtil.getFirstDayOfYear(2024, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT), DateUtil.getLastDayOfYear(2024, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT));
+        log.info("CurrentYearTradeDateList.size={},CurrentYearTradeDateList.size={},Year2022TradeDateList.size={},Year2023TradeDateList.size={},Year2024TradeDateList.size={},", ThisYearTradeDateList.size(), CurrentYearTradeDateList.size(), Year2022TradeDateList.size(), Year2023TradeDateList.size(), Year2024TradeDateList.size());
     }
 }

@@ -63,6 +63,10 @@ public class NewsServiceImpl implements NewsService {
         }
         JSONArray newsArray = JSON.parseArray(jsonArray.getJSONObject(3).getString("value")).getJSONObject(0).getJSONArray("news");
         List<NewsInfoVO> newInfoVOList = JSON.parseArray(newsArray.toJSONString(), NewsInfoVO.class);
+        if (newInfoVOList.isEmpty()){
+            log.error("transferNewsStockData_error,windCode={}", windCode);
+            return false;
+        }
         int newsInfoResultCount = newsMapper.insertNewsInfo(newInfoVOList);
         List<String> newsIdList = newInfoVOList.stream()
                 .map(NewsInfoVO::getId)

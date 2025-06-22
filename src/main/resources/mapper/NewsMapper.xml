@@ -4,7 +4,7 @@
 
     <!-- 批量新增新闻相关信息 -->
     <insert id="insertNewsInfo" parameterType="java.util.List">
-        INSERT INTO tb_news_base_info
+        INSERT IGNORE INTO tb_news_base_info
         (news_id, title, sitename, publish_date)
         VALUES
         <foreach collection="newInfoVOList" item="item" separator=",">

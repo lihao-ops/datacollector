@@ -618,6 +618,32 @@ public final class DateUtil {
     }
 
     /**
+     * 获取指定年份第一天，格式例如yyyy-MM-dd
+     *
+     * @param year    年份，例如2024
+     * @param pattern 日期格式，例如：yyyyMMdd
+     * @return 返回格式如 "2024-01-01"
+     */
+    public static String getFirstDayOfYear(int year, String pattern) {
+        LocalDate firstDay = LocalDate.of(year, 1, 1);
+        DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(pattern);
+        return firstDay.format(FORMATTER);
+    }
+
+    /**
+     * 获取指定年份最后一天，格式例如yyyy-MM-dd
+     *
+     * @param year    年份，例如2024
+     * @param pattern 日期格式，例如：yyyyMMdd
+     * @return 返回格式如 "2024-12-31"
+     */
+    public static String getLastDayOfYear(int year, String pattern) {
+        LocalDate lastDay = LocalDate.of(year, 12, 31);
+        DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(pattern);
+        return lastDay.format(FORMATTER);
+    }
+
+    /**
      * 通用日期格式转换方法（支持日期和时间）
      *
      * @param inputDate     输入的日期字符串
