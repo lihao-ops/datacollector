@@ -1,7 +1,11 @@
 package com.hao.datacollector.service;
 
+import com.hao.datacollector.dto.param.limitup.LimitUpStockQueryParam;
 import com.hao.datacollector.web.vo.limitup.ApiResponse;
+import com.hao.datacollector.web.vo.limitup.LimitUpStockQueryResultVO;
 import com.hao.datacollector.web.vo.limitup.ResultObjectVO;
+
+import java.util.List;
 
 /**
  * @author hli
@@ -26,4 +30,12 @@ public interface LimitUpService {
      * @return 是否成功
      */
     Boolean transferLimitUpDataToDatabase(String tradeTime);
+
+    /**
+     * 查询涨停股票信息列表
+     *
+     * @param queryParam 查询参数
+     * @return 结果列表
+     */
+    List<LimitUpStockQueryResultVO> queryLimitUpStockList(LimitUpStockQueryParam queryParam);
 }

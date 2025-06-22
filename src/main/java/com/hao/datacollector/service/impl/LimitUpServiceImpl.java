@@ -1,20 +1,20 @@
 package com.hao.datacollector.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hao.datacollector.common.cache.DateCache;
 import com.hao.datacollector.common.constant.DataSourceConstant;
 import com.hao.datacollector.common.constant.DateTimeFormatConstant;
 import com.hao.datacollector.common.utils.DateUtil;
 import com.hao.datacollector.common.utils.HttpUtil;
+import com.hao.datacollector.common.utils.PageUtil;
 import com.hao.datacollector.dal.dao.LimitUpMapper;
+import com.hao.datacollector.dto.param.limitup.LimitUpStockQueryParam;
 import com.hao.datacollector.dto.table.limitup.BaseTopicInsertDTO;
 import com.hao.datacollector.dto.table.limitup.LimitUpStockInfoInsertDTO;
 import com.hao.datacollector.dto.table.limitup.LimitUpStockTopicRelationInsertDTO;
 import com.hao.datacollector.service.LimitUpService;
-import com.hao.datacollector.web.vo.limitup.ApiResponse;
-import com.hao.datacollector.web.vo.limitup.ResultObjectVO;
-import com.hao.datacollector.web.vo.limitup.TopicInfoVO;
-import com.hao.datacollector.web.vo.limitup.TopicStockVO;
+import com.hao.datacollector.web.vo.limitup.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -186,5 +186,24 @@ public class LimitUpServiceImpl implements LimitUpService {
             log.error("涨停数据转档失败，交易日期: {}", tradeTime, e);
             return false;
         }
+    }
+
+    /**
+     * 查询涨停股票信息列表
+     *
+     * @param queryParam 查询参数
+     * @return 结果列表
+     */
+    @Override
+    public List<LimitUpStockQueryResultVO> queryLimitUpStockList(LimitUpStockQueryParam queryParam) {
+        log.info("LimitUpServiceImpl_queryLimitUpStockList_start=queryParam={}", JSON.toJSONString(queryParam));
+        // 处理分页参数，将pageNo转换为offset
+        if (queryParam.getPageNo() != null && queryParam.getPageSize() != null) {
+            int offset = PageUtil.calculateOffset(queryParam.getPageNo(), queryParam.getPageSize());
+            queryParam.setPageNo(offset);
+        }
+        List<LimitUpStockQueryResultVO> result = limitUpMapper.queryLimitUpStockList(queryParam);
+        log.info("LimitUpServiceImpl_queryLimitUpStockList_success=result_count={}", result.size());
+        return result;
     }
 }
