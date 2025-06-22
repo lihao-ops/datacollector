@@ -105,13 +105,14 @@ public class BaseDataServiceImpl implements BaseDataService {
     public Boolean batchInsertStockMarketData(String startTime, String endTime) {
         //登录
         loginW();
-        // 存储将要插入的股票市场数据的列表
-        List<StockDailyMetricsDTO> insertStockMarketDataList = new ArrayList<>();
         // 获取所有A股的代码
         List<String> allWindCode = baseDataMapper.getAllAStockCode();
         //清理已经插入过的代码,无需重复插入。
         List<String> overInsertMarketCode = baseDataMapper.getInsertMarketCode(endTime);
         allWindCode.removeAll(overInsertMarketCode);
+        //清理异常的股票列表
+        List<String> abnormalStockList = baseDataMapper.getAbnormalStockList();
+        allWindCode.removeAll(abnormalStockList);
         int emptyStatus = 0;
         // 如果中断遍历时,先将已转化的DTOList插入数据库,后查询插入数据库的所有代码,从AllCode中剔除,就是还需要获取的剩余数据。继续获取
         for (int i = 0; i < allWindCode.size(); i++) {
@@ -119,29 +120,19 @@ public class BaseDataServiceImpl implements BaseDataService {
             List<StockDailyMetricsDTO> stockDailyMetricsList = getInsertStockMarketData(allWindCode.get(i), startTime, endTime);
             // 如果获取的数据连续三次为空，表示出现调用异常
             if (stockDailyMetricsList.isEmpty()) {
-                if (emptyStatus == 1000) {
+                if (emptyStatus == 500) {
                     log.error("已处理共计{}个代码数据", i);
                     throw new RuntimeException("继续获取股票市场数据失败");
                 }
-                log.error("无数据code={}", allWindCode.get(i));
+                boolean insertAbnormalResult = baseDataMapper.insertAbnormalStock(allWindCode.get(i));
+                log.error("BaseDataServiceImpl_batchInsertStockMarketData_windCode={},insertAbnormalResult={}", allWindCode.get(i), insertAbnormalResult);
                 emptyStatus += 1;
                 continue;
             }
             //日期去重
             Boolean insertStockMarketData = baseDataMapper.batchInsertStockMarketData(stockDailyMetricsList.stream().filter(distinctByKey(StockDailyMetricsDTO::getTradeDate)).collect(Collectors.toList()));
             log.info("batchInsertStockMarketData_code={}!stockDailyMetricsList.size={},insertStockMarketData={}", allWindCode.get(i), stockDailyMetricsList.size(), insertStockMarketData);
-
-            // todo 将已获取的数据插入数据库
-//            Boolean insertStockMarketData = baseDataMapper.batchInsertStockMarketData(insertStockMarketDataList);
-//            log.error("batchInsertStockMarketData_stockDailyMetricsDTO==null,code={}!insertStockMarketData={}", allWindCode.get(i), insertStockMarketData);
-//            }
-            // 将获取的股票市场数据添加到插入列表中
-//            insertStockMarketDataList.addAll(stockDailyMetricsList);
         }
-        // 记录日志，显示剩余需要插入的数据量
-        log.info("BaseDataServiceImpl_batchInsertStockMarketData_allWindCode.size={},insertStockMarketDataList.size={}", allWindCode.size(), insertStockMarketDataList.size());
-        // 插入剩余的所有数据，并返回插入结果
-//        return baseDataMapper.batchInsertStockMarketData(insertStockMarketDataList);
         return true;
     }
 
@@ -199,6 +190,9 @@ public class BaseDataServiceImpl implements BaseDataService {
          * mfd_inflowproportion_m:主力净流入额占比
          */
         WindData wsd = W.wsd(windCode, "lastradeday_s,windcode,sec_name,latestconcept,chain,esg_rating_wind,open,high,low,close,vwap,volume_btin,amount_btin,pct_chg,turn,free_turn,maxup,maxdown,trade_status,ev,mkt_freeshares,open_auction_price,open_auction_volume,open_auction_amount,mfd_buyamt_at,mfd_sellamt_at,mfd_buyvol_at,mfd_sellvol_at,tech_turnoverrate5,tech_turnoverrate10,mfd_inflow_m,mfd_inflowproportion_m", startTime, endTime, "");
+        if(wsd.getErrorId() != 0){
+            throw new RuntimeException("getInsertStockMarketData_error,wsd.ErrorId=" + wsd.getErrorId());
+        }
         return convert(wsd.getData().toString().replace("[", "").replace("]", ""));
     }
 
@@ -207,7 +201,7 @@ public class BaseDataServiceImpl implements BaseDataService {
         List<StockDailyMetricsDTO> insertDataDTOList = new ArrayList<>();
         boolean statusFlag = false;
         try {
-            String[] parts = csvLine.split(",", -1); // 支持空值
+            String[] parts = csvLine.split(", ", -1); // 支持空值
             for (int index = 0; index < parts.length - 1; ) {
                 StockDailyMetricsDTO dto = new StockDailyMetricsDTO();
                 //当前交易日数据为null则表示可能为新股此时并无交易数据,且只打印一次

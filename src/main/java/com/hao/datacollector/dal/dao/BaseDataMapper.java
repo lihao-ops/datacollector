@@ -97,4 +97,19 @@ public interface BaseDataMapper {
      * @return 股票行情数据列表
      */
     List<StockMarketDataQueryResultVO> queryStockMarketData(StockMarketDataQueryParam queryParam);
+
+    /**
+     * 插入异常股票
+     *
+     * @param windCode 股票代码
+     * @return 操作结果
+     */
+    boolean insertAbnormalStock(String windCode);
+
+    /**
+     * 获取异常股票列表
+     *
+     * @return 异常股票列表
+     */
+    List<String> getAbnormalStockList();
 }

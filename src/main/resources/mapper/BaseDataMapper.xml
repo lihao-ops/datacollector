@@ -240,25 +240,25 @@
 
     <!-- 查询股票基本信息 -->
     <select id="queryStockBasicInfo" resultMap="StockBasicInfoResultMap">
-        SELECT 
-            wind_code,
-            sec_name,
-            listing_date,
-            status_existence,
-            concept_plates,
-            hot_concepts,
-            industry_chain,
-            is_long_below_net_asset,
-            company_profile,
-            business_scope,
-            sw_industry_code,
-            sw_industry_name,
-            citic_industry_code,
-            citic_industry_name,
-            total_shares,
-            float_shares,
-            create_time,
-            update_time
+        SELECT
+        wind_code,
+        sec_name,
+        listing_date,
+        status_existence,
+        concept_plates,
+        hot_concepts,
+        industry_chain,
+        is_long_below_net_asset,
+        company_profile,
+        business_scope,
+        sw_industry_code,
+        sw_industry_name,
+        citic_industry_code,
+        citic_industry_name,
+        total_shares,
+        float_shares,
+        create_time,
+        update_time
         FROM tb_product_stock_basic_info
         <where>
             <if test="windCode != null and windCode != ''">
@@ -579,4 +579,18 @@
             LIMIT #{pageNo}, #{pageSize}
         </if>
     </select>
+
+    <insert id="insertAbnormalStock" parameterType="string">
+        INSERT INTO tb_product_abnormal_stock (wind_code)
+        VALUES (#{windCode}) ON DUPLICATE KEY
+        UPDATE
+            update_time = NOW();
+    </insert>
+
+    <select id="getAbnormalStockList" resultType="string">
+        SELECT wind_code
+        FROM tb_product_abnormal_stock
+        WHERE status = 1
+    </select>
+
 </mapper>
