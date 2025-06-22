@@ -18,7 +18,7 @@
     </insert>
 
     <insert id="insertNewsStockRelation" parameterType="java.util.List">
-        INSERT INTO tb_news_stock_relation
+        INSERT IGNORE INTO tb_news_stock_relation
         (news_id, wind_code)
         VALUES
         <foreach collection="newsIdList" item="newsId" separator=",">
