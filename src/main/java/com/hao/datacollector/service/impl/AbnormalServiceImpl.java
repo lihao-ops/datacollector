@@ -169,7 +169,7 @@ public class AbnormalServiceImpl implements AbnormalService {
      */
     public Boolean transferListOfSeats(Integer period, Integer seatType, Integer pageNo, Integer pageSize, Integer sortCol, Integer sortFlag) {
         List<ActiveSeatsRankVO> sourceListOfSeatList = getSourceListOfSeats(period, seatType, pageNo, pageSize, sortCol, sortFlag);
-        //极值处理
+        //todo 极值处理bug(非极值也处理默认值)待修复
         ExtremeValueUtil.handleExtremeValues(sourceListOfSeatList);
         int result = abnormalMapper.insertSourceListOfSeats(sourceListOfSeatList);
         return result > 0;
@@ -228,7 +228,7 @@ public class AbnormalServiceImpl implements AbnormalService {
     @Override
     public Boolean transferActiveRank(Integer period, Integer pageNo, Integer pageSize, Integer sortCol, Integer sortFlag) {
         List<ActiveRankRecordVO> activeRankVOList = getSourceActiveRank(period, pageNo, pageSize, sortCol, sortFlag);
-        //极值处理
+        //todo 极值处理bug(非极值也处理默认值)待修复
         ExtremeValueUtil.handleExtremeValues(activeRankVOList);
         int result = abnormalMapper.insertActiveRankVOList(activeRankVOList);
         return result > 0;
