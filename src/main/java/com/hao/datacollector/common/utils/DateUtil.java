@@ -466,6 +466,19 @@ public final class DateUtil {
         return formatLocalDateTime(LocalDateTime.now(), pattern);
     }
 
+
+    /**
+     * 根据指定格式str获取当前时间
+     *
+     * @param format 日期格式
+     * @return 指定格式的当前时间
+     */
+    public static String getCurrentDateTimeByStr(String format) {
+        SimpleDateFormat formatter = new SimpleDateFormat(format);
+        Date date = new Date();
+        return formatter.format(date);
+    }
+
     /**
      * 获取当前日期字符串(yyyy-MM-dd格式)
      *

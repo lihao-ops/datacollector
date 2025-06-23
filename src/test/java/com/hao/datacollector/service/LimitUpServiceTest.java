@@ -21,7 +21,7 @@ class LimitUpServiceTest {
     @Test
     void transferLimitUpDataToDatabase() {
 
-        List<String> yearTradeDateList = DateUtil.formatLocalDateList(DateCache.Year2022TradeDateList, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT);
+        List<String> yearTradeDateList = DateUtil.formatLocalDateList(DateCache.Year2020TradeDateList, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT);
         yearTradeDateList.forEach(date -> {
             Boolean success = limitUpService.transferLimitUpDataToDatabase(date);
             if (!success) {

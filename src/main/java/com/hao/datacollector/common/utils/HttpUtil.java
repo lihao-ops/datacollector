@@ -10,6 +10,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -231,6 +232,33 @@ public final class HttpUtil {
             log.error("GET request failed for URL: {}", url, e);
             throw new HttpRequestException("GET request failed: " + e.getMessage(), e);
         }
+    }
+
+    /**
+     * 发送Get请求，带查询参数和超时时间
+     *
+     * @param url            请求url
+     * @param queryParams    查询参数
+     * @param httpHeader     http header头信息
+     * @param connectTimeOut 连接超时时间，单位为毫秒
+     * @param readTimeOut    读取缓存区数据超时时间，单位为毫秒
+     * @return
+     */
+    public static ResponseEntity<String> sendGetWithParams(String url, MultiValueMap<String, String> queryParams, HttpHeaders httpHeader, int connectTimeOut, int readTimeOut) {
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(connectTimeOut);
+        //获取数据超时时间
+        requestFactory.setReadTimeout(readTimeOut);
+        RestTemplate client = new RestTemplate(requestFactory);
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(httpHeader);
+        // 构建带查询参数的URI
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
+        if (queryParams != null && !queryParams.isEmpty()) {
+            builder.queryParams(queryParams);
+        }
+        String finalUrl = builder.toUriString();
+        ResponseEntity<String> response = client.exchange(finalUrl, HttpMethod.GET, requestEntity, String.class);
+        return response;
     }
 
     // ==================== JSON处理方法 ====================

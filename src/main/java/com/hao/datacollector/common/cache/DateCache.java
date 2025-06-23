@@ -29,7 +29,15 @@ public class DateCache {
      * 年初至今的交易日历
      */
     public static List<LocalDate> CurrentYearTradeDateList;
+    /**
+     * 2020年的交易日历
+     */
+    public static List<LocalDate> Year2020TradeDateList;
 
+    /**
+     * 2021年的交易日历
+     */
+    public static List<LocalDate> Year2021TradeDateList;
     /**
      * 2022年的交易日历
      */
@@ -58,6 +66,10 @@ public class DateCache {
         //年初至今的交易日历
         String currentDay = DateUtil.getCurrentDateTime(DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT);
         CurrentYearTradeDateList = baseDataService.getTradeDateListByTime(firstDayOfYear, currentDay);
+        //2020年的交易日历
+        Year2020TradeDateList = baseDataService.getTradeDateListByTime(DateUtil.getFirstDayOfYear(2020, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT), DateUtil.getLastDayOfYear(2020, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT));
+        //2021年的交易日历
+        Year2021TradeDateList = baseDataService.getTradeDateListByTime(DateUtil.getFirstDayOfYear(2021, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT), DateUtil.getLastDayOfYear(2021, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT));
         //2022年的交易日历
         Year2022TradeDateList = baseDataService.getTradeDateListByTime(DateUtil.getFirstDayOfYear(2022, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT), DateUtil.getLastDayOfYear(2022, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT));
         //2023年的交易日历

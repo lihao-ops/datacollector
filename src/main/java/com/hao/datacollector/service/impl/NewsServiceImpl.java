@@ -6,6 +6,7 @@ import com.hao.datacollector.common.constant.CommonConstant;
 import com.hao.datacollector.common.constant.DataSourceConstant;
 import com.hao.datacollector.common.utils.HttpUtil;
 import com.hao.datacollector.common.utils.PageUtil;
+import com.hao.datacollector.dal.dao.BaseDataMapper;
 import com.hao.datacollector.dal.dao.NewsMapper;
 import com.hao.datacollector.dto.param.news.NewsQueryParam;
 import com.hao.datacollector.dto.param.news.NewsRequestParams;
@@ -35,6 +36,9 @@ public class NewsServiceImpl implements NewsService {
     @Autowired
     private NewsMapper newsMapper;
 
+    @Autowired
+    private BaseDataMapper baseDataMapper;
+
     @Value("${wind_base.session_id}")
     private String windSessionId;
 
@@ -63,8 +67,9 @@ public class NewsServiceImpl implements NewsService {
         }
         JSONArray newsArray = JSON.parseArray(jsonArray.getJSONObject(3).getString("value")).getJSONObject(0).getJSONArray("news");
         List<NewsInfoVO> newInfoVOList = JSON.parseArray(newsArray.toJSONString(), NewsInfoVO.class);
-        if (newInfoVOList.isEmpty()){
-            log.error("transferNewsStockData_error,windCode={}", windCode);
+        if (newInfoVOList.isEmpty()) {
+            boolean insertAbnormalResult = baseDataMapper.insertAbnormalStock(windCode);
+            log.error("transferNewsStockData_error,windCode={},insertAbnormalResult={}", windCode, insertAbnormalResult);
             return false;
         }
         int newsInfoResultCount = newsMapper.insertNewsInfo(newInfoVOList);
