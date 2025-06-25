@@ -59,7 +59,7 @@ public class NewsServiceImpl implements NewsService {
         NewsRequestParams params = new NewsRequestParams();
         params.setWindCode(windCode);
         // 发送请求，设置超时时间
-        String bodyStr = HttpUtil.sendPostRequestTimeOut(url, JSON.toJSONString(params), 3000, header);
+        String bodyStr = HttpUtil.sendPostRequestTimeOut(url, JSON.toJSONString(params), 10000, header);
         JSONArray jsonArray = JSON.parseArray(bodyStr);
         if (jsonArray == null || !CommonConstant.successCode.equals(jsonArray.get(0))) {
             log.error("NewsServiceImpl_transferNewsStockData_error=windCode={}", windCode);

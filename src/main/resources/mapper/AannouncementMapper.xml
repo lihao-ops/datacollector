@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.datacollector.dal.dao.AnnouncementMapper">
+
+    <select id="getJobAnnouncementEndWindCodeList" resultType="string">
+        SELECT DISTINCT wind_code
+        FROM tb_stock_announcement
+        WHERE `date` = #{endDate}
+    </select>
+    <insert id="insertAnnouncementSourceData" parameterType="map">
+        INSERT INTO tb_stock_announcement (
+        wind_code,
+        date,
+        announcement,
+        url
+        ) VALUES
+        <foreach collection="item" item="announcement" separator=",">
+            (
+            #{windCode},
+            #{announcement.date},
+            #{announcement.announcement},
+            #{announcement.url}
+            )
+        </foreach>
+    </insert>
+
+    <select id="getJobEventEndWindCodeList" resultType="string">
+        SELECT DISTINCT wind_code
+        FROM tb_stock_event
+        WHERE `date` = #{endDate}
+    </select>
+    <insert id="insertEventSource" parameterType="java.util.List">
+        REPLACE INTO tb_stock_event (wind_code, event, date, type)
+        VALUES
+        <foreach collection="item" item="eventItem" separator=",">
+            (#{windCode}, #{eventItem.event}, #{eventItem.date}, #{eventItem.type})
+        </foreach>
+    </insert>
+</mapper>
