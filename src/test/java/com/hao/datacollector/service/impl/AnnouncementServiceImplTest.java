@@ -28,6 +28,7 @@ class AnnouncementServiceImplTest {
     void transferAnnouncement() {
         //去除近期已转档过的代码
         List<String> jobStockList = StockCache.allWindCode;
+        //todo 解决查询数据缺失问题
         List<String> jobEndList = announcementMapper.getJobAnnouncementEndWindCodeList("20250625");
         jobStockList.removeAll(jobEndList);
         //删除异常股票列表
@@ -43,6 +44,7 @@ class AnnouncementServiceImplTest {
     void transferEvent() {
         //去除近期已转档过的代码
         List<String> jobStockList = StockCache.allWindCode;
+        //todo 解决查询数据缺失问题
         List<String> jobEndList = announcementMapper.getJobEventEndWindCodeList("20250625");
         jobStockList.removeAll(jobEndList);
         //删除异常股票列表
