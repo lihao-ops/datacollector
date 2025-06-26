@@ -701,4 +701,31 @@ public final class DateUtil {
             return null;
         }
     }
+
+    /**
+     * 时间调整方法
+     *
+     * @param date 需要调整时间参数
+     * @param fmt  传入日期格式字符串
+     * @param num  调整大小,输入整数为增加时间,负数为减少时间,单位天数
+     * @return 调整后的fmt格式时间
+     */
+    public static String stringTimeToAdjust(String date, String fmt, Integer num) {
+        if (!StringUtils.hasLength(date)) {
+            return date;
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat(fmt);
+        Date dt = null;
+        try {
+            dt = sdf.parse(date);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        Calendar nowDate = Calendar.getInstance();
+        nowDate.setTime(dt);
+        nowDate.add(Calendar.DAY_OF_WEEK, num);
+        Date dt1 = nowDate.getTime();
+        String dayString = sdf.format(dt1);
+        return dayString;
+    }
 }

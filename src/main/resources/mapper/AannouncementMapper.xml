@@ -5,8 +5,13 @@
     <select id="getJobAnnouncementEndWindCodeList" resultType="string">
         SELECT DISTINCT wind_code
         FROM tb_stock_announcement
-        WHERE `date` <![CDATA[ >= ]]> STR_TO_DATE(#{endDate}, '%Y%m%d')
-          AND `date` <![CDATA[ < ]]> DATE_ADD(STR_TO_DATE(#{endDate}, '%Y%m%d'), INTERVAL 1 DAY)
+        WHERE 1 = 1
+        <if test="startDate != null and startDate != ''">
+            AND `date`<![CDATA[>=]]>  #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND `date` <![CDATA[<]]>  #{endDate}
+        </if>
     </select>
     <insert id="insertAnnouncementSourceData" parameterType="map">
         INSERT INTO tb_stock_announcement (
@@ -28,8 +33,13 @@
     <select id="getJobEventEndWindCodeList" resultType="string">
         SELECT DISTINCT wind_code
         FROM tb_stock_event
-        WHERE `date` <![CDATA[ >= ]]> STR_TO_DATE(#{endDate}, '%Y%m%d')
-          AND `date` <![CDATA[ < ]]> DATE_ADD(STR_TO_DATE(#{endDate}, '%Y%m%d'), INTERVAL 1 DAY)
+        WHERE 1 = 1
+        <if test="startDate != null and startDate != ''">
+            AND `date`<![CDATA[>=]]>  #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND `date` <![CDATA[<]]>  #{endDate}
+        </if>
     </select>
 
     <insert id="insertEventSource" parameterType="java.util.List">

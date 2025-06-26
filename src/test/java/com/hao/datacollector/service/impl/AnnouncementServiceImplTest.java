@@ -1,6 +1,8 @@
 package com.hao.datacollector.service.impl;
 
 import com.hao.datacollector.common.cache.StockCache;
+import com.hao.datacollector.common.constant.DateTimeFormatConstant;
+import com.hao.datacollector.common.utils.DateUtil;
 import com.hao.datacollector.dal.dao.AnnouncementMapper;
 import com.hao.datacollector.dal.dao.BaseDataMapper;
 import com.hao.datacollector.service.AnnouncementService;
@@ -28,8 +30,11 @@ class AnnouncementServiceImplTest {
     void transferAnnouncement() {
         //去除近期已转档过的代码
         List<String> jobStockList = StockCache.allWindCode;
-        //todo 解决查询数据缺失问题
-        List<String> jobEndList = announcementMapper.getJobAnnouncementEndWindCodeList("20250625");
+//        String startDate = "20250101";
+//        String endDate = DateUtil.stringTimeToAdjust("20250625", DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
+        String startDate = "20240101";
+        String endDate = DateUtil.stringTimeToAdjust("20241231", DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
+        List<String> jobEndList = announcementMapper.getJobAnnouncementEndWindCodeList(startDate, endDate);
         jobStockList.removeAll(jobEndList);
         //删除异常股票列表
         List<String> abnormalStockList = baseDataMapper.getAbnormalStockList();
@@ -44,8 +49,11 @@ class AnnouncementServiceImplTest {
     void transferEvent() {
         //去除近期已转档过的代码
         List<String> jobStockList = StockCache.allWindCode;
-        //todo 解决查询数据缺失问题
-        List<String> jobEndList = announcementMapper.getJobEventEndWindCodeList("20250625");
+//        String startDate = "20250101";
+//        String endDate = DateUtil.stringTimeToAdjust("20250625", DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
+        String startDate = "20240101";
+        String endDate = DateUtil.stringTimeToAdjust("20241231", DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
+        List<String> jobEndList = announcementMapper.getJobEventEndWindCodeList(startDate, endDate);
         jobStockList.removeAll(jobEndList);
         //删除异常股票列表
         List<String> abnormalStockList = baseDataMapper.getAbnormalStockList();
