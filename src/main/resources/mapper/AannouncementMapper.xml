@@ -14,7 +14,7 @@
         </if>
     </select>
     <insert id="insertAnnouncementSourceData" parameterType="map">
-        INSERT INTO tb_stock_announcement (
+        INSERT IGNORE INTO tb_stock_announcement (
         wind_code,
         date,
         announcement,

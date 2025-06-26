@@ -152,7 +152,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Override
     public Boolean transferEvent(String windCode, String startDate, String endDate, Integer pageNo, Integer pageSize) {
         List<BigEventVO> eventSourceList = getEventSourceData(windCode, startDate, endDate, pageNo, pageSize);
-        if (eventSourceList.isEmpty()) {
+        if (eventSourceList == null || eventSourceList.isEmpty()) {
             log.error("transferEvent_eventSourceList.isEmpty()!windCode={}", windCode);
             return false;
         }

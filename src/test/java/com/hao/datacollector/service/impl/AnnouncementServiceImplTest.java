@@ -40,7 +40,7 @@ class AnnouncementServiceImplTest {
         List<String> abnormalStockList = baseDataMapper.getAbnormalStockList();
         jobStockList.removeAll(abnormalStockList);
         for (String windCode : jobStockList) {
-            Boolean transferAnnouncementResult = announcementService.transferAnnouncement(windCode, "20250101", "20250625", 1, 500);
+            Boolean transferAnnouncementResult = announcementService.transferAnnouncement(windCode, "20240101", "20241231", 1, 500);
             log.info("AnnouncementServiceImplTest_transferAnnouncement_windCode={},transferAnnouncementResult={}", windCode, transferAnnouncementResult);
         }
     }
@@ -59,7 +59,7 @@ class AnnouncementServiceImplTest {
         List<String> abnormalStockList = baseDataMapper.getAbnormalStockList();
         jobStockList.removeAll(abnormalStockList);
         for (String windCode : jobStockList) {
-            Boolean transferEventResult = announcementService.transferEvent(windCode, "20250101", "20250625", 1, 500);
+            Boolean transferEventResult = announcementService.transferEvent(windCode, "20240101", "20241231", 1, 500);
             log.info("AnnouncementServiceImplTest_transferEvent_windCode={},transferEventResult={}", windCode, transferEventResult);
         }
     }
