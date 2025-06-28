@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -29,12 +28,6 @@ class AnnouncementServiceImplTest {
 
     @Autowired
     private BaseDataMapper baseDataMapper;
-
-    /**
-     * 注入在 ThreadPoolConfig 中定义的IO密集型线程池（平台线程）。
-     */
-    @Autowired
-    private ThreadPoolTaskExecutor ioTaskExecutor;
 
     /**
      * 注入在 ThreadPoolConfig 中定义的虚拟线程执行器。
