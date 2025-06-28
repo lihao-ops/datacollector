@@ -53,10 +53,11 @@ public interface BaseDataMapper {
      * 此方法旨在检索和提供在给定交易日期内，数据库或系统中未记录的市场代码信息
      * 主要用于数据完整性检查、审计或同步过程中识别缺失的数据
      *
-     * @param tradeDate 交易日期，用于查询未插入市场的代码的特定日期
+     * @param startDate 起始交易日期，用于查询未插入市场的代码的特定日期
+     * @param endDate   截止交易日期
      * @return 已插入市场的代码列表，每个代码作为字符串提供
      */
-    List<String> getInsertMarketCode(String tradeDate);
+    List<String> getInsertMarketCode(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
     /**
      * 清空交易日历表数据

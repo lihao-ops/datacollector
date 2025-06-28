@@ -191,9 +191,15 @@
     </insert>
 
     <select id="getInsertMarketCode" resultType="string">
-        SELECT `windcode`
+        SELECT DISTINCT `windcode`
         FROM tb_product_stock_daiy_metrics
-        WHERE `trade_date` = #{tradeDate}
+        WHERE 1 = 1
+        <if test="startDate != null and startDate != ''">
+            AND `trade_date` <![CDATA[>=]]>  #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND `trade_date` <![CDATA[<]]>  #{endDate}
+        </if>
     </select>
 
     <update id="clearTradeDate">

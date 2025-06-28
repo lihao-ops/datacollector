@@ -5,10 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hao.datacollector.common.constant.DataSourceConstant;
 import com.hao.datacollector.common.constant.DateTimeFormatConstant;
-import com.hao.datacollector.common.utils.ExcelReaderUtil;
-import com.hao.datacollector.common.utils.ExcelToDtoConverter;
-import com.hao.datacollector.common.utils.HttpUtil;
-import com.hao.datacollector.common.utils.PageUtil;
+import com.hao.datacollector.common.utils.*;
 import com.hao.datacollector.dal.dao.BaseDataMapper;
 import com.hao.datacollector.dto.param.stock.StockBasicInfoQueryParam;
 import com.hao.datacollector.dto.param.stock.StockMarketDataQueryParam;
@@ -108,7 +105,8 @@ public class BaseDataServiceImpl implements BaseDataService {
         // 获取所有A股的代码
         List<String> allWindCode = baseDataMapper.getAllAStockCode();
         //清理已经插入过的代码,无需重复插入。
-        List<String> overInsertMarketCode = baseDataMapper.getInsertMarketCode(endTime);
+        String endDate = DateUtil.stringTimeToAdjust(endTime, DateTimeFormatConstant.DEFAULT_DATE_FORMAT, 1);
+        List<String> overInsertMarketCode = baseDataMapper.getInsertMarketCode(startTime, endDate);
         allWindCode.removeAll(overInsertMarketCode);
         //清理异常的股票列表
         List<String> abnormalStockList = baseDataMapper.getAbnormalStockList();
@@ -190,7 +188,7 @@ public class BaseDataServiceImpl implements BaseDataService {
          * mfd_inflowproportion_m:主力净流入额占比
          */
         WindData wsd = W.wsd(windCode, "lastradeday_s,windcode,sec_name,latestconcept,chain,esg_rating_wind,open,high,low,close,vwap,volume_btin,amount_btin,pct_chg,turn,free_turn,maxup,maxdown,trade_status,ev,mkt_freeshares,open_auction_price,open_auction_volume,open_auction_amount,mfd_buyamt_at,mfd_sellamt_at,mfd_buyvol_at,mfd_sellvol_at,tech_turnoverrate5,tech_turnoverrate10,mfd_inflow_m,mfd_inflowproportion_m", startTime, endTime, "");
-        if(wsd.getErrorId() != 0){
+        if (wsd.getErrorId() != 0) {
             throw new RuntimeException("getInsertStockMarketData_error,wsd.ErrorId=" + wsd.getErrorId());
         }
         return convert(wsd.getData().toString().replace("[", "").replace("]", ""));
