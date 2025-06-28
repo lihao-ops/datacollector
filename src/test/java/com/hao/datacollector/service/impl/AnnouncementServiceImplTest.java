@@ -6,11 +6,11 @@ import com.hao.datacollector.common.utils.DateUtil;
 import com.hao.datacollector.dal.dao.AnnouncementMapper;
 import com.hao.datacollector.dal.dao.BaseDataMapper;
 import com.hao.datacollector.service.AnnouncementService;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import jakarta.annotation.Resource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.List;
@@ -117,15 +117,15 @@ class AnnouncementServiceImplTest {
 //        String endDate = DateUtil.stringTimeToAdjust("20250625", DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
 //        String startDate = "20240101";
 //        String endDate = DateUtil.stringTimeToAdjust("20241231", DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
-        String startDate = "20230101";
-        String endDate = DateUtil.stringTimeToAdjust("20231231", DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
+        String startDate = "20200101";
+        String endDate = DateUtil.stringTimeToAdjust("20201231", DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
         List<String> jobEndList = announcementMapper.getJobEventEndWindCodeList(startDate, endDate);
         jobStockList.removeAll(jobEndList);
         //删除异常股票列表
         List<String> abnormalStockList = baseDataMapper.getAbnormalStockList();
         jobStockList.removeAll(abnormalStockList);
         for (String windCode : jobStockList) {
-            Boolean transferEventResult = announcementService.transferEvent(windCode, "20230101", "20231231", 1, 500);
+            Boolean transferEventResult = announcementService.transferEvent(windCode, "20200101", "20201231", 1, 500);
             log.info("AnnouncementServiceImplTest_transferEvent_windCode={},transferEventResult={}", windCode, transferEventResult);
         }
     }
@@ -143,8 +143,8 @@ class AnnouncementServiceImplTest {
         //去除近期已转档过的代码
         // 通过创建副本确保线程安全，避免直接修改共享的静态缓存 StockCache.allWindCode
         List<String> jobStockList = new java.util.ArrayList<>(StockCache.allWindCode);
-        String startDate = "20230101";
-        String endDate = DateUtil.stringTimeToAdjust("20231231", DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
+        String startDate = "20200101";
+        String endDate = DateUtil.stringTimeToAdjust("20201231", DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
         List<String> jobEndList = announcementMapper.getJobEventEndWindCodeList(startDate, endDate);
         jobStockList.removeAll(jobEndList);
         //删除异常股票列表
@@ -155,7 +155,7 @@ class AnnouncementServiceImplTest {
         for (String windCode : jobStockList) {
             CompletableFuture.runAsync(() -> {
                 try {
-                    Boolean transferEventResult = announcementService.transferEvent(windCode, "20230101", "20231231", 1, 500);
+                    Boolean transferEventResult = announcementService.transferEvent(windCode, "20200101", "20201231", 1, 500);
                     log.info("AnnouncementServiceImplTest_transferEvent_windCode={},transferEventResult={}", windCode, transferEventResult);
                 } catch (Exception e) {
                     log.error("AnnouncementServiceImplTest_transferEvent_windCode={},e={}", windCode, e);

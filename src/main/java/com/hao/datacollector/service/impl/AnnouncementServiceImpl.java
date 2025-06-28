@@ -41,6 +41,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Value("${wind_base.event.url}")
     private String eventUrl;
 
+
+    private static final String DATE_TIME_SEPARATOR = "T";
+    private static final String UTC_FLAG = "Z";
+
     private static final String SUCCESS_FLAG = "200 OK";
 
     /**
@@ -104,8 +108,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
      * @return 转换后的代码
      */
     public String getFormattedDate(String date) {
-        if (date != null && date.contains("T")) {
-            return date.replace("T", " ").replace("Z", "");
+        if (date != null && date.contains(DATE_TIME_SEPARATOR)) {
+            return date.replace(DATE_TIME_SEPARATOR, " ").replace(UTC_FLAG, "");
         }
         return date;
     }
