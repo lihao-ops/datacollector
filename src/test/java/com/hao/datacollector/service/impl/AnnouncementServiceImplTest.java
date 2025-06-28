@@ -32,16 +32,22 @@ class AnnouncementServiceImplTest {
         List<String> jobStockList = StockCache.allWindCode;
 //        String startDate = "20250101";
 //        String endDate = DateUtil.stringTimeToAdjust("20250625", DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
-        String startDate = "20240101";
-        String endDate = DateUtil.stringTimeToAdjust("20241231", DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
+//        String startDate = "20240101";
+//        String endDate = DateUtil.stringTimeToAdjust("20241231", DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
+        String startDate = "20230101";
+        String endDate = DateUtil.stringTimeToAdjust("20231231", DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
         List<String> jobEndList = announcementMapper.getJobAnnouncementEndWindCodeList(startDate, endDate);
         jobStockList.removeAll(jobEndList);
         //删除异常股票列表
         List<String> abnormalStockList = baseDataMapper.getAbnormalStockList();
         jobStockList.removeAll(abnormalStockList);
         for (String windCode : jobStockList) {
-            Boolean transferAnnouncementResult = announcementService.transferAnnouncement(windCode, "20240101", "20241231", 1, 500);
-            log.info("AnnouncementServiceImplTest_transferAnnouncement_windCode={},transferAnnouncementResult={}", windCode, transferAnnouncementResult);
+            try {
+                Boolean transferAnnouncementResult = announcementService.transferAnnouncement(windCode, "20230101", "20231231", 1, 500);
+                log.info("AnnouncementServiceImplTest_transferAnnouncement_windCode={},transferAnnouncementResult={}", windCode, transferAnnouncementResult);
+            } catch (Exception e) {
+                log.error("AnnouncementServiceImplTest_transferAnnouncement_windCode={},e={}", windCode, e);
+            }
         }
     }
 
@@ -51,15 +57,17 @@ class AnnouncementServiceImplTest {
         List<String> jobStockList = StockCache.allWindCode;
 //        String startDate = "20250101";
 //        String endDate = DateUtil.stringTimeToAdjust("20250625", DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
-        String startDate = "20240101";
-        String endDate = DateUtil.stringTimeToAdjust("20241231", DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
+//        String startDate = "20240101";
+//        String endDate = DateUtil.stringTimeToAdjust("20241231", DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
+        String startDate = "20230101";
+        String endDate = DateUtil.stringTimeToAdjust("20231231", DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
         List<String> jobEndList = announcementMapper.getJobEventEndWindCodeList(startDate, endDate);
         jobStockList.removeAll(jobEndList);
         //删除异常股票列表
         List<String> abnormalStockList = baseDataMapper.getAbnormalStockList();
         jobStockList.removeAll(abnormalStockList);
         for (String windCode : jobStockList) {
-            Boolean transferEventResult = announcementService.transferEvent(windCode, "20240101", "20241231", 1, 500);
+            Boolean transferEventResult = announcementService.transferEvent(windCode, "20230101", "20231231", 1, 500);
             log.info("AnnouncementServiceImplTest_transferEvent_windCode={},transferEventResult={}", windCode, transferEventResult);
         }
     }

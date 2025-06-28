@@ -63,7 +63,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         queryParams.add("endDate", endDate);
         queryParams.add("pageNo", String.valueOf(pageNo));
         queryParams.add("pageSize", String.valueOf(pageSize));
-        ResponseEntity<String> response = HttpUtil.sendGetWithParams(url, queryParams, headers, 10000, 10000);
+        ResponseEntity<String> response = HttpUtil.sendGetWithParams(url, queryParams, headers, 100000, 100000);
         if (!SUCCESS_FLAG.equals(response.getStatusCode().toString())) {
             throw new RuntimeException("getBigEventData_error,result=" + response.getStatusCode());
         }
