@@ -47,9 +47,9 @@ class AnnouncementServiceImplTest {
     /**
      * 公告转档时间
      */
-    private static final String ANNOUNCEMENT_START_DATE = "20210101";
+    private static final String ANNOUNCEMENT_START_DATE = "20200101";
 
-    private static final String ANNOUNCEMENT_END_DATE = "20211231";
+    private static final String ANNOUNCEMENT_END_DATE = "20201231";
 
     /**
      * 大事件转档时间
