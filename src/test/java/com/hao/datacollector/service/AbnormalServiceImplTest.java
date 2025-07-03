@@ -24,7 +24,7 @@ class AbnormalServiceImplTest {
 //        Boolean b = abnormalService.transferHomePage(indexSourceParam);
 
 
-//        Boolean sourceListOfSeats = abnormalService.transferListOfSeats(3, 0, 1, 10000, 1, -1);
+        Boolean sourceListOfSeats = abnormalService.transferListOfSeats(3, 0, 1, 10000, 1, -1);
 //
 //
 //        System.out.println(JSON.toJSONString(sourceListOfSeats));

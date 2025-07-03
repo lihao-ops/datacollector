@@ -6,58 +6,40 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 public class ExtremeValueUtil {
 
-    // 默认极值阈值配置
     private static final Map<Class<?>, Number> DEFAULT_MAX_VALUES = new HashMap<>();
+    private static final int MAX_WARN_LOGS = 100; // 限制日志输出数量
+    private static final AtomicInteger warnLogCount = new AtomicInteger(0);
 
     static {
-        DEFAULT_MAX_VALUES.put(Double.class, 999999999.99);
-        DEFAULT_MAX_VALUES.put(double.class, 999999999.99);
-        DEFAULT_MAX_VALUES.put(Float.class, 999999999.99f);
-        DEFAULT_MAX_VALUES.put(float.class, 999999999.99f);
+        DEFAULT_MAX_VALUES.put(Double.class, 1e9);  // 10亿
+        DEFAULT_MAX_VALUES.put(double.class, 1e9);
+        DEFAULT_MAX_VALUES.put(Float.class, 1e9f);
+        DEFAULT_MAX_VALUES.put(float.class, 1e9f);
         DEFAULT_MAX_VALUES.put(Integer.class, 999999999);
         DEFAULT_MAX_VALUES.put(int.class, 999999999);
         DEFAULT_MAX_VALUES.put(Long.class, 999999999999L);
         DEFAULT_MAX_VALUES.put(long.class, 999999999999L);
     }
 
-    /**
-     * 处理列表中所有对象的极值字段
-     *
-     * @param list 待处理的对象列表
-     * @param <T>  泛型类型
-     */
     public static <T> void handleExtremeValues(List<T> list) {
         handleExtremeValues(list, null);
     }
 
-    /**
-     * 处理列表中所有对象的极值字段（自定义阈值）
-     *
-     * @param list            待处理的对象列表
-     * @param customMaxValues 自定义字段最大值配置 key:字段名 value:最大值
-     * @param <T>             泛型类型
-     */
     public static <T> void handleExtremeValues(List<T> list, Map<String, Number> customMaxValues) {
-        if (list == null || list.isEmpty()) {
-            return;
-        }
-
+        if (list == null || list.isEmpty()) return;
+        warnLogCount.set(0); // 每轮处理重置
         for (T obj : list) {
             handleSingleObject(obj, customMaxValues);
         }
     }
 
-    /**
-     * 处理单个对象的极值字段
-     */
     private static <T> void handleSingleObject(T obj, Map<String, Number> customMaxValues) {
-        if (obj == null) {
-            return;
-        }
+        if (obj == null) return;
 
         Class<?> clazz = obj.getClass();
         Field[] fields = clazz.getDeclaredFields();
@@ -66,23 +48,20 @@ public class ExtremeValueUtil {
             try {
                 field.setAccessible(true);
                 Object value = field.get(obj);
-
-                if (value == null) {
-                    continue;
-                }
+                if (value == null || !isNumericType(field.getType())) continue;
 
                 Class<?> fieldType = field.getType();
                 String fieldName = field.getName();
+                Number numValue = (Number) value;
+                Number maxValue = getMaxValue(fieldName, fieldType, customMaxValues);
 
-                // 检查是否为数值类型
-                if (isNumericType(fieldType)) {
-                    Number numValue = (Number) value;
-                    Number maxValue = getMaxValue(fieldName, fieldType, customMaxValues);
-
-                    if (isExtremeValue(numValue, maxValue, fieldType)) {
-                        setDefaultValue(obj, field, fieldType);
-                        log.warn("字段 {} 存在极值 {}，已设置为默认值", fieldName, numValue);
-                    }
+                // 非法值（如 NaN, Infinity, MAX_VALUE）
+                if (isIllegalValue(numValue, fieldType)) {
+                    setDefaultValue(obj, field, fieldType);
+                    logWarnOnce("字段 {} 是非法值 {}（如 NaN / Infinity），已设置为默认值", fieldName, numValue);
+                } else if (isExceedThreshold(numValue, maxValue, fieldType)) {
+                    setDefaultValue(obj, field, fieldType);
+                    logWarnOnce("字段 {} 超过阈值 {}，实际值为 {}，已设置为默认值", fieldName, maxValue, numValue);
                 }
 
             } catch (Exception e) {
@@ -91,9 +70,6 @@ public class ExtremeValueUtil {
         }
     }
 
-    /**
-     * 判断是否为数值类型
-     */
     private static boolean isNumericType(Class<?> type) {
         return type == double.class || type == Double.class ||
                 type == float.class || type == Float.class ||
@@ -101,51 +77,36 @@ public class ExtremeValueUtil {
                 type == long.class || type == Long.class;
     }
 
-    /**
-     * 获取字段的最大值阈值
-     */
     private static Number getMaxValue(String fieldName, Class<?> fieldType, Map<String, Number> customMaxValues) {
-        // 优先使用自定义配置
         if (customMaxValues != null && customMaxValues.containsKey(fieldName)) {
             return customMaxValues.get(fieldName);
         }
-
-        // 使用默认配置
         return DEFAULT_MAX_VALUES.get(fieldType);
     }
 
-    /**
-     * 判断是否为极值
-     */
-    private static boolean isExtremeValue(Number value, Number maxValue, Class<?> fieldType) {
-        if (maxValue == null) {
-            return false;
-        }
-
-        // 检查无穷大和NaN
+    private static boolean isIllegalValue(Number value, Class<?> fieldType) {
         if (fieldType == double.class || fieldType == Double.class) {
-            double doubleValue = value.doubleValue();
-            if (!Double.isFinite(doubleValue)) {
-                return true;
-            }
-            return doubleValue > maxValue.doubleValue();
+            double v = value.doubleValue();
+            return Double.isNaN(v) || Double.isInfinite(v) || v == Double.MAX_VALUE;
         }
-
         if (fieldType == float.class || fieldType == Float.class) {
-            float floatValue = value.floatValue();
-            if (!Float.isFinite(floatValue)) {
-                return true;
-            }
-            return floatValue > maxValue.floatValue();
+            float v = value.floatValue();
+            return Float.isNaN(v) || Float.isInfinite(v) || v == Float.MAX_VALUE;
         }
+        return false;
+    }
 
-        // 整数类型比较
+    private static boolean isExceedThreshold(Number value, Number maxValue, Class<?> fieldType) {
+        if (maxValue == null) return false;
+        if (fieldType == double.class || fieldType == Double.class) {
+            return value.doubleValue() > maxValue.doubleValue();
+        }
+        if (fieldType == float.class || fieldType == Float.class) {
+            return value.floatValue() > maxValue.floatValue();
+        }
         return value.longValue() > maxValue.longValue();
     }
 
-    /**
-     * 设置默认值
-     */
     private static void setDefaultValue(Object obj, Field field, Class<?> fieldType) throws IllegalAccessException {
         if (fieldType == double.class || fieldType == Double.class) {
             field.set(obj, 0.0);
@@ -155,6 +116,14 @@ public class ExtremeValueUtil {
             field.set(obj, 0);
         } else if (fieldType == long.class || fieldType == Long.class) {
             field.set(obj, 0L);
+        }
+    }
+
+    private static void logWarnOnce(String message, Object... args) {
+        if (warnLogCount.getAndIncrement() < MAX_WARN_LOGS) {
+            log.warn(message, args);
+        } else if (warnLogCount.get() == MAX_WARN_LOGS + 1) {
+            log.warn("日志输出已达到上限（{} 条），后续将不再打印...", MAX_WARN_LOGS);
         }
     }
 }
