@@ -43,21 +43,6 @@ class AnnouncementServiceImplTest {
     @Resource(name = "ioTaskExecutor")
     private java.util.concurrent.Executor ioTaskExecutor;
 
-
-    /**
-     * 公告转档时间
-     */
-    private static final String ANNOUNCEMENT_START_DATE = "20200101";
-
-    private static final String ANNOUNCEMENT_END_DATE = "20201231";
-
-    /**
-     * 大事件转档时间
-     */
-    private static final String EVENT_START_DATE = "20200101";
-    private static final String EVENT_END_DATE = "20201231";
-
-
     /**
      * 转档公告数据。
      * <p>
@@ -68,8 +53,9 @@ class AnnouncementServiceImplTest {
     void transferAnnouncement() {
         //去除近期已转档过的代码
         List<String> jobStockList = StockCache.allWindCode;
-        String startDate = ANNOUNCEMENT_START_DATE;
-        String endDate = DateUtil.stringTimeToAdjust(ANNOUNCEMENT_END_DATE, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
+//        String startDate = announcementMapper.getJobAnnouncementEndLastDate();
+        String startDate = "20250704";
+        String endDate = DateUtil.stringTimeToAdjust(DateUtil.getCurrentDateTimeByStr(DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT), DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
         List<String> jobEndList = announcementMapper.getJobAnnouncementEndWindCodeList(startDate, endDate);
         jobStockList.removeAll(jobEndList);
         //删除异常股票列表
@@ -77,7 +63,7 @@ class AnnouncementServiceImplTest {
         jobStockList.removeAll(abnormalStockList);
         for (String windCode : jobStockList) {
             try {
-                Boolean transferAnnouncementResult = announcementService.transferAnnouncement(windCode, ANNOUNCEMENT_START_DATE, ANNOUNCEMENT_END_DATE, 1, 500);
+                Boolean transferAnnouncementResult = announcementService.transferAnnouncement(windCode, startDate, endDate, 1, 500);
                 log.info("AnnouncementServiceImplTest_transferAnnouncement_windCode={},transferAnnouncementResult={}", windCode, transferAnnouncementResult);
             } catch (Exception e) {
                 log.error("AnnouncementServiceImplTest_transferAnnouncement_windCode={},e={}", windCode, e);
@@ -98,8 +84,8 @@ class AnnouncementServiceImplTest {
         //去除近期已转档过的代码
         // 通过创建副本确保线程安全，避免直接修改共享的静态缓存 StockCache.allWindCode
         List<String> jobStockList = new java.util.ArrayList<>(StockCache.allWindCode);
-        String startDate = ANNOUNCEMENT_START_DATE;
-        String endDate = DateUtil.stringTimeToAdjust(ANNOUNCEMENT_END_DATE, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
+        String startDate = announcementMapper.getJobAnnouncementEndLastDate();
+        String endDate = DateUtil.stringTimeToAdjust(DateUtil.getCurrentDateTimeByStr(DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT), DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
         List<String> jobEndList = announcementMapper.getJobAnnouncementEndWindCodeList(startDate, endDate);
         jobStockList.removeAll(jobEndList);
         //删除异常股票列表
@@ -110,7 +96,7 @@ class AnnouncementServiceImplTest {
         for (String windCode : jobStockList) {
             CompletableFuture.runAsync(() -> {
                 try {
-                    Boolean transferAnnouncementResult = announcementService.transferAnnouncement(windCode, ANNOUNCEMENT_START_DATE, ANNOUNCEMENT_END_DATE, 1, 500);
+                    Boolean transferAnnouncementResult = announcementService.transferAnnouncement(windCode, startDate, endDate, 1, 500);
                     log.info("AnnouncementServiceImplTest_transferAnnouncement_windCode={},transferAnnouncementResult={}", windCode, transferAnnouncementResult);
                 } catch (Exception e) {
                     log.error("AnnouncementServiceImplTest_transferAnnouncement_windCode={},e={}", windCode, e);
@@ -140,8 +126,8 @@ class AnnouncementServiceImplTest {
         //去除近期已转档过的代码
         // 通过创建副本确保线程安全，避免直接修改共享的静态缓存 StockCache.allWindCode
         List<String> jobStockList = new java.util.ArrayList<>(StockCache.allWindCode);
-        String startDate = ANNOUNCEMENT_START_DATE;
-        String endDate = DateUtil.stringTimeToAdjust(ANNOUNCEMENT_END_DATE, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
+        String startDate = announcementMapper.getJobAnnouncementEndLastDate();
+        String endDate = DateUtil.stringTimeToAdjust(DateUtil.getCurrentDateTimeByStr(DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT), DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
         List<String> jobEndList = announcementMapper.getJobAnnouncementEndWindCodeList(startDate, endDate);
         jobStockList.removeAll(jobEndList);
         //删除异常股票列表
@@ -152,7 +138,7 @@ class AnnouncementServiceImplTest {
         for (String windCode : jobStockList) {
             CompletableFuture.runAsync(() -> {
                 try {
-                    Boolean transferAnnouncementResult = announcementService.transferAnnouncement(windCode, ANNOUNCEMENT_START_DATE, ANNOUNCEMENT_END_DATE, 1, 500);
+                    Boolean transferAnnouncementResult = announcementService.transferAnnouncement(windCode, startDate, endDate, 1, 500);
                     log.info("AnnouncementServiceImplTest_transferAnnouncement_windCode={},transferAnnouncementResult={}", windCode, transferAnnouncementResult);
                 } catch (Exception e) {
                     log.error("AnnouncementServiceImplTest_transferAnnouncement_windCode={},e={}", windCode, e);
@@ -172,15 +158,16 @@ class AnnouncementServiceImplTest {
     void transferEvent() {
         //去除近期已转档过的代码
         List<String> jobStockList = StockCache.allWindCode;
-        String startDate = EVENT_START_DATE;
-        String endDate = DateUtil.stringTimeToAdjust(EVENT_END_DATE, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
+//        String startDate = announcementMapper.getJobEventEndLastDate();
+        String startDate = "20250612";
+        String endDate = DateUtil.stringTimeToAdjust(DateUtil.getCurrentDateTimeByStr(DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT), DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
         List<String> jobEndList = announcementMapper.getJobEventEndWindCodeList(startDate, endDate);
         jobStockList.removeAll(jobEndList);
         //删除异常股票列表
         List<String> abnormalStockList = baseDataMapper.getAbnormalStockList();
         jobStockList.removeAll(abnormalStockList);
         for (String windCode : jobStockList) {
-            Boolean transferEventResult = announcementService.transferEvent(windCode, EVENT_START_DATE, EVENT_END_DATE, 1, 500);
+            Boolean transferEventResult = announcementService.transferEvent(windCode, startDate, endDate, 1, 500);
             log.info("AnnouncementServiceImplTest_transferEvent_windCode={},transferEventResult={}", windCode, transferEventResult);
         }
     }
@@ -198,8 +185,8 @@ class AnnouncementServiceImplTest {
         //去除近期已转档过的代码
         // 通过创建副本确保线程安全，避免直接修改共享的静态缓存 StockCache.allWindCode
         List<String> jobStockList = new java.util.ArrayList<>(StockCache.allWindCode);
-        String startDate = EVENT_START_DATE;
-        String endDate = DateUtil.stringTimeToAdjust(EVENT_END_DATE, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
+        String startDate = announcementMapper.getJobEventEndLastDate();
+        String endDate = DateUtil.stringTimeToAdjust(DateUtil.getCurrentDateTimeByStr(DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT), DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
         List<String> jobEndList = announcementMapper.getJobEventEndWindCodeList(startDate, endDate);
         jobStockList.removeAll(jobEndList);
         //删除异常股票列表
@@ -210,7 +197,7 @@ class AnnouncementServiceImplTest {
         for (String windCode : jobStockList) {
             CompletableFuture.runAsync(() -> {
                 try {
-                    Boolean transferEventResult = announcementService.transferEvent(windCode, EVENT_START_DATE, EVENT_END_DATE, 1, 500);
+                    Boolean transferEventResult = announcementService.transferEvent(windCode, startDate, endDate, 1, 500);
                     log.info("AnnouncementServiceImplTest_transferEvent_windCode={},transferEventResult={}", windCode, transferEventResult);
                 } catch (Exception e) {
                     log.error("AnnouncementServiceImplTest_transferEvent_windCode={},e={}", windCode, e);

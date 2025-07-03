@@ -5,7 +5,6 @@ import com.hao.datacollector.web.vo.announcement.AnnouncementVO;
 import com.hao.datacollector.web.vo.announcement.BigEventVO;
 import org.apache.ibatis.annotations.Param;
 
-import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -40,6 +39,13 @@ public interface AnnouncementMapper {
      */
     List<String> getJobAnnouncementEndWindCodeList(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
+    /**
+     * 获取已转档公告数据的最后时间
+     * yyyyMMdd格式！
+     *
+     * @return 已转档股票列表
+     */
+    String getJobAnnouncementEndLastDate();
 
     /**
      * 获取已转档大事数据的股票列表
@@ -47,4 +53,12 @@ public interface AnnouncementMapper {
      * @return 已转档股票列表
      */
     List<String> getJobEventEndWindCodeList(@Param("startDate") String startDate, @Param("endDate") String endDate);
+
+    /**
+     * 获取已转档公告数据的最后时间
+     * yyyyMMdd格式！
+     *
+     * @return 已转档股票列表
+     */
+    String getJobEventEndLastDate();
 }
