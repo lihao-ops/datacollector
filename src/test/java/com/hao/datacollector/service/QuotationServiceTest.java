@@ -19,9 +19,10 @@ class QuotationServiceTest {
     @Test
     void transferQuotationBaseByStock() {
         String startDate = DateUtil.formatLocalDate(DateCache.CurrentYearTradeDateList.get(0), DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT);
+        //需要剔除已经转档的股票
         String endDate = DateUtil.formatLocalDate(DateCache.CurrentYearTradeDateList.get(DateCache.CurrentYearTradeDateList.size() - 1), DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT);
         for (String windCode : StockCache.allWindCode) {
-            Boolean transferResult = quotationService.transferQuotationBaseByStock("600000.SH", "2023-05-01", "2023-05-05");
+            Boolean transferResult = quotationService.transferQuotationBaseByStock(windCode, startDate, endDate);
             log.info("transferQuotationBaseByStock_result={},windCode={},startDate={},endDate={}", transferResult, windCode, startDate, endDate);
         }
     }

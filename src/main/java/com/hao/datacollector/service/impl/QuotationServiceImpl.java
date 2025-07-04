@@ -55,6 +55,10 @@ public class QuotationServiceImpl implements QuotationService {
         List<List<Long>> quotationList = JSON.parseObject(response.getBody(), new TypeReference<List<List<Long>>>() {
         });
         List<QuotationStockBaseDTO> quotationStockBaseList = new ArrayList<>();
+        if (quotationList == null || quotationList.isEmpty()) {
+            log.error("quotationData.quotationList_isEmpty()!windCode={}", windCode);
+            return false;
+        }
         for (List<Long> quotationData : quotationList) {
             if (quotationData.isEmpty()) {
                 log.error("quotationData.isEmpty()!windCode={}", windCode);
