@@ -124,6 +124,30 @@ public final class DateUtil {
         }
     }
 
+    /**
+     * 使用LocalDate格式化日期
+     * 推荐使用此方法，性能好且线程安全
+     *
+     * @param localDate 本地日期对象
+     * @param pattern   格式模式，例如：yyyy-MM-dd 或 yyyyMMdd
+     * @return 格式化后的字符串
+     */
+    public static String formatLocalDate(LocalDate localDate, String pattern) {
+        if (localDate == null) {
+            return null;
+        }
+        if (!StringUtils.hasText(pattern)) {
+            throw new IllegalArgumentException("Date pattern cannot be null or empty");
+        }
+
+        try {
+            return localDate.format(DateTimeFormatter.ofPattern(pattern));
+        } catch (Exception e) {
+            log.error("Failed to format LocalDate: {} with pattern: {}", localDate, pattern, e);
+            throw new IllegalArgumentException("Invalid date pattern: " + pattern, e);
+        }
+    }
+
     // ==================== 日期解析方法 ====================
 
     /**
