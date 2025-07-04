@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.datacollector.dal.dao.QuotationMapper">
+    <insert id="ins0ertQuotationStockBaseList" parameterType="java.util.List">
+        INSERT IGNORE INTO tb_quotation_stock_base (
+        wind_code,
+        trade_date,
+        open_price,
+        high_price,
+        low_price,
+        volume,
+        amount,
+        close_price,
+        turnover_rate
+        )
+        VALUES
+        <foreach collection="baseQuotationList" item="item" separator=",">
+            (
+            #{item.windCode},
+            #{item.tradeDate},
+            #{item.openPrice},
+            #{item.highPrice},
+            #{item.lowPrice},
+            #{item.volume},
+            #{item.amount},
+            #{item.closePrice},
+            #{item.turnoverRate}
+            )
+        </foreach>
+    </insert>
+
+</mapper>

@@ -2,6 +2,7 @@ package com.hao.datacollector.web.controller;
 
 import com.hao.datacollector.service.QuotationService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -26,14 +27,16 @@ public class QuotationController {
     @Autowired
     private QuotationService quotationService;
 
-    @Operation(summary = "转档股票新闻数据", description = "检查服务运行状态")
+    @Operation(summary = "转档股票行情数据", description = "转档股票基础行情数据")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "服务正常运行"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "服务异常")
+            @ApiResponse(responseCode = "200", description = "服务正常运行"),
+            @ApiResponse(responseCode = "500", description = "服务异常")
     })
-    @PostMapping("/transfer")
-    public ResponseEntity<String> transferQuotationByStock(@RequestParam(required = false) String windCode) {
-        Boolean success = quotationService.transferQuotationByStock(windCode);
+    @PostMapping("/transfer_base")
+    public ResponseEntity<String> transferQuotationBaseByStock(@RequestParam(required = false) String windCode,
+                                                               @RequestParam(required = false) String startDate,
+                                                               @RequestParam(required = false) String endDate) {
+        Boolean success = quotationService.transferQuotationBaseByStock(windCode, startDate, endDate);
         if (!success) {
             return ResponseEntity.badRequest().body("数据转档失败");
         }
