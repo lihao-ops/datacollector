@@ -29,4 +29,15 @@
         </foreach>
     </insert>
 
+    <select id="getJobQuotationBaseEndWindCodeList">
+        SELECT DISTINCT wind_code
+        FROM tb_quotation_stock_base
+        WHERE 1 = 1
+        <if test="startDate != null and startDate != ''">
+            AND `trade_date` <![CDATA[>=]]>  #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND `trade_date` <![CDATA[<]]>  #{endDate}
+        </if>
+    </select>
 </mapper>

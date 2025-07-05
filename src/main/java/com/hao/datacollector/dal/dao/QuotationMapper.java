@@ -13,4 +13,13 @@ public interface QuotationMapper {
      * @return 插入数量
      */
     int ins0ertQuotationStockBaseList(@Param("baseQuotationList") List<QuotationStockBaseDTO> quotationStockBaseList);
+
+    /**
+     * 获取指定时间内已转档的股票列表
+     *
+     * @param startDate 开始时间
+     * @param endDate   结束时间
+     * @return 已转档的股票列表
+     */
+    List<String> getJobQuotationBaseEndWindCodeList(@Param("startDate") String startDate, @Param("endDate") String endDate);
 }
