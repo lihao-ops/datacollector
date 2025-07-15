@@ -8,6 +8,7 @@ import com.hao.datacollector.common.utils.DateUtil;
 import com.hao.datacollector.common.utils.HttpUtil;
 import com.hao.datacollector.common.utils.MathUtil;
 import com.hao.datacollector.dal.dao.QuotationMapper;
+import com.hao.datacollector.dto.quotation.HistoryTrendDTO;
 import com.hao.datacollector.dto.table.quotation.QuotationStockBaseDTO;
 import com.hao.datacollector.service.QuotationService;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +17,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author hli
@@ -35,8 +44,16 @@ public class QuotationServiceImpl implements QuotationService {
     @Value("${wind_base.quotation.base.url}")
     private String QuotationBaseUrl;
 
+    @Value("${wind_base.quotation.history.trend.url}")
+    private String QuotationHistoryTrendUrl;
+
     @Autowired
     private QuotationMapper quotationMapper;
+
+    /**
+     * 请求成功标识
+     */
+    private static final String SUCCESS_FLAG = "200 OK";
 
     /**
      * 获取基础行情数据
@@ -89,5 +106,85 @@ public class QuotationServiceImpl implements QuotationService {
         }
         int insertResult = quotationMapper.ins0ertQuotationStockBaseList(quotationStockBaseList);
         return insertResult > 0;
+    }
+
+    /**
+     * 转档股票历史分时数据
+     *
+     * @param tradeDate 交易日期,如:20220608
+     * @param windCodes 股票代码List
+     * @param dateType  时间类型,0表示固定时间
+     * @return 操作结果
+     */
+    @Override
+    public Boolean transferQuotationHistoryTrend(int tradeDate, String windCodes, Integer dateType) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(DataSourceConstant.WIND_POINT_SESSION_NAME, windSessionId);
+        String url = DataSourceConstant.WIND_PROD_WGQ + String.format(QuotationHistoryTrendUrl, tradeDate, windCodes, dateType);
+        String response = HttpUtil.sendGetRequest(url, headers, 10000, 30000).getBody();
+        Map<String, Map<String, Object>> rawData = JSON.parseObject(response, new TypeReference<Map<String, Map<String, Object>>>() {
+        });
+        for (Map.Entry<String, Map<String, Object>> stockEntry : rawData.entrySet()) {
+            List<HistoryTrendDTO> allHistoryTrendList = new ArrayList<>();
+            String stockCode = stockEntry.getKey();
+            Map<String, Object> stockData = stockEntry.getValue();
+            for (Map.Entry<String, Object> dateEntry : stockData.entrySet()) {
+                List<HistoryTrendDTO> historyTrendList = new ArrayList<>();
+                String date = dateEntry.getKey();
+                Object dateData = dateEntry.getValue();
+                if (dateData == null) continue;
+                List<List<Integer>> dataArrays = (List<List<Integer>>) dateData;
+                if (dataArrays.isEmpty()) continue;
+                // 获取配置数组,只获取一次,indicatorIds.对应指标id元素下标数组,decimalShifts.对应关于每个位置元素精度小数位数(倒序)
+                List<Integer> indicatorIds = new ArrayList<>();
+                List<Integer> decimalShifts = new ArrayList<>();
+                List<Integer> configArray = dataArrays.get(dataArrays.size() - 1);
+                for (int i = 0; i < 5; i++) {
+                    indicatorIds.add(configArray.get(i));
+                    decimalShifts.add(configArray.get(i + 5));
+                }
+                Collections.reverse(decimalShifts);
+                int time_s = 0;
+                Double latestPrice = 0.00, averagePrice = 0.00;
+                int sum = dataArrays.stream()
+                        .filter(subList -> subList.size() > 1)
+                        .mapToInt(subList -> subList.get(1))
+                        .sum();
+                if (sum > 150100) {
+                    throw new RuntimeException("transferQuotationHistoryTrend_dataError!");
+                }
+                int timeIndex = indicatorIds.indexOf(2);
+                int latestPriceIndex = indicatorIds.indexOf(3);
+                int averagePriceIndex = indicatorIds.indexOf(79);
+                int totalVolumeIndex = indicatorIds.indexOf(8);
+                //剔除最后一行指标数据
+                for (int i = 0; i < dataArrays.size() - 1; i++) {
+                    HistoryTrendDTO historyTrendDTO = new HistoryTrendDTO();
+                    time_s += dataArrays.get(i).get(timeIndex).intValue();
+                    // 转换为LocalDateTime
+                    LocalDate localDateTime = LocalDate.parse(date, DateTimeFormatter.ofPattern(DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT));
+                    LocalTime time = LocalTime.of(
+                            time_s / 10000,        // 小时: 13
+                            (time_s % 10000) / 100, // 分钟: 38
+                            time_s % 100           // 秒: 58
+                    );
+                    LocalDateTime dateTime = LocalDateTime.of(localDateTime, time);
+                    historyTrendDTO.setTradeDate(dateTime);
+                    historyTrendDTO.setWindCode(stockCode);
+                    historyTrendDTO.setLatestPrice(latestPrice += dataArrays.get(i).get(latestPriceIndex));
+                    historyTrendDTO.setAveragePrice(averagePrice += dataArrays.get(i).get(averagePriceIndex));
+                    //总成交量不需要累加
+                    historyTrendDTO.setTotalVolume(Long.valueOf(dataArrays.get(i).get(totalVolumeIndex)));
+                    historyTrendList.add(historyTrendDTO);
+                }
+                //精度处理
+                for (HistoryTrendDTO historyTrendDTO : historyTrendList) {
+                    historyTrendDTO.setLatestPrice(MathUtil.formatDecimal(historyTrendDTO.getLatestPrice(), decimalShifts.get(latestPriceIndex), false));
+                    historyTrendDTO.setAveragePrice(MathUtil.formatDecimal(historyTrendDTO.getAveragePrice(), decimalShifts.get(averagePriceIndex), false));
+                }
+                allHistoryTrendList.addAll(historyTrendList);
+            }
+        }
+        return true;
     }
 }

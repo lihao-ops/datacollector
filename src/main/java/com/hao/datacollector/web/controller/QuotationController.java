@@ -42,4 +42,21 @@ public class QuotationController {
         }
         return ResponseEntity.ok("数据转档成功");
     }
+
+    @Operation(summary = "转档股票历史分时数据", description = "转档股票历史分时数据")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "服务正常运行"),
+            @ApiResponse(responseCode = "500", description = "服务异常")
+    })
+    @PostMapping("/transfer_history_trend")
+    public ResponseEntity<String> transferQuotationHistoryTrend(
+            @RequestParam int tradeDate,
+            @RequestParam String windCodes,
+            @RequestParam(required = false, defaultValue = "0") Integer dateType) {
+        Boolean success = quotationService.transferQuotationHistoryTrend(tradeDate, windCodes, dateType);
+        if (!success) {
+            return ResponseEntity.badRequest().body("数据转档失败");
+        }
+        return ResponseEntity.ok("数据转档成功");
+    }
 }
