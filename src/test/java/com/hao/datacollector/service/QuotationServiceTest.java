@@ -44,7 +44,7 @@ class QuotationServiceTest {
         // List<String> endWindCodeList = quotationMapper.getJobQuotationBaseEndWindCodeList(startDate, endDate);
         // allWindCodeList.removeAll(endWindCodeList);
         List<String> yearTradeDateList = DateUtil.formatLocalDateList(DateCache.CurrentYearTradeDateList, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT);
-        int batchSize = 100;
+        int batchSize = 1;
         int totalSize = allWindCodeList.size();
         for (String tradeDate : yearTradeDateList) {
             for (int i = 0; i < totalSize; i += batchSize) {

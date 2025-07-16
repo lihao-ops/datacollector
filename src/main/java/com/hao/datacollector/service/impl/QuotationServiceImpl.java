@@ -164,9 +164,9 @@ public class QuotationServiceImpl implements QuotationService {
                         .filter(subList -> subList.size() > 1)
                         .mapToInt(subList -> subList.get(1))
                         .sum();
-//                if (sum > 150100) {
-//                    throw new RuntimeException("数据异常");
-//                }
+                if (sum > 160000) {
+                    throw new RuntimeException("数据异常");
+                }
                 int timeIndex = indicatorIds.indexOf(2);
                 int latestPriceIndex = indicatorIds.indexOf(3);
                 int averagePriceIndex = indicatorIds.indexOf(79);
