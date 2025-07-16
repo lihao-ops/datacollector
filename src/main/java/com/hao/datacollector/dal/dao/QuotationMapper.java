@@ -31,4 +31,12 @@ public interface QuotationMapper {
      * @return 插入数量
      */
     int insertQuotationHistoryTrendList(@Param("historyTrendQuotationList") List<HistoryTrendDTO> historyTrendQuotationList);
+
+    /**
+     * 获取指定年份的股票历史分时数据结束日期
+     *
+     * @param year 年份 yyyy
+     * @return 当前年份最大日期yyyyMMdd
+     */
+    String getMaxHistoryTrendEndDate(@Param("year") String year);
 }

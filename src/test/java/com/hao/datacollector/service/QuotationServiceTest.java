@@ -40,11 +40,10 @@ class QuotationServiceTest {
     @Test
     void transferQuotationHistoryTrend() {
         List<String> allWindCodeList = new ArrayList<>(StockCache.allWindCode);
-        // todo 需要剔除已经转档的股票
-        // List<String> endWindCodeList = quotationMapper.getJobQuotationBaseEndWindCodeList(startDate, endDate);
-        // allWindCodeList.removeAll(endWindCodeList);
         List<String> yearTradeDateList = DateUtil.formatLocalDateList(DateCache.CurrentYearTradeDateList, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT);
-        int tradeDateIndexOf = yearTradeDateList.indexOf("20250210");
+        //从当年已转档的最大日期(包含)开始转档
+        String maxEndDate = quotationMapper.getMaxHistoryTrendEndDate("2025");
+        int tradeDateIndexOf = yearTradeDateList.indexOf(maxEndDate);
         if (tradeDateIndexOf != -1) {
             yearTradeDateList = new ArrayList<>(yearTradeDateList.subList(tradeDateIndexOf, yearTradeDateList.size()));
         }

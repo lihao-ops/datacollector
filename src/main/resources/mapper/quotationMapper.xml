@@ -61,4 +61,10 @@
             )
         </foreach>
     </insert>
+
+    <select id="getMaxHistoryTrendEndDate" resultType="string">
+        SELECT DATE_FORMAT(MAX(trade_date), '%Y%m%d')
+        FROM tb_quotation_history_trend
+        WHERE trade_date LIKE CONCAT(#{year}, '%')
+    </select>
 </mapper>
