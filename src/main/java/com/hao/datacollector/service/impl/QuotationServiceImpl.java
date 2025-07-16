@@ -188,7 +188,7 @@ public class QuotationServiceImpl implements QuotationService {
                     historyTrendDTO.setLatestPrice(latestPrice += dataArrays.get(i).get(latestPriceIndex));
                     historyTrendDTO.setAveragePrice(averagePrice += dataArrays.get(i).get(averagePriceIndex));
                     //总成交量不需要累加
-                    historyTrendDTO.setTotalVolume(Long.valueOf(dataArrays.get(i).get(totalVolumeIndex)));
+                    historyTrendDTO.setTotalVolume(Double.valueOf(dataArrays.get(i).get(totalVolumeIndex)));
                     historyTrendList.add(historyTrendDTO);
                 }
                 //精度处理
@@ -196,7 +196,7 @@ public class QuotationServiceImpl implements QuotationService {
                     historyTrendDTO.setLatestPrice(MathUtil.formatDecimal(historyTrendDTO.getLatestPrice(), decimalShifts.get(latestPriceIndex), false));
                     historyTrendDTO.setAveragePrice(MathUtil.formatDecimal(historyTrendDTO.getAveragePrice(), decimalShifts.get(averagePriceIndex), false));
                     //成交额(买卖都算),由于A股市场都是以100股为单位/1手,故此在此固定/100
-                    historyTrendDTO.setTotalVolume(historyTrendDTO.getTotalVolume() / 100);
+                    historyTrendDTO.setTotalVolume(MathUtil.formatDecimal(historyTrendDTO.getTotalVolume(), 2, false));
                 }
                 allHistoryTrendList.addAll(historyTrendList);
             }
