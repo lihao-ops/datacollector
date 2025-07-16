@@ -133,7 +133,7 @@ public class QuotationServiceImpl implements QuotationService {
         HttpHeaders headers = new HttpHeaders();
         headers.add(DataSourceConstant.WIND_POINT_SESSION_NAME, windSessionId);
         String url = DataSourceConstant.WIND_PROD_WGQ + String.format(QuotationHistoryTrendUrl, tradeDate, windCodes, dateType);
-        ResponseEntity<String> response = HttpUtil.sendGet(url, headers, 10000, 10000);
+        ResponseEntity<String> response = HttpUtil.sendGet(url, headers, 100000, 100000);
         Map<String, Map<String, Object>> rawData = JSON.parseObject(response.getBody(), new TypeReference<Map<String, Map<String, Object>>>() {
         });
         List<HistoryTrendDTO> allHistoryTrendList = new ArrayList<>();
@@ -195,6 +195,8 @@ public class QuotationServiceImpl implements QuotationService {
                 for (HistoryTrendDTO historyTrendDTO : historyTrendList) {
                     historyTrendDTO.setLatestPrice(MathUtil.formatDecimal(historyTrendDTO.getLatestPrice(), decimalShifts.get(latestPriceIndex), false));
                     historyTrendDTO.setAveragePrice(MathUtil.formatDecimal(historyTrendDTO.getAveragePrice(), decimalShifts.get(averagePriceIndex), false));
+                    //由于A股市场都是以100股为单位/1手,故此在此固定/100
+                    historyTrendDTO.setTotalVolume(historyTrendDTO.getTotalVolume() / 100);
                 }
                 allHistoryTrendList.addAll(historyTrendList);
             }

@@ -21,7 +21,7 @@ public class HistoryTrendDTO {
     @Schema(description = "3.最新价", example = "142.316")
     private Double latestPrice;
 
-    @Schema(description = "8.总成交量,总成交量不需要累加", example = "1423160")
+    @Schema(description = "8.总成交量(手)1手=100股,总成交量不需要累加", example = "1423160")
     private Long totalVolume;
 
     @Schema(description = "79.均价", example = "142.50")
