@@ -195,7 +195,7 @@ public class QuotationServiceImpl implements QuotationService {
                 for (HistoryTrendDTO historyTrendDTO : historyTrendList) {
                     historyTrendDTO.setLatestPrice(MathUtil.formatDecimal(historyTrendDTO.getLatestPrice(), decimalShifts.get(latestPriceIndex), false));
                     historyTrendDTO.setAveragePrice(MathUtil.formatDecimal(historyTrendDTO.getAveragePrice(), decimalShifts.get(averagePriceIndex), false));
-                    //由于A股市场都是以100股为单位/1手,故此在此固定/100
+                    //成交额(买卖都算),由于A股市场都是以100股为单位/1手,故此在此固定/100
                     historyTrendDTO.setTotalVolume(historyTrendDTO.getTotalVolume() / 100);
                 }
                 allHistoryTrendList.addAll(historyTrendList);
