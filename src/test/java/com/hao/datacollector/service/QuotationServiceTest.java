@@ -53,10 +53,8 @@ class QuotationServiceTest {
             for (int i = 0; i < totalSize; i += batchSize) {
                 List<String> subList = allWindCodeList.subList(i, Math.min(i + batchSize, totalSize));
                 String windCodeStr = String.join(",", subList);
-                Boolean transferResult = quotationService.transferQuotationHistoryTrend(
-                        Integer.parseInt(tradeDate), windCodeStr, 0);
-                log.info("transferQuotationHistoryTrend_result={}, tradeDate={}, windCodes={}",
-                        transferResult, tradeDate, windCodeStr);
+                Boolean transferResult = quotationService.transferQuotationHistoryTrend(Integer.parseInt(tradeDate), windCodeStr, 0);
+                log.info("transferQuotationHistoryTrend_result={}, tradeDate={}, windCodes={}", transferResult, tradeDate, windCodeStr);
             }
         }
     }
