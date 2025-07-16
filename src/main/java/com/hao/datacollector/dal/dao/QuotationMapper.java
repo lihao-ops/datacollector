@@ -1,5 +1,6 @@
 package com.hao.datacollector.dal.dao;
 
+import com.hao.datacollector.dto.quotation.HistoryTrendDTO;
 import com.hao.datacollector.dto.table.quotation.QuotationStockBaseDTO;
 import org.apache.ibatis.annotations.Param;
 
@@ -12,7 +13,7 @@ public interface QuotationMapper {
      * @param quotationStockBaseList 行情数据列表
      * @return 插入数量
      */
-    int ins0ertQuotationStockBaseList(@Param("baseQuotationList") List<QuotationStockBaseDTO> quotationStockBaseList);
+    int insertQuotationStockBaseList(@Param("baseQuotationList") List<QuotationStockBaseDTO> quotationStockBaseList);
 
     /**
      * 获取指定时间内已转档的股票列表
@@ -22,4 +23,12 @@ public interface QuotationMapper {
      * @return 已转档的股票列表
      */
     List<String> getJobQuotationBaseEndWindCodeList(@Param("startDate") String startDate, @Param("endDate") String endDate);
+
+    /**
+     * 批量插入历史分时行情数据
+     *
+     * @param historyTrendQuotationList 历史分时行情数据列表
+     * @return 插入数量
+     */
+    int insertQuotationHistoryTrendList(@Param("historyTrendQuotationList") List<HistoryTrendDTO> historyTrendQuotationList);
 }

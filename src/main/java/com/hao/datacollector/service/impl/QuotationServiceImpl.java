@@ -17,8 +17,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -104,7 +102,7 @@ public class QuotationServiceImpl implements QuotationService {
             log.error("transferQuotationBaseByStock_list=null!,windCode={}", windCode);
             return false;
         }
-        int insertResult = quotationMapper.ins0ertQuotationStockBaseList(quotationStockBaseList);
+        int insertResult = quotationMapper.insertQuotationStockBaseList(quotationStockBaseList);
         return insertResult > 0;
     }
 
@@ -118,21 +116,37 @@ public class QuotationServiceImpl implements QuotationService {
      */
     @Override
     public Boolean transferQuotationHistoryTrend(int tradeDate, String windCodes, Integer dateType) {
+        List<HistoryTrendDTO> quotationHistoryTrendList = getQuotationHistoryTrendList(tradeDate, windCodes, dateType);
+        int insertResult = quotationMapper.insertQuotationHistoryTrendList(quotationHistoryTrendList);
+        return insertResult > 0;
+    }
+
+    /**
+     * 获取股票历史分时对象List
+     *
+     * @param tradeDate 交易日期,如:20220608
+     * @param windCodes 股票代码List
+     * @param dateType  时间类型,0表示固定时间
+     * @return 操作结果
+     */
+    private List<HistoryTrendDTO> getQuotationHistoryTrendList(int tradeDate, String windCodes, Integer dateType) {
         HttpHeaders headers = new HttpHeaders();
         headers.add(DataSourceConstant.WIND_POINT_SESSION_NAME, windSessionId);
         String url = DataSourceConstant.WIND_PROD_WGQ + String.format(QuotationHistoryTrendUrl, tradeDate, windCodes, dateType);
-        String response = HttpUtil.sendGetRequest(url, headers, 10000, 30000).getBody();
-        Map<String, Map<String, Object>> rawData = JSON.parseObject(response, new TypeReference<Map<String, Map<String, Object>>>() {
+        ResponseEntity<String> response = HttpUtil.sendGet(url, headers, 10000, 10000);
+        Map<String, Map<String, Object>> rawData = JSON.parseObject(response.getBody(), new TypeReference<Map<String, Map<String, Object>>>() {
         });
+        List<HistoryTrendDTO> allHistoryTrendList = new ArrayList<>();
         for (Map.Entry<String, Map<String, Object>> stockEntry : rawData.entrySet()) {
-            List<HistoryTrendDTO> allHistoryTrendList = new ArrayList<>();
             String stockCode = stockEntry.getKey();
             Map<String, Object> stockData = stockEntry.getValue();
             for (Map.Entry<String, Object> dateEntry : stockData.entrySet()) {
                 List<HistoryTrendDTO> historyTrendList = new ArrayList<>();
                 String date = dateEntry.getKey();
                 Object dateData = dateEntry.getValue();
-                if (dateData == null) continue;
+                if (dateData == null || dateData.getClass().equals(Integer.class)) {
+                    continue;
+                }
                 List<List<Integer>> dataArrays = (List<List<Integer>>) dateData;
                 if (dataArrays.isEmpty()) continue;
                 // 获取配置数组,只获取一次,indicatorIds.对应指标id元素下标数组,decimalShifts.对应关于每个位置元素精度小数位数(倒序)
@@ -150,9 +164,9 @@ public class QuotationServiceImpl implements QuotationService {
                         .filter(subList -> subList.size() > 1)
                         .mapToInt(subList -> subList.get(1))
                         .sum();
-                if (sum > 150100) {
-                    throw new RuntimeException("transferQuotationHistoryTrend_dataError!");
-                }
+//                if (sum > 150100) {
+//                    throw new RuntimeException("数据异常");
+//                }
                 int timeIndex = indicatorIds.indexOf(2);
                 int latestPriceIndex = indicatorIds.indexOf(3);
                 int averagePriceIndex = indicatorIds.indexOf(79);
@@ -162,7 +176,7 @@ public class QuotationServiceImpl implements QuotationService {
                     HistoryTrendDTO historyTrendDTO = new HistoryTrendDTO();
                     time_s += dataArrays.get(i).get(timeIndex).intValue();
                     // 转换为LocalDateTime
-                    LocalDate localDateTime = LocalDate.parse(date, DateTimeFormatter.ofPattern(DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT));
+                    LocalDate localDateTime = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyyMMdd"));
                     LocalTime time = LocalTime.of(
                             time_s / 10000,        // 小时: 13
                             (time_s % 10000) / 100, // 分钟: 38
@@ -185,6 +199,7 @@ public class QuotationServiceImpl implements QuotationService {
                 allHistoryTrendList.addAll(historyTrendList);
             }
         }
-        return true;
+        log.info("getQuotationHistoryTrendList_allHistoryTrendList.size={}", allHistoryTrendList.size());
+        return allHistoryTrendList;
     }
 }
