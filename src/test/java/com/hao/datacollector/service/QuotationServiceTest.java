@@ -27,7 +27,7 @@ class QuotationServiceTest {
     void transferQuotationBaseByStock() {
         List<String> allWindCodeList = new ArrayList<>(StockCache.allWindCode);
 //        String startDate = DateUtil.formatLocalDate(DateCache.CurrentYearTradeDateList.get(0), DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT);
-        String startDate = "20200101";
+        String startDate = "20250718";
         String endDate = DateUtil.stringTimeToAdjust(DateUtil.getCurrentDateTimeByStr(DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT), DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
         //需要剔除已经转档的股票
         List<String> endWindCodeList = quotationMapper.getJobQuotationBaseEndWindCodeList(startDate, endDate);
