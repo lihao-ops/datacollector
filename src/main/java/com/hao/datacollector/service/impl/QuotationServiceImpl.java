@@ -117,6 +117,10 @@ public class QuotationServiceImpl implements QuotationService {
     @Override
     public Boolean transferQuotationHistoryTrend(int tradeDate, String windCodes, Integer dateType) {
         List<HistoryTrendDTO> quotationHistoryTrendList = getQuotationHistoryTrendList(tradeDate, windCodes, dateType);
+        if (quotationHistoryTrendList.isEmpty()) {
+            log.error("quotationHistoryTrendList.isEmpty()!tradeDate={},windCodes={},dateType={}", tradeDate, windCodes, dateType);
+            return false;
+        }
         int insertResult = quotationMapper.insertQuotationHistoryTrendList(quotationHistoryTrendList);
         return insertResult > 0;
     }
