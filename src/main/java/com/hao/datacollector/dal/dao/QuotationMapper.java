@@ -39,4 +39,12 @@ public interface QuotationMapper {
      * @return 当前年份最大日期yyyyMMdd
      */
     String getMaxHistoryTrendEndDate(@Param("year") String year);
+
+    /**
+     * 获取指定日期已完成的股票列表
+     *
+     * @param maxEndDate 最大结束日期
+     * @return 已完成的股票列表
+     */
+    List<String> getCompletedWindCodes(String maxEndDate);
 }
