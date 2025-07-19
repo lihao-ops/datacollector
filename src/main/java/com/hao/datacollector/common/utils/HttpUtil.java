@@ -433,6 +433,23 @@ public final class HttpUtil {
     }
 
     /**
+     * 发送 POST 表单请求
+     */
+    public static ResponseEntity<String> sendRequestFormPost(String url,
+                                                      MultiValueMap<String, String> bodyContent,
+                                                      HttpHeaders httpHeader,
+                                                      int connectTimeOut,
+                                                      int readTimeOut) {
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(connectTimeOut);
+        factory.setReadTimeout(readTimeOut);
+
+        RestTemplate restTemplate = new RestTemplate(factory);
+        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(bodyContent, httpHeader);
+        return restTemplate.postForEntity(url, entity, String.class);
+    }
+
+    /**
      * @deprecated 使用 {@link #sendFormPost(String, MultiValueMap, HttpHeaders, int, int)} 替代
      * 重命名方法以避免与正式方法签名冲突
      */
