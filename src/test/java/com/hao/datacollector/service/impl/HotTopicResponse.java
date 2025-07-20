@@ -194,7 +194,7 @@ class StockInfo {
     private List<StockTag> tag;
 
     @JsonProperty("prod_name")
-    @Schema(description = "产品名称", example = "隆基绿能")
+    @Schema(description = "股票名称", example = "隆基绿能")
     private String prodName;
 
     @JsonProperty("HotNum")
