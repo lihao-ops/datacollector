@@ -40,8 +40,6 @@ public class StockProfileServiceImpl implements StockProfileService {
      */
     @Override
     public List<SearchKeyBoardVO> getSearchKeyBoard(String keyword, Integer pageNo, Integer pageSize) {
-        HttpHeaders httpHeader = new HttpHeaders();
-        httpHeader.set(DataSourceConstant.WIND_POINT_SESSION_NAME, windSessionId);
         String url = String.format(keywordUrl, keyword, pageNo, pageSize);
         HttpHeaders headers = new HttpHeaders();
         headers.set(DataSourceConstant.WIND_SESSION_NAME, windSessionId);
