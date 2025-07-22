@@ -4,6 +4,7 @@ package com.hao.datacollector.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.parser.Feature;
+import com.hao.datacollector.common.constant.CommonConstant;
 import com.hao.datacollector.common.constant.DataSourceConstant;
 import com.hao.datacollector.common.constant.DateTimeFormatConstant;
 import com.hao.datacollector.common.utils.DateUtil;
@@ -51,11 +52,6 @@ public class AbnormalServiceImpl implements AbnormalService {
     private AbnormalMapper abnormalMapper;
 
     /**
-     * 请求成功标识
-     */
-    private static final String SUCCESS_FLAG = "200 OK";
-
-    /**
      * 获取source龙虎榜首页
      *
      * @param tradeDate 交易日期
@@ -87,7 +83,7 @@ public class AbnormalServiceImpl implements AbnormalService {
         } catch (Exception e) {
             throw new RuntimeException("getHomePage_error," + e.getMessage());
         }
-        if (!SUCCESS_FLAG.equals(entity.getStatusCode().toString())) {
+        if (!CommonConstant.SUCCESS_FLAG.equals(entity.getStatusCode().toString())) {
             throw new RuntimeException("getHomePage_error,result=" + entity.getStatusCode());
         }
         List<AbnormalIndexVO> indexVOList = JSONObject.parseObject(entity.getBody().toString(), new TypeReference<List<AbnormalIndexVO>>() {
@@ -147,7 +143,7 @@ public class AbnormalServiceImpl implements AbnormalService {
         } catch (Exception e) {
             throw new RuntimeException("getSourceListOfSeats_error," + e.getMessage());
         }
-        if (!SUCCESS_FLAG.equals(entity.getStatusCode().toString())) {
+        if (!CommonConstant.SUCCESS_FLAG.equals(entity.getStatusCode().toString())) {
             throw new RuntimeException("getSourceListOfSeats_error,result=" + entity.getStatusCode());
         }
         List<ActiveSeatsRankVO> activeSeatsRankList = JSONObject.parseObject(entity.getBody().toString(), new TypeReference<List<ActiveSeatsRankVO>>() {
@@ -206,7 +202,7 @@ public class AbnormalServiceImpl implements AbnormalService {
         } catch (Exception e) {
             throw new RuntimeException("getSourceActiveRank_error," + e.getMessage());
         }
-        if (!SUCCESS_FLAG.equals(entity.getStatusCode().toString())) {
+        if (!CommonConstant.SUCCESS_FLAG.equals(entity.getStatusCode().toString())) {
             throw new RuntimeException("getSourceActiveRank_error,result=" + entity.getStatusCode());
         }
         List<ActiveRankRecordVO> activeRankRecordVOList = JSONObject.parseObject(entity.getBody().toString(), new TypeReference<List<ActiveRankRecordVO>>() {
