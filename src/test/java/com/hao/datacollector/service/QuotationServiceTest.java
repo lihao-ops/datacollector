@@ -44,7 +44,7 @@ class QuotationServiceTest {
         List<String> yearTradeDateList = DateUtil.formatLocalDateList(DateCache.Year2024TradeDateList, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT);
         //从当年已转档的最大日期(包含),并且剔除最大日期已经转档过的windCode,继续开始转档
         String maxEndDate = quotationMapper.getMaxHistoryTrendEndDate("2024");
-//        String maxEndDate = "20240301";
+//        String maxEndDate = "20240401";
         List<String> completedWindCodes = quotationMapper.getCompletedWindCodes(maxEndDate);
         int tradeDateIndexOf = yearTradeDateList.indexOf(maxEndDate);
         int batchSize = 100;
@@ -67,8 +67,8 @@ class QuotationServiceTest {
     private void transferOneDay(List<String> yearTradeDateList, List<String> windCodes, int batchSize) {
         int totalSize = windCodes.size();
         for (String tradeDate : yearTradeDateList) {
-            if (tradeDate.contains("202404")) {
-                throw new RuntimeException("202404!!!!");
+            if (tradeDate.contains("202405")) {
+                throw new RuntimeException("202405!!!!");
             }
             for (int i = 0; i < totalSize; i += batchSize) {
                 List<String> subList = windCodes.subList(i, Math.min(i + batchSize, totalSize));
