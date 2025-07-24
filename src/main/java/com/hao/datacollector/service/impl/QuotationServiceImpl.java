@@ -137,7 +137,27 @@ public class QuotationServiceImpl implements QuotationService {
         HttpHeaders headers = new HttpHeaders();
         headers.add(DataSourceConstant.WIND_POINT_SESSION_NAME, windSessionId);
         String url = DataSourceConstant.WIND_PROD_WGQ + String.format(QuotationHistoryTrendUrl, tradeDate, windCodes, dateType);
-        ResponseEntity<String> response = HttpUtil.sendGet(url, headers, 100000, 100000);
+        int retryCount = 0;
+        int maxRetries = 2; // 最多重试2次
+        ResponseEntity<String> response = null;
+        while (retryCount <= maxRetries) {
+            try {
+                response = HttpUtil.sendGet(url, headers, 100000, 100000);
+                break; // 成功则跳出循环
+            } catch (Exception ex) {
+                retryCount++;
+                if (retryCount > maxRetries) {
+                    // 超过最大重试次数，尝试从下一个ip获取
+                    continue;
+                }
+                // 重试前等待一段时间
+                try {
+                    Thread.sleep(1000 * retryCount); // 递增等待时间
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
         Map<String, Map<String, Object>> rawData = JSON.parseObject(response.getBody(), new TypeReference<Map<String, Map<String, Object>>>() {
         });
         List<HistoryTrendDTO> allHistoryTrendList = new ArrayList<>();
