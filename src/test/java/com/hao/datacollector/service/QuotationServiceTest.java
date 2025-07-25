@@ -2,7 +2,7 @@ package com.hao.datacollector.service;
 
 import com.hao.datacollector.common.cache.DateCache;
 import com.hao.datacollector.common.cache.StockCache;
-import com.hao.datacollector.common.constant.DateTimeFormatConstant;
+import com.hao.datacollector.common.constant.DateTimeFormatConstants;
 import com.hao.datacollector.common.utils.DateUtil;
 import com.hao.datacollector.dal.dao.QuotationMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ class QuotationServiceTest {
         List<String> allWindCodeList = new ArrayList<>(StockCache.allWindCode);
 //        String startDate = DateUtil.formatLocalDate(DateCache.CurrentYearTradeDateList.get(0), DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT);
         String startDate = "20250718";
-        String endDate = DateUtil.stringTimeToAdjust(DateUtil.getCurrentDateTimeByStr(DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT), DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
+        String endDate = DateUtil.stringTimeToAdjust(DateUtil.getCurrentDateTimeByStr(DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT), DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT, 1);
         //需要剔除已经转档的股票
         List<String> endWindCodeList = quotationMapper.getJobQuotationBaseEndWindCodeList(startDate, endDate);
         allWindCodeList.removeAll(endWindCodeList);
@@ -41,7 +41,7 @@ class QuotationServiceTest {
     @Test
     void transferQuotationHistoryTrend() {
         List<String> allWindCodeList = new ArrayList<>(StockCache.allWindCode);
-        List<String> yearTradeDateList = DateUtil.formatLocalDateList(DateCache.Year2024TradeDateList, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT);
+        List<String> yearTradeDateList = DateUtil.formatLocalDateList(DateCache.Year2024TradeDateList, DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT);
         //从当年已转档的最大日期(包含),并且剔除最大日期已经转档过的windCode,继续开始转档
         String maxEndDate = quotationMapper.getMaxHistoryTrendEndDate("2024");
 //        String maxEndDate = "20240603";

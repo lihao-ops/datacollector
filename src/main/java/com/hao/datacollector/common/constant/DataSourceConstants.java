@@ -6,7 +6,7 @@ package com.hao.datacollector.common.constant;
  * @Date 2025-06-14 14:09:20
  * @description: 数据源相关常亮枚举
  */
-public class DataSourceConstant {
+public class DataSourceConstants {
     /**
      * session名称
      */

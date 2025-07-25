@@ -3,7 +3,7 @@ package com.hao.datacollector.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.parser.Feature;
-import com.hao.datacollector.common.constant.DataSourceConstant;
+import com.hao.datacollector.common.constant.DataSourceConstants;
 import com.hao.datacollector.common.utils.HttpUtil;
 import com.hao.datacollector.service.StockProfileService;
 import com.hao.datacollector.web.vo.stockProfile.SearchKeyBoardVO;
@@ -42,8 +42,8 @@ public class StockProfileServiceImpl implements StockProfileService {
     public List<SearchKeyBoardVO> getSearchKeyBoard(String keyword, Integer pageNo, Integer pageSize) {
         String url = String.format(keywordUrl, keyword, pageNo, pageSize);
         HttpHeaders headers = new HttpHeaders();
-        headers.set(DataSourceConstant.WIND_SESSION_NAME, windSessionId);
-        String response = HttpUtil.sendGetRequest(DataSourceConstant.WIND_PROD_WGQ + url, headers, 10000, 30000).getBody();
+        headers.set(DataSourceConstants.WIND_SESSION_NAME, windSessionId);
+        String response = HttpUtil.sendGetRequest(DataSourceConstants.WIND_PROD_WGQ + url, headers, 10000, 30000).getBody();
         return JSONObject.parseObject(response, new TypeReference<List<SearchKeyBoardVO>>() {
         }, Feature.OrderedField);
     }

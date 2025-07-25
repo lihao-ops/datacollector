@@ -3,8 +3,8 @@ package com.hao.datacollector.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hao.datacollector.common.cache.DateCache;
-import com.hao.datacollector.common.constant.DataSourceConstant;
-import com.hao.datacollector.common.constant.DateTimeFormatConstant;
+import com.hao.datacollector.common.constant.DataSourceConstants;
+import com.hao.datacollector.common.constant.DateTimeFormatConstants;
 import com.hao.datacollector.common.utils.DateUtil;
 import com.hao.datacollector.common.utils.HttpUtil;
 import com.hao.datacollector.common.utils.PageUtil;
@@ -58,19 +58,19 @@ public class LimitUpServiceImpl implements LimitUpService {
     public ApiResponse<ResultObjectVO> getLimitUpData(String tradeTime) { // Changed return type
         try {
             if (!StringUtils.hasLength(tradeTime)) {
-                tradeTime = DateUtil.getCurrentDateTime(DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT);
+                tradeTime = DateUtil.getCurrentDateTime(DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT);
             }
             //非交易日无数据。
             // Corrected DateCache usage if it was incorrect
-            if (!DateCache.ThisYearTradeDateList.contains(DateUtil.parseToLocalDate(tradeTime, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT))) {
+            if (!DateCache.ThisYearTradeDateList.contains(DateUtil.parseToLocalDate(tradeTime, DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT))) {
                 log.error("LimitUpServiceImpl_getLimitUpData: {} is not a trade date.", tradeTime);
                 throw new RuntimeException("LimitUpServiceImpl_getLimitUpData: " + tradeTime + " is not a trade date.");
             }
             //url具体参数含义可查看TopicDetailParam,日期格式必须类似20250609
             String url = String.format(limitUpBaseUrl, tradeTime);
             org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
-            headers.set(DataSourceConstant.WIND_SESSION_NAME, windSessionId);
-            String response = HttpUtil.sendGetRequest(DataSourceConstant.WIND_PROD_WGQ + url, headers, 10000, 30000).getBody();
+            headers.set(DataSourceConstants.WIND_SESSION_NAME, windSessionId);
+            String response = HttpUtil.sendGetRequest(DataSourceConstants.WIND_PROD_WGQ + url, headers, 10000, 30000).getBody();
             if (!StringUtils.hasLength(response)) {
                 log.error("LimitUpServiceImpl_getLimitUpData: HTTP response body is empty for tradeTime: {}", tradeTime);
                 throw new RuntimeException("LimitUpServiceImpl_getLimitUpData: HTTP response body is empty for tradeTime: " + tradeTime);
@@ -104,7 +104,7 @@ public class LimitUpServiceImpl implements LimitUpService {
     public Boolean transferLimitUpDataToDatabase(String tradeTime) {
         //如果tradeTime为空，则使用当前时间
         if (!StringUtils.hasLength(tradeTime)) {
-            tradeTime = DateUtil.getCurrentDateTime(DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT);
+            tradeTime = DateUtil.getCurrentDateTime(DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT);
         }
         try {
             log.info("开始执行涨停数据转档任务，交易日期: {}", tradeTime);
@@ -118,7 +118,7 @@ public class LimitUpServiceImpl implements LimitUpService {
             //对应基础标签表
             List<BaseTopicInsertDTO> baseTopicInsertList = new ArrayList<>();
             List<LimitUpStockTopicRelationInsertDTO> relationInsertList = new ArrayList<>();
-            LocalDate localTradeTime = DateUtil.parseToLocalDate(tradeTime, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT);
+            LocalDate localTradeTime = DateUtil.parseToLocalDate(tradeTime, DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT);
             for (TopicStockVO stockDetail : stockDetails) {
                 for (TopicInfoVO stockDetailTopic : stockDetail.getTopics()) {
                     if (stockDetailTopic == null) {

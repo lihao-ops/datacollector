@@ -2,8 +2,8 @@ package com.hao.datacollector.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.hao.datacollector.common.constant.DataSourceConstant;
-import com.hao.datacollector.common.constant.DateTimeFormatConstant;
+import com.hao.datacollector.common.constant.DataSourceConstants;
+import com.hao.datacollector.common.constant.DateTimeFormatConstants;
 import com.hao.datacollector.common.utils.DateUtil;
 import com.hao.datacollector.common.utils.HttpUtil;
 import com.hao.datacollector.common.utils.MathUtil;
@@ -64,8 +64,8 @@ public class QuotationServiceImpl implements QuotationService {
     @Override
     public Boolean transferQuotationBaseByStock(String windCode, String startDate, String endDate) {
         HttpHeaders headers = new HttpHeaders();
-        headers.add(DataSourceConstant.WIND_POINT_SESSION_NAME, windSessionId);
-        String url = DataSourceConstant.WIND_PROD_WGQ + String.format(QuotationBaseUrl, windCode, startDate, endDate);
+        headers.add(DataSourceConstants.WIND_POINT_SESSION_NAME, windSessionId);
+        String url = DataSourceConstants.WIND_PROD_WGQ + String.format(QuotationBaseUrl, windCode, startDate, endDate);
         ResponseEntity<String> response = HttpUtil.sendGetRequest(url, headers, 30000, 30000);
         List<List<Long>> quotationList = JSON.parseObject(response.getBody(), new TypeReference<List<List<Long>>>() {
         });
@@ -81,7 +81,7 @@ public class QuotationServiceImpl implements QuotationService {
             }
             QuotationStockBaseDTO quotationStockBaseDTO = new QuotationStockBaseDTO();
             quotationStockBaseDTO.setWindCode(windCode);
-            quotationStockBaseDTO.setTradeDate(DateUtil.parseToLocalDate(String.valueOf(quotationData.get(0)), DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT));
+            quotationStockBaseDTO.setTradeDate(DateUtil.parseToLocalDate(String.valueOf(quotationData.get(0)), DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT));
             //元
             quotationStockBaseDTO.setOpenPrice(MathUtil.shiftDecimal(quotationData.get(1).toString(), 2));
             //元
@@ -135,8 +135,8 @@ public class QuotationServiceImpl implements QuotationService {
      */
     private List<HistoryTrendDTO> getQuotationHistoryTrendList(int tradeDate, String windCodes, Integer dateType) {
         HttpHeaders headers = new HttpHeaders();
-        headers.add(DataSourceConstant.WIND_POINT_SESSION_NAME, windSessionId);
-        String url = DataSourceConstant.WIND_PROD_WGQ + String.format(QuotationHistoryTrendUrl, tradeDate, windCodes, dateType);
+        headers.add(DataSourceConstants.WIND_POINT_SESSION_NAME, windSessionId);
+        String url = DataSourceConstants.WIND_PROD_WGQ + String.format(QuotationHistoryTrendUrl, tradeDate, windCodes, dateType);
         int retryCount = 0;
         int maxRetries = 2; // 最多重试2次
         ResponseEntity<String> response = null;

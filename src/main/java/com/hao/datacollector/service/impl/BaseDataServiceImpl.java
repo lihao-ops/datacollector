@@ -3,8 +3,8 @@ package com.hao.datacollector.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hao.datacollector.common.constant.DataSourceConstant;
-import com.hao.datacollector.common.constant.DateTimeFormatConstant;
+import com.hao.datacollector.common.constant.DataSourceConstants;
+import com.hao.datacollector.common.constant.DateTimeFormatConstants;
 import com.hao.datacollector.common.utils.*;
 import com.hao.datacollector.dal.dao.BaseDataMapper;
 import com.hao.datacollector.dto.param.stock.StockBasicInfoQueryParam;
@@ -105,7 +105,7 @@ public class BaseDataServiceImpl implements BaseDataService {
         // 获取所有A股的代码
         List<String> allWindCode = baseDataMapper.getAllAStockCode();
         //清理已经插入过的代码,无需重复插入。
-        String endDate = DateUtil.stringTimeToAdjust(endTime, DateTimeFormatConstant.DEFAULT_DATE_FORMAT, 1);
+        String endDate = DateUtil.stringTimeToAdjust(endTime, DateTimeFormatConstants.DEFAULT_DATE_FORMAT, 1);
         List<String> overInsertMarketCode = baseDataMapper.getInsertMarketCode(startTime, endDate);
         allWindCode.removeAll(overInsertMarketCode);
         //清理异常的股票列表
@@ -280,8 +280,8 @@ public class BaseDataServiceImpl implements BaseDataService {
     public Boolean setTradeDateList(String startTime, String endTime) {
         String requestTradeDateUrl = String.format(tradeDateBaseUrl, startTime, endTime);
         HttpHeaders headers = new HttpHeaders();
-        headers.set(DataSourceConstant.WIND_SESSION_NAME, windSessionId);
-        String response = HttpUtil.sendGetRequest(DataSourceConstant.WIND_PROD_WGQ + requestTradeDateUrl, headers, 10000, 30000).getBody();
+        headers.set(DataSourceConstants.WIND_SESSION_NAME, windSessionId);
+        String response = HttpUtil.sendGetRequest(DataSourceConstants.WIND_PROD_WGQ + requestTradeDateUrl, headers, 10000, 30000).getBody();
         // 解析JSON响应为LimitResultVO对象
         // 配置忽略未知字段，避免反序列化错误
         objectMapper.configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -308,7 +308,7 @@ public class BaseDataServiceImpl implements BaseDataService {
         Boolean clearTradeDateResult = tradeDate >= 0;
         // 将其转为 LocalDate 格式
         List<LocalDate> dateList = tradeDateList.stream()
-                .map(i -> LocalDate.parse(String.valueOf(i), DateTimeFormatter.ofPattern(DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT)))
+                .map(i -> LocalDate.parse(String.valueOf(i), DateTimeFormatter.ofPattern(DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT)))
                 .collect(Collectors.toList());
         Boolean insertTradeDateListResult = baseDataMapper.insertTradeDate(dateList);
         log.info("BaseDataServiceImpl_setTradeDateList,tradeDateList.size={},clearTradeDateResult={},insertTradeDateListResult={}", tradeDateList.size(), clearTradeDateResult, insertTradeDateListResult);

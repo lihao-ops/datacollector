@@ -1,6 +1,6 @@
 package com.hao.datacollector.common.cache;
 
-import com.hao.datacollector.common.constant.DateTimeFormatConstant;
+import com.hao.datacollector.common.constant.DateTimeFormatConstants;
 import com.hao.datacollector.common.utils.DateUtil;
 import com.hao.datacollector.service.BaseDataService;
 import jakarta.annotation.PostConstruct;
@@ -60,22 +60,22 @@ public class DateCache {
     @PostConstruct
     private void initDateList() {
         //今年整年的交易日历
-        String firstDayOfYear = DateUtil.getFirstDayOfYear(DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT);
-        String lastDayOfYear = DateUtil.getLastDayOfYear(DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT);
+        String firstDayOfYear = DateUtil.getFirstDayOfYear(DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT);
+        String lastDayOfYear = DateUtil.getLastDayOfYear(DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT);
         ThisYearTradeDateList = baseDataService.getTradeDateListByTime(firstDayOfYear, lastDayOfYear);
         //年初至今的交易日历
-        String currentDay = DateUtil.getCurrentDateTime(DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT);
+        String currentDay = DateUtil.getCurrentDateTime(DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT);
         CurrentYearTradeDateList = baseDataService.getTradeDateListByTime(firstDayOfYear, currentDay);
         //2020年的交易日历
-        Year2020TradeDateList = baseDataService.getTradeDateListByTime(DateUtil.getFirstDayOfYear(2020, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT), DateUtil.getLastDayOfYear(2020, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT));
+        Year2020TradeDateList = baseDataService.getTradeDateListByTime(DateUtil.getFirstDayOfYear(2020, DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT), DateUtil.getLastDayOfYear(2020, DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT));
         //2021年的交易日历
-        Year2021TradeDateList = baseDataService.getTradeDateListByTime(DateUtil.getFirstDayOfYear(2021, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT), DateUtil.getLastDayOfYear(2021, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT));
+        Year2021TradeDateList = baseDataService.getTradeDateListByTime(DateUtil.getFirstDayOfYear(2021, DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT), DateUtil.getLastDayOfYear(2021, DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT));
         //2022年的交易日历
-        Year2022TradeDateList = baseDataService.getTradeDateListByTime(DateUtil.getFirstDayOfYear(2022, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT), DateUtil.getLastDayOfYear(2022, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT));
+        Year2022TradeDateList = baseDataService.getTradeDateListByTime(DateUtil.getFirstDayOfYear(2022, DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT), DateUtil.getLastDayOfYear(2022, DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT));
         //2023年的交易日历
-        Year2023TradeDateList = baseDataService.getTradeDateListByTime(DateUtil.getFirstDayOfYear(2023, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT), DateUtil.getLastDayOfYear(2023, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT));
+        Year2023TradeDateList = baseDataService.getTradeDateListByTime(DateUtil.getFirstDayOfYear(2023, DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT), DateUtil.getLastDayOfYear(2023, DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT));
         //2024年的交易日历
-        Year2024TradeDateList = baseDataService.getTradeDateListByTime(DateUtil.getFirstDayOfYear(2024, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT), DateUtil.getLastDayOfYear(2024, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT));
+        Year2024TradeDateList = baseDataService.getTradeDateListByTime(DateUtil.getFirstDayOfYear(2024, DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT), DateUtil.getLastDayOfYear(2024, DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT));
         log.info("CurrentYearTradeDateList.size={},CurrentYearTradeDateList.size={},Year2022TradeDateList.size={},Year2023TradeDateList.size={},Year2024TradeDateList.size={},", ThisYearTradeDateList.size(), CurrentYearTradeDateList.size(), Year2022TradeDateList.size(), Year2023TradeDateList.size(), Year2024TradeDateList.size());
     }
 }

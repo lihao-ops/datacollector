@@ -6,7 +6,7 @@ package com.hao.datacollector.common.constant;
  * @Date 2025-01-27
  * @description: 日期时间格式常量类
  */
-public class DateTimeFormatConstant {
+public class DateTimeFormatConstants {
 
     /**
      * 默认日期格式
@@ -96,7 +96,7 @@ public class DateTimeFormatConstant {
     /**
      * 私有构造函数，防止实例化
      */
-    private DateTimeFormatConstant() {
+    private DateTimeFormatConstants() {
         throw new UnsupportedOperationException("Utility class cannot be instantiated");
     }
 }

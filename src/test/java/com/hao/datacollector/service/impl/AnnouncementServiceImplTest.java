@@ -1,7 +1,7 @@
 package com.hao.datacollector.service.impl;
 
 import com.hao.datacollector.common.cache.StockCache;
-import com.hao.datacollector.common.constant.DateTimeFormatConstant;
+import com.hao.datacollector.common.constant.DateTimeFormatConstants;
 import com.hao.datacollector.common.utils.DateUtil;
 import com.hao.datacollector.dal.dao.AnnouncementMapper;
 import com.hao.datacollector.dal.dao.BaseDataMapper;
@@ -55,7 +55,7 @@ class AnnouncementServiceImplTest {
         List<String> jobStockList = StockCache.allWindCode;
 //        String startDate = announcementMapper.getJobAnnouncementEndLastDate();
         String startDate = "20250704";
-        String endDate = DateUtil.stringTimeToAdjust(DateUtil.getCurrentDateTimeByStr(DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT), DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
+        String endDate = DateUtil.stringTimeToAdjust(DateUtil.getCurrentDateTimeByStr(DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT), DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT, 1);
         List<String> jobEndList = announcementMapper.getJobAnnouncementEndWindCodeList(startDate, endDate);
         jobStockList.removeAll(jobEndList);
         //删除异常股票列表
@@ -85,7 +85,7 @@ class AnnouncementServiceImplTest {
         // 通过创建副本确保线程安全，避免直接修改共享的静态缓存 StockCache.allWindCode
         List<String> jobStockList = new java.util.ArrayList<>(StockCache.allWindCode);
         String startDate = announcementMapper.getJobAnnouncementEndLastDate();
-        String endDate = DateUtil.stringTimeToAdjust(DateUtil.getCurrentDateTimeByStr(DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT), DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
+        String endDate = DateUtil.stringTimeToAdjust(DateUtil.getCurrentDateTimeByStr(DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT), DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT, 1);
         List<String> jobEndList = announcementMapper.getJobAnnouncementEndWindCodeList(startDate, endDate);
         jobStockList.removeAll(jobEndList);
         //删除异常股票列表
@@ -127,7 +127,7 @@ class AnnouncementServiceImplTest {
         // 通过创建副本确保线程安全，避免直接修改共享的静态缓存 StockCache.allWindCode
         List<String> jobStockList = new java.util.ArrayList<>(StockCache.allWindCode);
         String startDate = announcementMapper.getJobAnnouncementEndLastDate();
-        String endDate = DateUtil.stringTimeToAdjust(DateUtil.getCurrentDateTimeByStr(DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT), DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
+        String endDate = DateUtil.stringTimeToAdjust(DateUtil.getCurrentDateTimeByStr(DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT), DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT, 1);
         List<String> jobEndList = announcementMapper.getJobAnnouncementEndWindCodeList(startDate, endDate);
         jobStockList.removeAll(jobEndList);
         //删除异常股票列表
@@ -160,7 +160,7 @@ class AnnouncementServiceImplTest {
         List<String> jobStockList = StockCache.allWindCode;
 //        String startDate = announcementMapper.getJobEventEndLastDate();
         String startDate = "20250612";
-        String endDate = DateUtil.stringTimeToAdjust(DateUtil.getCurrentDateTimeByStr(DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT), DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
+        String endDate = DateUtil.stringTimeToAdjust(DateUtil.getCurrentDateTimeByStr(DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT), DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT, 1);
         List<String> jobEndList = announcementMapper.getJobEventEndWindCodeList(startDate, endDate);
         jobStockList.removeAll(jobEndList);
         //删除异常股票列表
@@ -186,7 +186,7 @@ class AnnouncementServiceImplTest {
         // 通过创建副本确保线程安全，避免直接修改共享的静态缓存 StockCache.allWindCode
         List<String> jobStockList = new java.util.ArrayList<>(StockCache.allWindCode);
         String startDate = announcementMapper.getJobEventEndLastDate();
-        String endDate = DateUtil.stringTimeToAdjust(DateUtil.getCurrentDateTimeByStr(DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT), DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT, 1);
+        String endDate = DateUtil.stringTimeToAdjust(DateUtil.getCurrentDateTimeByStr(DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT), DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT, 1);
         List<String> jobEndList = announcementMapper.getJobEventEndWindCodeList(startDate, endDate);
         jobStockList.removeAll(jobEndList);
         //删除异常股票列表

@@ -1,6 +1,6 @@
 package com.hao.datacollector.web.controller;
 
-import com.hao.datacollector.common.constant.DateTimeFormatConstant;
+import com.hao.datacollector.common.constant.DateTimeFormatConstants;
 import com.hao.datacollector.common.utils.DateUtil;
 import com.hao.datacollector.dto.param.stock.StockBasicInfoQueryParam;
 import com.hao.datacollector.dto.param.stock.StockMarketDataQueryParam;
@@ -59,7 +59,7 @@ public class BaseDataController {
         log.info("getTradeDateListByTime,startTime={},endTime={}", startTime, endTime);
         List<LocalDate> dateListByTime = baseDataService.getTradeDateListByTime(startTime, endTime);
         //默认转换为8位数字日期格式（如：20190214）
-        return DateUtil.formatLocalDateList(dateListByTime, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT);
+        return DateUtil.formatLocalDateList(dateListByTime, DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT);
     }
 
     @Operation(

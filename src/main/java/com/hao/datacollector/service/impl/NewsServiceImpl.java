@@ -2,8 +2,8 @@ package com.hao.datacollector.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.hao.datacollector.common.constant.CommonConstant;
-import com.hao.datacollector.common.constant.DataSourceConstant;
+import com.hao.datacollector.common.constant.CommonConstants;
+import com.hao.datacollector.common.constant.DataSourceConstants;
 import com.hao.datacollector.common.utils.HttpUtil;
 import com.hao.datacollector.common.utils.PageUtil;
 import com.hao.datacollector.dal.dao.BaseDataMapper;
@@ -53,15 +53,15 @@ public class NewsServiceImpl implements NewsService {
      */
     @Override
     public Boolean transferNewsStockData(String windCode) {
-        String url = DataSourceConstant.WIND_PROD_WGQ + stockNewsUrl;
+        String url = DataSourceConstants.WIND_PROD_WGQ + stockNewsUrl;
         HashMap<String, String> header = new HashMap<>(4);
-        header.put(DataSourceConstant.WIND_POINT_SESSION_NAME, windSessionId);
+        header.put(DataSourceConstants.WIND_POINT_SESSION_NAME, windSessionId);
         NewsRequestParams params = new NewsRequestParams();
         params.setWindCode(windCode);
         // 发送请求，设置超时时间
         String bodyStr = HttpUtil.sendPostRequestTimeOut(url, JSON.toJSONString(params), 10000, header);
         JSONArray jsonArray = JSON.parseArray(bodyStr);
-        if (jsonArray == null || !CommonConstant.successCode.equals(jsonArray.get(0))) {
+        if (jsonArray == null || !CommonConstants.successCode.equals(jsonArray.get(0))) {
             log.error("NewsServiceImpl_transferNewsStockData_error=windCode={}", windCode);
             throw new RuntimeException("数据异常");
         }

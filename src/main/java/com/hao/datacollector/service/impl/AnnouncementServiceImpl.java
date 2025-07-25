@@ -2,7 +2,7 @@ package com.hao.datacollector.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.hao.datacollector.common.constant.DataSourceConstant;
+import com.hao.datacollector.common.constant.DataSourceConstants;
 import com.hao.datacollector.common.utils.HttpUtil;
 import com.hao.datacollector.dal.dao.AnnouncementMapper;
 import com.hao.datacollector.service.AnnouncementService;
@@ -59,9 +59,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
      */
     @Override
     public List<AnnouncementVO> getAnnouncementSourceData(String windCode, String startDate, String endDate, Integer pageNo, Integer pageSize) {
-        String url = String.format(DataSourceConstant.WIND_PROD_WGQ + AnnouncementUrl, windCode);
+        String url = String.format(DataSourceConstants.WIND_PROD_WGQ + AnnouncementUrl, windCode);
         org.springframework.http.HttpHeaders headers = new HttpHeaders();
-        headers.set(DataSourceConstant.WIND_POINT_SESSION_NAME, windSessionId);
+        headers.set(DataSourceConstants.WIND_POINT_SESSION_NAME, windSessionId);
         MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
         queryParams.add("startDate", startDate);
         queryParams.add("endDate", endDate);
@@ -126,9 +126,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
      */
     @Override
     public List<BigEventVO> getEventSourceData(String windCode, String startDate, String endDate, Integer pageNo, Integer pageSize) {
-        String url = String.format(DataSourceConstant.WIND_PROD_WGQ + eventUrl, windCode);
+        String url = String.format(DataSourceConstants.WIND_PROD_WGQ + eventUrl, windCode);
         org.springframework.http.HttpHeaders headers = new HttpHeaders();
-        headers.set(DataSourceConstant.WIND_POINT_SESSION_NAME, windSessionId);
+        headers.set(DataSourceConstants.WIND_POINT_SESSION_NAME, windSessionId);
         MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
         queryParams.add("startDate", startDate);
         queryParams.add("endDate", endDate);

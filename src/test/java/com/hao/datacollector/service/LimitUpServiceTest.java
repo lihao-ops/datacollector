@@ -1,7 +1,7 @@
 package com.hao.datacollector.service;
 
 import com.hao.datacollector.common.cache.DateCache;
-import com.hao.datacollector.common.constant.DateTimeFormatConstant;
+import com.hao.datacollector.common.constant.DateTimeFormatConstants;
 import com.hao.datacollector.common.utils.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @SpringBootTest
@@ -21,7 +19,7 @@ class LimitUpServiceTest {
     @Test
     void transferLimitUpDataToDatabase() {
 
-        List<String> yearTradeDateList = DateUtil.formatLocalDateList(DateCache.CurrentYearTradeDateList, DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT);
+        List<String> yearTradeDateList = DateUtil.formatLocalDateList(DateCache.CurrentYearTradeDateList, DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT);
         yearTradeDateList.forEach(date -> {
             Boolean success = limitUpService.transferLimitUpDataToDatabase(date);
             if (!success) {

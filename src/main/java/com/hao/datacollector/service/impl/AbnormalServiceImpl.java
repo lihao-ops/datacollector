@@ -4,9 +4,9 @@ package com.hao.datacollector.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.parser.Feature;
-import com.hao.datacollector.common.constant.CommonConstant;
-import com.hao.datacollector.common.constant.DataSourceConstant;
-import com.hao.datacollector.common.constant.DateTimeFormatConstant;
+import com.hao.datacollector.common.constant.CommonConstants;
+import com.hao.datacollector.common.constant.DataSourceConstants;
+import com.hao.datacollector.common.constant.DateTimeFormatConstants;
 import com.hao.datacollector.common.utils.DateUtil;
 import com.hao.datacollector.common.utils.ExtremeValueUtil;
 import com.hao.datacollector.common.utils.HttpUtil;
@@ -63,16 +63,16 @@ public class AbnormalServiceImpl implements AbnormalService {
     @Override
     public List<AbnormalIndexVO> getSourceHomePage(String tradeDate, Integer sortCol, Integer orderType) {
         if (StringUtils.isEmpty(tradeDate)) {
-            tradeDate = DateUtil.getCurrentDateTimeByStr(DateTimeFormatConstant.EIGHT_DIGIT_DATE_FORMAT);
+            tradeDate = DateUtil.getCurrentDateTimeByStr(DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT);
         }
         //判断当前传入日期是否属交易日
         if (false) {
             throw new RuntimeException("not_support_tradeDate!");
         }
         HttpHeaders httpHeader = new HttpHeaders();
-        httpHeader.set(DataSourceConstant.WIND_POINT_SESSION_NAME, windSessionId);
+        httpHeader.set(DataSourceConstants.WIND_POINT_SESSION_NAME, windSessionId);
         //param
-        String url = String.format(DataSourceConstant.WIND_PROD_WGQ + homePageUrl);
+        String url = String.format(DataSourceConstants.WIND_PROD_WGQ + homePageUrl);
         MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
         queryParams.add("tradeDate", tradeDate);
         queryParams.add("sortCol", sortCol.toString());
@@ -83,7 +83,7 @@ public class AbnormalServiceImpl implements AbnormalService {
         } catch (Exception e) {
             throw new RuntimeException("getHomePage_error," + e.getMessage());
         }
-        if (!CommonConstant.SUCCESS_FLAG.equals(entity.getStatusCode().toString())) {
+        if (!CommonConstants.SUCCESS_FLAG.equals(entity.getStatusCode().toString())) {
             throw new RuntimeException("getHomePage_error,result=" + entity.getStatusCode());
         }
         List<AbnormalIndexVO> indexVOList = JSONObject.parseObject(entity.getBody().toString(), new TypeReference<List<AbnormalIndexVO>>() {
@@ -128,7 +128,7 @@ public class AbnormalServiceImpl implements AbnormalService {
             throw new RuntimeException("not_support_tradeDate!");
         }
         HttpHeaders httpHeader = new HttpHeaders();
-        httpHeader.set(DataSourceConstant.WIND_POINT_SESSION_NAME, windSessionId);
+        httpHeader.set(DataSourceConstants.WIND_POINT_SESSION_NAME, windSessionId);
         //param
         MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
         queryParams.add("period", period.toString());
@@ -139,11 +139,11 @@ public class AbnormalServiceImpl implements AbnormalService {
         queryParams.add("sortFlag", sortFlag.toString());
         ResponseEntity<String> entity = null;
         try {
-            entity = HttpUtil.sendGetWithParams(DataSourceConstant.WIND_PROD_WGQ + seatsUrl, queryParams, httpHeader, 10000, 10000);
+            entity = HttpUtil.sendGetWithParams(DataSourceConstants.WIND_PROD_WGQ + seatsUrl, queryParams, httpHeader, 10000, 10000);
         } catch (Exception e) {
             throw new RuntimeException("getSourceListOfSeats_error," + e.getMessage());
         }
-        if (!CommonConstant.SUCCESS_FLAG.equals(entity.getStatusCode().toString())) {
+        if (!CommonConstants.SUCCESS_FLAG.equals(entity.getStatusCode().toString())) {
             throw new RuntimeException("getSourceListOfSeats_error,result=" + entity.getStatusCode());
         }
         List<ActiveSeatsRankVO> activeSeatsRankList = JSONObject.parseObject(entity.getBody().toString(), new TypeReference<List<ActiveSeatsRankVO>>() {
@@ -188,7 +188,7 @@ public class AbnormalServiceImpl implements AbnormalService {
             throw new RuntimeException("not_support_tradeDate!");
         }
         HttpHeaders httpHeader = new HttpHeaders();
-        httpHeader.set(DataSourceConstant.WIND_POINT_SESSION_NAME, windSessionId);
+        httpHeader.set(DataSourceConstants.WIND_POINT_SESSION_NAME, windSessionId);
         //param
         MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
         queryParams.add("period", period.toString());
@@ -198,11 +198,11 @@ public class AbnormalServiceImpl implements AbnormalService {
         queryParams.add("sortFlag", sortFlag.toString());
         ResponseEntity<String> entity = null;
         try {
-            entity = HttpUtil.sendGetWithParams(DataSourceConstant.WIND_PROD_WGQ + activeUrl, queryParams, httpHeader, 10000, 10000);
+            entity = HttpUtil.sendGetWithParams(DataSourceConstants.WIND_PROD_WGQ + activeUrl, queryParams, httpHeader, 10000, 10000);
         } catch (Exception e) {
             throw new RuntimeException("getSourceActiveRank_error," + e.getMessage());
         }
-        if (!CommonConstant.SUCCESS_FLAG.equals(entity.getStatusCode().toString())) {
+        if (!CommonConstants.SUCCESS_FLAG.equals(entity.getStatusCode().toString())) {
             throw new RuntimeException("getSourceActiveRank_error,result=" + entity.getStatusCode());
         }
         List<ActiveRankRecordVO> activeRankRecordVOList = JSONObject.parseObject(entity.getBody().toString(), new TypeReference<List<ActiveRankRecordVO>>() {
