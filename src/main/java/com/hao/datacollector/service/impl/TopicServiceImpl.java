@@ -2,6 +2,7 @@ package com.hao.datacollector.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hao.datacollector.common.utils.DateUtil;
+import com.hao.datacollector.common.utils.HttpUtil;
 import com.hao.datacollector.common.utils.PageRuleUtil;
 import com.hao.datacollector.dal.dao.TopicMapper;
 import com.hao.datacollector.dto.PageNumDTO;
@@ -18,11 +19,14 @@ import com.hao.datacollector.web.vo.topic.TopicInfoKplVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +42,7 @@ public class TopicServiceImpl implements TopicService {
     @Autowired
     private TopicMapper topicMapper;
 
+    private static final String URL = "https://applhb.longhuvip.com/w1/api/index.php";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -50,18 +55,47 @@ public class TopicServiceImpl implements TopicService {
     @Override
     public Boolean setKplTopicInfoJob(Integer num) {
         try {
-            // 读取本地文件内容
-            String filePath = "C:\\Users\\hli.lihao\\Desktop\\response.txt";
-            String content = Files.readString(Paths.get(filePath));
-            log.info("setKplTopicInfoJob_response.size={}", content.length());
-            // 解析JSON为对象
-            HotTopicKpl hotTopic = objectMapper.readValue(content, HotTopicKpl.class);
-            //转换插入
-            return insertKplTopicInsertData(hotTopic);
+            for (int id = 1; id <= 1000; id++) {
+                try {
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+                    headers.set("User-Agent", "lhb/5.20.7 (com.kaipanla.www; build:0; iOS 16.2.0) Alamofire/4.9.1");
+                    MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+                    body.add("DeviceID", "26a33d6b656c5a0f8fe859414b5daa0a877e3cb3");
+//                body.add("ID", String.valueOf(id));
+                    body.add("ID", String.valueOf(25));
+                    body.add("PhoneOSNew", "2");
+                    body.add("Token", "31835bf8e1ff2ac1c5b1001195e0f138");
+                    body.add("UserID", "4239370");
+                    body.add("VerSion", "5.20.0.7");
+                    body.add("a", "InfoGet");
+                    body.add("apiv", "w41");
+                    body.add("c", "Theme");
 
-        } catch (IOException e) {
-            System.err.println("读取文件失败：" + e.getMessage());
-            return false; // 处理失败返回false
+                    ResponseEntity<String> response = HttpUtil.sendRequestFormPost(
+                            URL,
+                            body,
+                            headers,
+                            3000, // connectTimeout ms
+                            5000  // readTimeout ms
+                    );
+                    if (!response.getStatusCode().is2xxSuccessful()) {
+                        throw new RuntimeException("setKplTopicInfoJob_error,result=" + response.getStatusCode());
+                    }
+                    log.info("setKplTopicInfoJob_response.size={}", response.getBody().length());
+                    // 解析JSON为对象
+                    HotTopicKpl hotTopic = objectMapper.readValue(response.getBody(), HotTopicKpl.class);
+                    //转换插入
+                    return insertKplTopicInsertData(hotTopic);
+
+                } catch (IOException e) {
+                    System.err.println("读取文件失败：" + e.getMessage());
+                    return false; // 处理失败返回false
+                }
+            }
+            return true;
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -153,7 +187,8 @@ public class TopicServiceImpl implements TopicService {
      * @param insertStockCategoryMappingList 股票映射信息list
      * @return 操作结果
      */
-    private Boolean insertTopicInfo(List<InsertTopicInfoDTO> insertTopicInfoList, List<InsertTopicCategoryDTO> insertCategoryList, List<InsertStockCategoryMappingDTO> insertStockCategoryMappingList) {
+    private Boolean insertTopicInfo
+    (List<InsertTopicInfoDTO> insertTopicInfoList, List<InsertTopicCategoryDTO> insertCategoryList, List<InsertStockCategoryMappingDTO> insertStockCategoryMappingList) {
         int insertTopicNum = topicMapper.insertTopicInfoList(insertTopicInfoList);
         int insertCategoryNum = topicMapper.insertCategoryList(insertCategoryList);
         int insertStockNum = topicMapper.insertStockCategoryMappingList(insertStockCategoryMappingList);
