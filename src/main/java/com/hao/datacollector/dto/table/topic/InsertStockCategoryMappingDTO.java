@@ -3,6 +3,8 @@ package com.hao.datacollector.dto.table.topic;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 @Schema(description = "插入股票题材类别映射DTO")
 public class InsertStockCategoryMappingDTO {
@@ -32,8 +34,8 @@ public class InsertStockCategoryMappingDTO {
     private Integer hot;
 
     @Schema(description = "首次上架时间", example = "2024-01-01 10:30:00")
-    private String firstShelveTime;
+    private Date firstShelveTime;
 
     @Schema(description = "缓存更新时间", example = "2024-01-01 10:30:00")
-    private String updateCacheTime;
+    private Date updateCacheTime;
 }

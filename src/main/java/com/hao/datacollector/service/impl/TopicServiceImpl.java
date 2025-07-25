@@ -1,6 +1,7 @@
 package com.hao.datacollector.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hao.datacollector.common.utils.DateUtil;
 import com.hao.datacollector.common.utils.PageRuleUtil;
 import com.hao.datacollector.dal.dao.TopicMapper;
 import com.hao.datacollector.dto.PageNumDTO;
@@ -77,8 +78,8 @@ public class TopicServiceImpl implements TopicService {
         BeanUtils.copyProperties(hotTopic, insertTopicInfoDTO);
         insertTopicInfoDTO.setTopicId(Integer.valueOf(hotTopic.getId()));
         //主题时间
-        insertTopicInfoDTO.setTopicCreateTime(hotTopic.getCreateTime());
-        insertTopicInfoDTO.setTopicUpdateTime(hotTopic.getUpdateTime());
+        insertTopicInfoDTO.setTopicCreateTime(DateUtil.timestampToDate(Long.parseLong(hotTopic.getCreateTime())));
+        insertTopicInfoDTO.setTopicUpdateTime(DateUtil.timestampToDate(Long.parseLong(hotTopic.getUpdateTime())));
         //类别信息列表
         List<InsertTopicCategoryDTO> insertCategoryList = new ArrayList<>();
         //类别所属股票映射信息列表
@@ -114,6 +115,9 @@ public class TopicServiceImpl implements TopicService {
                 for (CategoryLevel level2 : level2List) {
                     InsertTopicCategoryDTO insertCategoryLevel2 = new InsertTopicCategoryDTO();
                     BeanUtils.copyProperties(level2, insertCategoryLevel2);
+                    //时间戳转换
+                    insertCategoryLevel2.setFirstShelveTime(DateUtil.timestampToDate(Long.parseLong(level2.getFirstShelveTime())));
+                    insertCategoryLevel2.setUpdateCacheTime(DateUtil.timestampToDate(Long.parseLong(level2.getUpdateCacheTime())));
                     insertCategoryLevel2.setTopicId(Integer.valueOf(hotTopic.getId()));
                     insertCategoryLevel2.setCategoryId(Integer.valueOf(level2.getId()));
                     //指定一级类别id为父id
@@ -127,6 +131,9 @@ public class TopicServiceImpl implements TopicService {
                         BeanUtils.copyProperties(level2Stock, stockMappingDTO);
                         stockMappingDTO.setWindCode(getWindCodeMapping(level2Stock.getStockId()));
                         stockMappingDTO.setCategoryId(insertCategoryLevel2.getCategoryId());
+                        //时间戳转换
+                        stockMappingDTO.setFirstShelveTime(DateUtil.timestampToDate(Long.parseLong(level2Stock.getFirstShelveTime())));
+                        stockMappingDTO.setUpdateCacheTime(DateUtil.timestampToDate(Long.parseLong(level2Stock.getUpdateCacheTime())));
                         insertStockCategoryMappingList.add(stockMappingDTO);
                     }
                 }

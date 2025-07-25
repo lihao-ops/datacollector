@@ -752,4 +752,34 @@ public final class DateUtil {
         String dayString = sdf.format(dt1);
         return dayString;
     }
+
+    /**
+     * 将Unix时间戳转换为Date对象
+     *
+     * @param timestamp Unix时间戳（秒）
+     * @return Date对象
+     */
+    public static Date timestampToDate(long timestamp) {
+        // Unix时间戳是秒数，需要乘以1000转换为毫秒
+        return new Date(timestamp * 1000L);
+    }
+
+    /**
+     * 将毫秒时间戳转换为Date对象
+     *
+     * @param timestampMillis 毫秒时间戳
+     * @return Date对象
+     */
+    public static Date millsToDate(long timestampMillis) {
+        return new Date(timestampMillis);
+    }
+
+    /**
+     * 获取当前时间的Unix时间戳（秒）
+     *
+     * @return 当前Unix时间戳
+     */
+    public static long getCurrentTimestamp() {
+        return System.currentTimeMillis() / 1000L;
+    }
 }
