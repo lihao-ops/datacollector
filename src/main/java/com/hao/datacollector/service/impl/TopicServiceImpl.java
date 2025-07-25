@@ -19,6 +19,7 @@ import com.hao.datacollector.web.vo.topic.TopicInfoKplVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,10 +39,11 @@ import java.util.List;
 @Service
 public class TopicServiceImpl implements TopicService {
 
+    @Value("${kpl.topic.url}")
+    private String kplTopicUrl;
+
     @Autowired
     private TopicMapper topicMapper;
-
-    private static final String URL = "https://applhb.longhuvip.com/w1/api/index.php";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -54,50 +55,61 @@ public class TopicServiceImpl implements TopicService {
      */
     @Override
     public Boolean setKplTopicInfoJob(Integer num) {
-        try {
-            for (int id = 1; id <= 1000; id++) {
-                try {
-                    HttpHeaders headers = new HttpHeaders();
-                    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-                    headers.set("User-Agent", "lhb/5.20.7 (com.kaipanla.www; build:0; iOS 16.2.0) Alamofire/4.9.1");
-                    MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-                    body.add("DeviceID", "26a33d6b656c5a0f8fe859414b5daa0a877e3cb3");
-//                body.add("ID", String.valueOf(id));
-                    body.add("ID", String.valueOf(25));
-                    body.add("PhoneOSNew", "2");
-                    body.add("Token", "31835bf8e1ff2ac1c5b1001195e0f138");
-                    body.add("UserID", "4239370");
-                    body.add("VerSion", "5.20.0.7");
-                    body.add("a", "InfoGet");
-                    body.add("apiv", "w41");
-                    body.add("c", "Theme");
-
-                    ResponseEntity<String> response = HttpUtil.sendRequestFormPost(
-                            URL,
-                            body,
-                            headers,
-                            3000, // connectTimeout ms
-                            5000  // readTimeout ms
-                    );
-                    if (!response.getStatusCode().is2xxSuccessful()) {
-                        throw new RuntimeException("setKplTopicInfoJob_error,result=" + response.getStatusCode());
-                    }
-                    log.info("setKplTopicInfoJob_response.size={}", response.getBody().length());
-                    // 解析JSON为对象
-                    HotTopicKpl hotTopic = objectMapper.readValue(response.getBody(), HotTopicKpl.class);
-                    //转换插入
-                    return insertKplTopicInsertData(hotTopic);
-
-                } catch (IOException e) {
-                    System.err.println("读取文件失败：" + e.getMessage());
-                    return false; // 处理失败返回false
-                }
+        for (int id = 1; id <= num; id++) {
+            String kplTopicDataStr = getRequestKplTopicData(id);
+            // 解析JSON为对象
+            HotTopicKpl hotTopic = null;
+            try {
+                hotTopic = objectMapper.readValue(kplTopicDataStr, HotTopicKpl.class);
+            } catch (Exception e) {
+                throw new RuntimeException("setKplTopicInfoJob_convertData_error!");
             }
-            return true;
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e);
+            //转换插入
+            Boolean insertResult = insertKplTopicInsertData(hotTopic);
+            log.info("setKplTopicInfoJob_ID={},result={}", id, insertResult);
         }
+        return true;
     }
+
+    /**
+     * 获取KPL主题话题数据
+     *
+     * @param id 主题话题ID参数
+     * @return HTTP响应的字符串结果
+     */
+    private String getRequestKplTopicData(Integer id) {
+        // 构造HTTP请求头
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.set("User-Agent", "lhb/5.20.7 (com.kaipanla.www; build:0; iOS 16.2.0) Alamofire/4.9.1");
+        // 构造请求体参数
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("DeviceID", "26a33d6b656c5a0f8fe859414b5daa0a877e3cb3");
+//                body.add("ID", String.valueOf(id));
+        body.add("ID", String.valueOf(25)); // 注意：这里写死了ID为25，没有使用传入参数
+        body.add("PhoneOSNew", "2");
+        body.add("Token", "31835bf8e1ff2ac1c5b1001195e0f138");
+        body.add("UserID", "4239370");
+        body.add("VerSion", "5.20.0.7");
+        body.add("a", "InfoGet");
+        body.add("apiv", "w41");
+        body.add("c", "Theme");
+        ResponseEntity<String> response = HttpUtil.sendRequestFormPost(
+                kplTopicUrl,
+                body,
+                headers,
+                3000, // connectTimeout ms
+                5000  // readTimeout ms
+        );
+        // 检查响应状态码，非2xx状态码抛出异常
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            throw new RuntimeException("setKplTopicInfoJob_getRequestKplTopicData_error,result=" + response.getStatusCode());
+        }
+        // 记录响应数据大小
+        log.info("setKplTopicInfoJob_response.size={}", response.getBody().length());
+        return response.getBody();
+    }
+
 
     /**
      * 插入题材相关数据
