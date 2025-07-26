@@ -99,8 +99,8 @@ public class TopicServiceImpl implements TopicService {
         // 构造请求体参数
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("DeviceID", "26a33d6b656c5a0f8fe859414b5daa0a877e3cb3");
-//        body.add("ID", String.valueOf(id));
-        body.add("ID", String.valueOf(59)); // 注意：这里写死了ID为25，没有使用传入参数
+        body.add("ID", String.valueOf(id));
+//        body.add("ID", String.valueOf(59)); // 注意：这里写死了ID为25，没有使用传入参数
         body.add("PhoneOSNew", "2");
         body.add("Token", "31835bf8e1ff2ac1c5b1001195e0f138");
         body.add("UserID", "4239370");
@@ -139,6 +139,12 @@ public class TopicServiceImpl implements TopicService {
         //主题时间
         insertTopicInfoDTO.setTopicCreateTime(DateUtil.timestampToDateStr(Long.parseLong(hotTopic.getCreateTime())));
         insertTopicInfoDTO.setTopicUpdateTime(DateUtil.timestampToDateStr(Long.parseLong(hotTopic.getUpdateTime())));
+        if (StringUtils.hasLength(hotTopic.getFirstShelveTime())) {
+            insertTopicInfoDTO.setFirstShelveTime(DateUtil.timestampToDateStr(Long.parseLong(hotTopic.getFirstShelveTime())));
+        }
+        if (StringUtils.hasLength(hotTopic.getUpdateCacheTime())) {
+            insertTopicInfoDTO.setUpdateCacheTime(DateUtil.timestampToDateStr(Long.parseLong(hotTopic.getUpdateCacheTime())));
+        }
         //类别信息列表
         List<InsertTopicCategoryDTO> insertCategoryList = new ArrayList<>();
         //类别所属股票映射信息列表

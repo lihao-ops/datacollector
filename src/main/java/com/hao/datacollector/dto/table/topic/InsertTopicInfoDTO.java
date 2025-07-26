@@ -1,5 +1,6 @@
 package com.hao.datacollector.dto.table.topic;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -62,4 +63,12 @@ public class InsertTopicInfoDTO {
 
     @Schema(description = "时间戳")
     private Double t;
+
+    @JsonProperty("FirstShelveTime")
+    @Schema(description = "首次上架时间", example = "2024-01-01 10:30:00")
+    private String firstShelveTime;
+
+    @JsonProperty("UpdateCacheTime")
+    @Schema(description = "缓存更新时间", example = "2024-01-01 10:30:00")
+    private String updateCacheTime;
 }

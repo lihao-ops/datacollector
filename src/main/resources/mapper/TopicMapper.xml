@@ -6,7 +6,7 @@
         INSERT INTO tb_topic_info (
         topic_id, name, brief_intro, class_layer, `desc`, plate_switch,
         stk_switch, introduction, topic_create_time, topic_update_time,
-        is_new, power, subscribe, is_good, good_num, com_num, errcode, t
+        is_new, power, subscribe, is_good, good_num, com_num, errcode, t,first_shelve_time, update_cache_time
         ) VALUES
         <foreach collection="insertList" item="item" separator=",">
             (
@@ -14,7 +14,7 @@
             #{item.desc}, #{item.plateSwitch}, #{item.stkSwitch}, #{item.introduction},
             #{item.topicCreateTime}, #{item.topicUpdateTime}, #{item.isNew},
             #{item.power}, #{item.subscribe}, #{item.isGood}, #{item.goodNum},
-            #{item.comNum}, #{item.errcode}, #{item.t}
+            #{item.comNum}, #{item.errcode}, #{item.t},#{item.firstShelveTime}, #{item.updateCacheTime}
             )
         </foreach>
         ON DUPLICATE KEY UPDATE
@@ -35,6 +35,8 @@
         com_num = VALUES(com_num),
         errcode = VALUES(errcode),
         t = VALUES(t),
+        first_shelve_time = VALUES(first_shelve_time),
+        update_cache_time = VALUES(update_cache_time),
         update_time = CURRENT_TIMESTAMP
     </insert>
 
