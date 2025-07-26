@@ -143,13 +143,13 @@ public class BaseDataController {
     @GetMapping("/stock_market_list")
     public List<StockMarketDataQueryResultVO> queryStockMarketData(
             @Parameter(description = "股票代码", example = "000001.SZ")
-            @RequestParam(required = false) String windcode,
+            @RequestParam(required = false) String windCode,
             @Parameter(description = "交易日期开始", example = "2023-01-01")
             @RequestParam(required = false) String tradeDateStart,
             @Parameter(description = "交易日期结束", example = "2023-12-31")
             @RequestParam(required = false) String tradeDateEnd,
             @Parameter(description = "股票名称", example = "平安银行")
-            @RequestParam(required = false) String secName,
+            @RequestParam(required = false) String windName,
             @Parameter(description = "最新概念", example = "金融科技")
             @RequestParam(required = false) String latestconcept,
             @Parameter(description = "所属产业链板块", example = "金融服务")
@@ -263,10 +263,10 @@ public class BaseDataController {
             @Parameter(description = "每页大小", example = "20")
             @RequestParam(defaultValue = "20") Integer pageSize) {
         StockMarketDataQueryParam queryParam = new StockMarketDataQueryParam();
-        queryParam.setWindcode(windcode);
+        queryParam.setWindCode(windCode);
         queryParam.setTradeDateStart(tradeDateStart != null ? LocalDate.parse(tradeDateStart) : null);
         queryParam.setTradeDateEnd(tradeDateEnd != null ? LocalDate.parse(tradeDateEnd) : null);
-        queryParam.setSecName(secName);
+        queryParam.setWindName(windName);
         queryParam.setLatestconcept(latestconcept);
         queryParam.setChain(chain);
         queryParam.setOpenMin(openMin != null ? new BigDecimal(openMin) : null);

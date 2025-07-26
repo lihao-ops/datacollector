@@ -340,8 +340,8 @@
 
     <!-- 股票行情数据查询结果映射 -->
     <resultMap id="StockMarketDataResultMap" type="com.hao.datacollector.web.vo.stock.StockMarketDataQueryResultVO">
-        <result column="wind_code" property="windcode"/>
-        <result column="wind_name" property="secName"/>
+        <result column="wind_code" property="windCode"/>
+        <result column="wind_name" property="windName"/>
         <result column="trade_date" property="tradeDate"/>
         <result column="open" property="open"/>
         <result column="close" property="close"/>
@@ -415,8 +415,8 @@
         update_time
         FROM tb_product_stock_daiy_metrics
         <where>
-            <if test="windcode != null and windcode != ''">
-                AND wind_code = #{windcode}
+            <if test="windCode != null and windCode != ''">
+                AND wind_code = #{windCode}
             </if>
             <if test="tradeDateStart != null">
                 AND trade_date <![CDATA[ >= ]]> #{tradeDateStart}
@@ -424,8 +424,8 @@
             <if test="tradeDateEnd != null">
                 AND trade_date <![CDATA[ <= ]]> #{tradeDateEnd}
             </if>
-            <if test="secName != null and secName != ''">
-                AND wind_name LIKE CONCAT('%', #{secName}, '%')
+            <if test="windName != null and windName != ''">
+                AND wind_name LIKE CONCAT('%', #{windName}, '%')
             </if>
             <if test="latestconcept != null and latestconcept != ''">
                 AND latestconcept LIKE CONCAT('%', #{latestconcept}, '%')

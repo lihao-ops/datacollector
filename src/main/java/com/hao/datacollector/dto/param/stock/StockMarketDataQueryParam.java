@@ -17,7 +17,7 @@ import java.time.LocalDate;
 public class StockMarketDataQueryParam {
     
     @Schema(description = "股票代码")
-    private String windcode;
+    private String windCode;
     
     @Schema(description = "交易日期开始")
     private LocalDate tradeDateStart;
@@ -26,7 +26,7 @@ public class StockMarketDataQueryParam {
     private LocalDate tradeDateEnd;
     
     @Schema(description = "股票名称")
-    private String secName;
+    private String windName;
 
     @Schema(description = "最新概念")
     private String latestconcept;
