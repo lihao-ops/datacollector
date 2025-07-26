@@ -3,8 +3,6 @@ package com.hao.datacollector.dto.table.topic;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import java.util.Date;
-
 @Data
 @Schema(description = "插入题材类别信息DTO")
 public class InsertTopicCategoryDTO {
@@ -25,10 +23,10 @@ public class InsertTopicCategoryDTO {
     private Integer isNew;
 
     @Schema(description = "首次上架时间", example = "2024-01-01 10:30:00")
-    private Date firstShelveTime;
+    private String firstShelveTime;
 
     @Schema(description = "缓存更新时间", example = "2024-01-01 10:30:00")
-    private Date updateCacheTime;
+    private String updateCacheTime;
 
     @Schema(description = "父节点ID，0表示一级节点", example = "0", requiredMode = Schema.RequiredMode.REQUIRED)
     private Integer parentId;

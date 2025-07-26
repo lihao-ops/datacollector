@@ -47,4 +47,11 @@ public interface TopicMapper {
      * @return 题材信息列表
      */
     List<TopicInfoKplVO> getKplTopicInfoList(@Param("param") TopicInfoParam queryDTO);
+
+    /**
+     * 获取最大topicId
+     *
+     * @return topicId
+     */
+    Integer getKplTopicMaxId();
 }

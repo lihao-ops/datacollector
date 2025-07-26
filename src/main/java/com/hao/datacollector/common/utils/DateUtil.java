@@ -1,6 +1,7 @@
 package com.hao.datacollector.common.utils;
 
 
+import com.hao.datacollector.common.constant.DateTimeFormatConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 
@@ -759,27 +760,19 @@ public final class DateUtil {
      * @param timestamp Unix时间戳（秒）
      * @return Date对象
      */
-    public static Date timestampToDate(long timestamp) {
-        // Unix时间戳是秒数，需要乘以1000转换为毫秒
-        return new Date(timestamp * 1000L);
-    }
-
     /**
-     * 将毫秒时间戳转换为Date对象
+     * 将 Unix 秒级时间戳转换为北京时间格式字符串
      *
-     * @param timestampMillis 毫秒时间戳
-     * @return Date对象
+     * @param timestamp Unix 时间戳（单位：秒）
+     * @return 格式化后的北京时间字符串，如 "2025-07-22 10:50:08"，非法时间戳返回 null
      */
-    public static Date millsToDate(long timestampMillis) {
-        return new Date(timestampMillis);
-    }
-
-    /**
-     * 获取当前时间的Unix时间戳（秒）
-     *
-     * @return 当前Unix时间戳
-     */
-    public static long getCurrentTimestamp() {
-        return System.currentTimeMillis() / 1000L;
+    public static String timestampToDateStr(long timestamp) {
+        if (timestamp <= 0) {
+            return null;
+        }
+        Date date = new Date(timestamp * 1000L);
+        SimpleDateFormat sdf = new SimpleDateFormat(DateTimeFormatConstants.DEFAULT_DATETIME_FORMAT);
+        sdf.setTimeZone(TimeZone.getTimeZone(DateTimeFormatConstants.SHANG_HAI)); // 设置为北京时间
+        return sdf.format(date);
     }
 }

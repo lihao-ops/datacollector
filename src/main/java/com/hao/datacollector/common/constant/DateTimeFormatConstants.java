@@ -99,4 +99,6 @@ public class DateTimeFormatConstants {
     private DateTimeFormatConstants() {
         throw new UnsupportedOperationException("Utility class cannot be instantiated");
     }
+
+    public static final String SHANG_HAI = "Asia/Shanghai";
 }

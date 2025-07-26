@@ -64,12 +64,12 @@
     <insert id="insertStockCategoryMappingList" parameterType="java.util.List">
         INSERT INTO tb_topic_stock_category_mapping (
         wind_code, category_id, is_zz, is_hot, reason, is_new,
-        prod_name, hot, first_shelve_time, update_cache_time
+        wind_name, hot, first_shelve_time, update_cache_time
         ) VALUES
         <foreach collection="insertList" item="item" separator=",">
             (
             #{item.windCode}, #{item.categoryId}, #{item.isZz}, #{item.isHot},
-            #{item.reason}, #{item.isNew}, #{item.prodName}, #{item.hot},
+            #{item.reason}, #{item.isNew}, #{item.windName}, #{item.hot},
             #{item.firstShelveTime}, #{item.updateCacheTime}
             )
         </foreach>
@@ -78,7 +78,7 @@
         is_hot = VALUES(is_hot),
         reason = VALUES(reason),
         is_new = VALUES(is_new),
-        prod_name = VALUES(prod_name),
+        wind_name = VALUES(wind_name),
         hot = VALUES(hot),
         first_shelve_time = VALUES(first_shelve_time),
         update_cache_time = VALUES(update_cache_time),
@@ -222,4 +222,9 @@
             </choose>
         </if>
     </sql>
+
+    <select id="getKplTopicMaxId" resultType="int">
+        SELECT MAX(topic_id)
+        FROM tb_topic_info
+    </select>
 </mapper>

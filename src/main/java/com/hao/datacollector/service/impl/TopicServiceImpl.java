@@ -1,6 +1,7 @@
 package com.hao.datacollector.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hao.datacollector.common.cache.StockCache;
 import com.hao.datacollector.common.utils.DateUtil;
 import com.hao.datacollector.common.utils.HttpUtil;
 import com.hao.datacollector.common.utils.PageRuleUtil;
@@ -14,7 +15,9 @@ import com.hao.datacollector.dto.param.topic.TopicInfoParam;
 import com.hao.datacollector.dto.table.topic.InsertStockCategoryMappingDTO;
 import com.hao.datacollector.dto.table.topic.InsertTopicCategoryDTO;
 import com.hao.datacollector.dto.table.topic.InsertTopicInfoDTO;
+import com.hao.datacollector.service.StockProfileService;
 import com.hao.datacollector.service.TopicService;
+import com.hao.datacollector.web.vo.stockProfile.SearchKeyBoardVO;
 import com.hao.datacollector.web.vo.topic.TopicInfoKplVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -26,6 +29,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,24 +49,34 @@ public class TopicServiceImpl implements TopicService {
     @Autowired
     private TopicMapper topicMapper;
 
+    @Autowired
+    private StockProfileService stockProfileService;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      * 转档题材库
      *
-     * @param num 遍历题材id的数量
+     * @param startId 遍历题材起始id
+     * @param endId   遍历题材结束id
      * @return 转档结果
      */
     @Override
-    public Boolean setKplTopicInfoJob(Integer num) {
-        for (int id = 1; id <= num; id++) {
+    public Boolean setKplTopicInfoJob(Integer startId, Integer endId) {
+        for (int id = startId; id <= endId; id++) {
             String kplTopicDataStr = getRequestKplTopicData(id);
             // 解析JSON为对象
             HotTopicKpl hotTopic = null;
             try {
                 hotTopic = objectMapper.readValue(kplTopicDataStr, HotTopicKpl.class);
             } catch (Exception e) {
-                throw new RuntimeException("setKplTopicInfoJob_convertData_error!");
+                log.error("setKplTopicInfoJob_convertData_error,id={},result={}", id, kplTopicDataStr);
+                continue;
+//                throw new RuntimeException("setKplTopicInfoJob_convertData_error!");
+            }
+            if (hotTopic == null || !StringUtils.hasLength(hotTopic.getId())) {
+                log.error("setKplTopicInfoJob_getKplTopicData_data_error,id={},result={}", id, kplTopicDataStr);
+                continue;
             }
             //转换插入
             Boolean insertResult = insertKplTopicInsertData(hotTopic);
@@ -85,8 +99,8 @@ public class TopicServiceImpl implements TopicService {
         // 构造请求体参数
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("DeviceID", "26a33d6b656c5a0f8fe859414b5daa0a877e3cb3");
-//                body.add("ID", String.valueOf(id));
-        body.add("ID", String.valueOf(25)); // 注意：这里写死了ID为25，没有使用传入参数
+        body.add("ID", String.valueOf(id));
+//        body.add("ID", String.valueOf(25)); // 注意：这里写死了ID为25，没有使用传入参数
         body.add("PhoneOSNew", "2");
         body.add("Token", "31835bf8e1ff2ac1c5b1001195e0f138");
         body.add("UserID", "4239370");
@@ -110,7 +124,6 @@ public class TopicServiceImpl implements TopicService {
         return response.getBody();
     }
 
-
     /**
      * 插入题材相关数据
      *
@@ -124,8 +137,8 @@ public class TopicServiceImpl implements TopicService {
         BeanUtils.copyProperties(hotTopic, insertTopicInfoDTO);
         insertTopicInfoDTO.setTopicId(Integer.valueOf(hotTopic.getId()));
         //主题时间
-        insertTopicInfoDTO.setTopicCreateTime(DateUtil.timestampToDate(Long.parseLong(hotTopic.getCreateTime())));
-        insertTopicInfoDTO.setTopicUpdateTime(DateUtil.timestampToDate(Long.parseLong(hotTopic.getUpdateTime())));
+        insertTopicInfoDTO.setTopicCreateTime(DateUtil.timestampToDateStr(Long.parseLong(hotTopic.getCreateTime())));
+        insertTopicInfoDTO.setTopicUpdateTime(DateUtil.timestampToDateStr(Long.parseLong(hotTopic.getUpdateTime())));
         //类别信息列表
         List<InsertTopicCategoryDTO> insertCategoryList = new ArrayList<>();
         //类别所属股票映射信息列表
@@ -144,6 +157,12 @@ public class TopicServiceImpl implements TopicService {
             //一级类别数据parentId = 0
             insertCategoryLevel1.setParentId(0);
             insertCategoryLevel1.setCategoryId(Integer.valueOf(level1.getId()));
+            if (StringUtils.hasLength(level1.getFirstShelveTime())) {
+                insertCategoryLevel1.setFirstShelveTime(DateUtil.timestampToDateStr(Long.parseLong(level1.getFirstShelveTime())));
+            }
+            if (StringUtils.hasLength(level1.getUpdateCacheTime())) {
+                insertCategoryLevel1.setUpdateCacheTime(DateUtil.timestampToDateStr(Long.parseLong(level1.getUpdateCacheTime())));
+            }
             insertCategoryList.add(insertCategoryLevel1);
             //一级类别股票映射信息
             List<StockDetail> level1Stocks = level1.getStocks();
@@ -153,6 +172,12 @@ public class TopicServiceImpl implements TopicService {
                     BeanUtils.copyProperties(level1Stock, stockMappingDTO);
                     stockMappingDTO.setWindCode(getWindCodeMapping(level1Stock.getStockId()));
                     stockMappingDTO.setCategoryId(insertCategoryLevel1.getCategoryId());
+                    if (StringUtils.hasLength(level1Stock.getFirstShelveTime())) {
+                        stockMappingDTO.setFirstShelveTime(DateUtil.timestampToDateStr(Long.parseLong(level1Stock.getFirstShelveTime())));
+                    }
+                    if (StringUtils.hasLength(level1Stock.getUpdateCacheTime())) {
+                        stockMappingDTO.setUpdateCacheTime(DateUtil.timestampToDateStr(Long.parseLong(level1Stock.getUpdateCacheTime())));
+                    }
                     insertStockCategoryMappingList.add(stockMappingDTO);
                 }
             }
@@ -162,8 +187,12 @@ public class TopicServiceImpl implements TopicService {
                     InsertTopicCategoryDTO insertCategoryLevel2 = new InsertTopicCategoryDTO();
                     BeanUtils.copyProperties(level2, insertCategoryLevel2);
                     //时间戳转换
-                    insertCategoryLevel2.setFirstShelveTime(DateUtil.timestampToDate(Long.parseLong(level2.getFirstShelveTime())));
-                    insertCategoryLevel2.setUpdateCacheTime(DateUtil.timestampToDate(Long.parseLong(level2.getUpdateCacheTime())));
+                    if (StringUtils.hasLength(level2.getFirstShelveTime())) {
+                        insertCategoryLevel2.setFirstShelveTime(DateUtil.timestampToDateStr(Long.parseLong(level2.getFirstShelveTime())));
+                    }
+                    if (StringUtils.hasLength(level2.getUpdateCacheTime())) {
+                        insertCategoryLevel2.setUpdateCacheTime(DateUtil.timestampToDateStr(Long.parseLong(level2.getUpdateCacheTime())));
+                    }
                     insertCategoryLevel2.setTopicId(Integer.valueOf(hotTopic.getId()));
                     insertCategoryLevel2.setCategoryId(Integer.valueOf(level2.getId()));
                     //指定一级类别id为父id
@@ -176,10 +205,15 @@ public class TopicServiceImpl implements TopicService {
                         InsertStockCategoryMappingDTO stockMappingDTO = new InsertStockCategoryMappingDTO();
                         BeanUtils.copyProperties(level2Stock, stockMappingDTO);
                         stockMappingDTO.setWindCode(getWindCodeMapping(level2Stock.getStockId()));
+                        stockMappingDTO.setWindName(level2Stock.getProdName());
                         stockMappingDTO.setCategoryId(insertCategoryLevel2.getCategoryId());
                         //时间戳转换
-                        stockMappingDTO.setFirstShelveTime(DateUtil.timestampToDate(Long.parseLong(level2Stock.getFirstShelveTime())));
-                        stockMappingDTO.setUpdateCacheTime(DateUtil.timestampToDate(Long.parseLong(level2Stock.getUpdateCacheTime())));
+                        if (StringUtils.hasLength(level2Stock.getFirstShelveTime())) {
+                            stockMappingDTO.setFirstShelveTime(DateUtil.timestampToDateStr(Long.parseLong(level2Stock.getFirstShelveTime())));
+                        }
+                        if (StringUtils.hasLength(level2Stock.getUpdateCacheTime())) {
+                            stockMappingDTO.setUpdateCacheTime(DateUtil.timestampToDateStr(Long.parseLong(level2Stock.getUpdateCacheTime())));
+                        }
                         insertStockCategoryMappingList.add(stockMappingDTO);
                     }
                 }
@@ -201,9 +235,16 @@ public class TopicServiceImpl implements TopicService {
      */
     private Boolean insertTopicInfo
     (List<InsertTopicInfoDTO> insertTopicInfoList, List<InsertTopicCategoryDTO> insertCategoryList, List<InsertStockCategoryMappingDTO> insertStockCategoryMappingList) {
-        int insertTopicNum = topicMapper.insertTopicInfoList(insertTopicInfoList);
-        int insertCategoryNum = topicMapper.insertCategoryList(insertCategoryList);
-        int insertStockNum = topicMapper.insertStockCategoryMappingList(insertStockCategoryMappingList);
+        int insertTopicNum = 0, insertCategoryNum = 0, insertStockNum = 0;
+        if (!insertTopicInfoList.isEmpty()) {
+            insertTopicNum = topicMapper.insertTopicInfoList(insertTopicInfoList);
+        }
+        if (!insertCategoryList.isEmpty()) {
+            insertCategoryNum = topicMapper.insertCategoryList(insertCategoryList);
+        }
+        if (!insertStockCategoryMappingList.isEmpty()) {
+            insertStockNum = topicMapper.insertStockCategoryMappingList(insertStockCategoryMappingList);
+        }
         log.info("insertTopicInfo_insertTopicNum={},insertCategoryNum={},insertStockNum={}", insertTopicNum, insertCategoryNum, insertStockNum);
         return insertTopicNum + insertCategoryNum + insertStockNum > 0;
     }
@@ -215,7 +256,17 @@ public class TopicServiceImpl implements TopicService {
      * @return 带有后缀股票代码
      */
     private String getWindCodeMapping(String stockId) {
-        return stockId + ".SH";
+        //匹配股票代码后缀
+        String windCode = StockCache.getWindCodeByStockId(stockId);
+        if (StringUtils.hasLength(windCode)) {
+            return windCode;
+        }
+        //匹配不到则调用键盘精灵接口获取,实在获取不到则返回原始不带后缀股票代码
+        List<SearchKeyBoardVO> searchKeyBoard = stockProfileService.getSearchKeyBoard(stockId, 1, 10);
+        if (searchKeyBoard != null && searchKeyBoard.size() > 0) {
+            return searchKeyBoard.get(0).getWindCode();
+        }
+        return stockId;
     }
 
     /**

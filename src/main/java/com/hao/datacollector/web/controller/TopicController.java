@@ -1,5 +1,6 @@
 package com.hao.datacollector.web.controller;
 
+import com.hao.datacollector.dal.dao.TopicMapper;
 import com.hao.datacollector.dto.param.topic.TopicInfoParam;
 import com.hao.datacollector.service.TopicService;
 import com.hao.datacollector.web.vo.topic.TopicInfoKplVO;
@@ -26,13 +27,24 @@ public class TopicController {
     @Autowired
     private TopicService topicService;
 
+    @Autowired
+    private TopicMapper topicMapper;
+
     @Operation(summary = "转档题材库", method = "POST")
     @Parameters({
-            @Parameter(name = "num", description = "提问内容对象", required = true)
+            @Parameter(name = "endId", description = "转档结束题材id", required = true)
     })
     @PostMapping("/kpl_job")
-    public Boolean setKplTopicInfoJob(@RequestBody Integer num) {
-        return topicService.setKplTopicInfoJob(num);
+    public Boolean setKplTopicInfoJob(@RequestBody Integer endId) {
+        //获取表中最大topicId作为起始id
+        Integer maxId = topicMapper.getKplTopicMaxId();
+        if (maxId == null) {
+            maxId = 1;
+        }
+        if (endId <= maxId) {
+            throw new RuntimeException("转档endId不能<=表中存储最大id");
+        }
+        return topicService.setKplTopicInfoJob(maxId, endId);
     }
 
     @GetMapping("topic_list")

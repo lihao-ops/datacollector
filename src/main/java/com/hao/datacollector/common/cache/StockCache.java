@@ -6,7 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author hli
@@ -26,10 +28,30 @@ public class StockCache {
      */
     public static List<String> allWindCode;
 
+    /**
+     * 股票ID前缀 -> 完整wind_code 映射
+     * 例如：000001 -> 000001.SZ
+     */
+    public static Map<String, String> stockIdToWindCodeMap = new HashMap<>();
+
     @PostConstruct
     private void initDateList() {
-        // 获取所有A股的代码
         allWindCode = baseDataMapper.getAllAStockCode();
         log.info("StockCache_allWindCode.size={}", allWindCode.size());
+
+        for (String windCode : allWindCode) {
+            // 例如 windCode 是 000001.SZ，截取前缀作为 key
+            String prefix = windCode.split("\\.")[0];
+            // 避免覆盖已有的
+            stockIdToWindCodeMap.putIfAbsent(prefix, windCode);
+        }
+        log.info("StockCache_stockIdToWindCodeMap.size={}", stockIdToWindCodeMap.size());
+    }
+
+    /**
+     * 根据股票ID获取完整wind_code
+     */
+    public static String getWindCodeByStockId(String stockId) {
+        return stockIdToWindCodeMap.get(stockId);
     }
 }

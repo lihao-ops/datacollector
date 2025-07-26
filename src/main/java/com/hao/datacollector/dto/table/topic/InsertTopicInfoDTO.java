@@ -34,10 +34,10 @@ public class InsertTopicInfoDTO {
     private String introduction;
 
     @Schema(description = "主题创建时间")
-    private Date topicCreateTime;
+    private String topicCreateTime;
 
     @Schema(description = "主题更新时间")
-    private Date topicUpdateTime;
+    private String topicUpdateTime;
 
     @Schema(description = "是否新增：1.是，0.否", example = "1")
     private Integer isNew;

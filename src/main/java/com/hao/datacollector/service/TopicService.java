@@ -2,7 +2,6 @@ package com.hao.datacollector.service;
 
 
 import com.hao.datacollector.dto.param.topic.TopicInfoParam;
-import com.hao.datacollector.web.vo.limitup.TopicInfoVO;
 import com.hao.datacollector.web.vo.topic.TopicInfoKplVO;
 
 import java.util.List;
@@ -16,10 +15,11 @@ public interface TopicService {
     /**
      * 转档题材库
      *
-     * @param num 遍历题材id的数量
+     * @param startId 遍历题材起始id
+     * @param endId   遍历题材结束id
      * @return 转档结果
      */
-    Boolean setKplTopicInfoJob(Integer num);
+    Boolean setKplTopicInfoJob(Integer startId, Integer endId);
 
     /**
      * 获取热门题材信息列表

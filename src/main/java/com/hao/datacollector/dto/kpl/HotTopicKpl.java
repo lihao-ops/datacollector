@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.List;
-import java.util.Map;
 
 @Data
 @Schema(description = "热门主题(开盘啦)DTO")
@@ -76,7 +75,7 @@ public class HotTopicKpl {
 
     @JsonProperty("ZT")
     @Schema(description = "涨停相关数据")
-    private Map<String, List<Object>> zt;
+    private Object zt;
 
     @JsonProperty("IsGood")
     @Schema(description = "是否点赞", example = "1")
