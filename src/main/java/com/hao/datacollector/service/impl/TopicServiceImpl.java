@@ -99,8 +99,8 @@ public class TopicServiceImpl implements TopicService {
         // 构造请求体参数
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("DeviceID", "26a33d6b656c5a0f8fe859414b5daa0a877e3cb3");
-        body.add("ID", String.valueOf(id));
-//        body.add("ID", String.valueOf(25)); // 注意：这里写死了ID为25，没有使用传入参数
+//        body.add("ID", String.valueOf(id));
+        body.add("ID", String.valueOf(59)); // 注意：这里写死了ID为25，没有使用传入参数
         body.add("PhoneOSNew", "2");
         body.add("Token", "31835bf8e1ff2ac1c5b1001195e0f138");
         body.add("UserID", "4239370");
@@ -205,7 +205,8 @@ public class TopicServiceImpl implements TopicService {
                         InsertStockCategoryMappingDTO stockMappingDTO = new InsertStockCategoryMappingDTO();
                         BeanUtils.copyProperties(level2Stock, stockMappingDTO);
                         stockMappingDTO.setWindCode(getWindCodeMapping(level2Stock.getStockId()));
-                        stockMappingDTO.setWindName(level2Stock.getProdName());
+                        //存在匹配不到windCode的股票，特殊处理
+                        stockMappingDTO.setWindName(getWindName(stockMappingDTO.getWindCode()));
                         stockMappingDTO.setCategoryId(insertCategoryLevel2.getCategoryId());
                         //时间戳转换
                         if (StringUtils.hasLength(level2Stock.getFirstShelveTime())) {
@@ -267,6 +268,25 @@ public class TopicServiceImpl implements TopicService {
             return searchKeyBoard.get(0).getWindCode();
         }
         return stockId;
+    }
+
+    /**
+     * 获取股票名称
+     *
+     * @param windCode 股票代码
+     * @return 对应的股票名称
+     */
+    private String getWindName(String windCode) {
+        String windName = StockCache.getWindNameByWindCode(windCode);
+        if (StringUtils.hasLength(windName)) {
+            return null;
+        }
+        //匹配不到则调用键盘精灵接口获取,实在获取不到则返回原始不带后缀股票代码
+        List<SearchKeyBoardVO> searchKeyBoard = stockProfileService.getSearchKeyBoard(windCode, 1, 10);
+        if (searchKeyBoard != null && searchKeyBoard.size() > 0) {
+            return searchKeyBoard.get(0).getName();
+        }
+        return null;
     }
 
     /**

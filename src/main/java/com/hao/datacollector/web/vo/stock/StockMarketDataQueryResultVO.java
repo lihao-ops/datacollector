@@ -17,7 +17,7 @@ import java.time.LocalDate;
 public class StockMarketDataQueryResultVO {
 
     @Schema(description = "股票代码", required = true)
-    private String windcode;
+    private String windCode;
 
     @Schema(description = "股票名称")
     private String secName;

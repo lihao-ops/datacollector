@@ -9,6 +9,16 @@
         FROM tb_product_stock_basic_info;
     </select>
 
+    <resultMap id="AllStockBaseInfoMap" type="com.hao.datacollector.dto.table.base.StockBaseDTO">
+        <result column="wind_code" property="windCode"/>
+        <result column="wind_name" property="windName"/>
+    </resultMap>
+
+    <select id="getAllStockBaseInfo" resultMap="AllStockBaseInfoMap">
+        SELECT `wind_code`, `wind_name`
+        FROM tb_product_stock_basic_info;
+    </select>
+
     <insert id="batchInsertStockFinancialMetrics" parameterType="java.util.List">
         INSERT INTO tb_product_stock_financial_metrics (
         wind_code,
@@ -76,7 +86,7 @@
     <insert id="batchInsertStockBasicInfo" parameterType="java.util.List">
         INSERT INTO tb_product_stock_basic_info (
         wind_code,
-        sec_name,
+        wind_name,
         listing_date,
         status_existence,
         concept_plates,
@@ -119,8 +129,8 @@
     <insert id="batchInsertStockMarketData" parameterType="java.util.List" useGeneratedKeys="false">
         insert into tb_product_stock_daiy_metrics (
         trade_date,
-        windcode,
-        sec_name,
+        wind_code,
+        wind_name,
         latestconcept,
         CHAIN,
         OPEN,
@@ -191,7 +201,7 @@
     </insert>
 
     <select id="getInsertMarketCode" resultType="string">
-        SELECT DISTINCT `windcode`
+        SELECT DISTINCT `wind_code`
         FROM tb_product_stock_daiy_metrics
         WHERE 1 = 1
         <if test="startDate != null and startDate != ''">
@@ -225,7 +235,7 @@
     <!-- 股票基本信息查询结果映射 -->
     <resultMap id="StockBasicInfoResultMap" type="com.hao.datacollector.web.vo.stock.StockBasicInfoQueryResultVO">
         <result column="wind_code" property="windCode"/>
-        <result column="sec_name" property="secName"/>
+        <result column="wind_name" property="secName"/>
         <result column="listing_date" property="listingDate"/>
         <result column="status_existence" property="statusExistence"/>
         <result column="concept_plates" property="conceptPlates"/>
@@ -248,7 +258,7 @@
     <select id="queryStockBasicInfo" resultMap="StockBasicInfoResultMap">
         SELECT
         wind_code,
-        sec_name,
+        wind_name,
         listing_date,
         status_existence,
         concept_plates,
@@ -271,7 +281,7 @@
                 AND wind_code = #{windCode}
             </if>
             <if test="secName != null and secName != ''">
-                AND sec_name LIKE CONCAT('%', #{secName}, '%')
+                AND wind_name LIKE CONCAT('%', #{secName}, '%')
             </if>
             <if test="swIndustryName != null and swIndustryName != ''">
                 AND sw_industry_name LIKE CONCAT('%', #{swIndustryName}, '%')
@@ -330,8 +340,8 @@
 
     <!-- 股票行情数据查询结果映射 -->
     <resultMap id="StockMarketDataResultMap" type="com.hao.datacollector.web.vo.stock.StockMarketDataQueryResultVO">
-        <result column="windcode" property="windcode"/>
-        <result column="sec_name" property="secName"/>
+        <result column="wind_code" property="windcode"/>
+        <result column="wind_name" property="secName"/>
         <result column="trade_date" property="tradeDate"/>
         <result column="open" property="open"/>
         <result column="close" property="close"/>
@@ -369,8 +379,8 @@
     <!-- 查询股票行情数据 -->
     <select id="queryStockMarketData" resultMap="StockMarketDataResultMap">
         SELECT
-        windcode,
-        sec_name,
+        wind_code,
+        wind_name,
         trade_date,
         open,
         close,
@@ -406,7 +416,7 @@
         FROM tb_product_stock_daiy_metrics
         <where>
             <if test="windcode != null and windcode != ''">
-                AND windcode = #{windcode}
+                AND wind_code = #{windcode}
             </if>
             <if test="tradeDateStart != null">
                 AND trade_date <![CDATA[ >= ]]> #{tradeDateStart}
@@ -415,7 +425,7 @@
                 AND trade_date <![CDATA[ <= ]]> #{tradeDateEnd}
             </if>
             <if test="secName != null and secName != ''">
-                AND sec_name LIKE CONCAT('%', #{secName}, '%')
+                AND wind_name LIKE CONCAT('%', #{secName}, '%')
             </if>
             <if test="latestconcept != null and latestconcept != ''">
                 AND latestconcept LIKE CONCAT('%', #{latestconcept}, '%')
@@ -580,7 +590,7 @@
                 AND esg_rating_wind = #{esgRatingWind}
             </if>
         </where>
-        ORDER BY trade_date DESC, windcode
+        ORDER BY trade_date DESC, wind_code
         <if test="pageSize != null and pageNo != null">
             LIMIT #{pageNo}, #{pageSize}
         </if>

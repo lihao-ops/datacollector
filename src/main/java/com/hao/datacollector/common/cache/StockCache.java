@@ -1,6 +1,7 @@
 package com.hao.datacollector.common.cache;
 
 import com.hao.datacollector.dal.dao.BaseDataMapper;
+import com.hao.datacollector.dto.table.base.StockBaseDTO;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author hli
@@ -34,11 +36,20 @@ public class StockCache {
      */
     public static Map<String, String> stockIdToWindCodeMap = new HashMap<>();
 
+    /**
+     * 股票基本信息map
+     * key:windCode,value:windName
+     */
+    public static Map<String, String> windCodeToNameMap = new HashMap<>();
+
     @PostConstruct
     private void initDateList() {
         allWindCode = baseDataMapper.getAllAStockCode();
         log.info("StockCache_allWindCode.size={}", allWindCode.size());
-
+        List<StockBaseDTO> allWindBaseInfo = baseDataMapper.getAllStockBaseInfo();
+        windCodeToNameMap = allWindBaseInfo.stream()
+                .collect(Collectors.toMap(StockBaseDTO::getWindCode, StockBaseDTO::getWindName));
+        log.info("StockCache_allWindBaseInfo.size={},windCodeToNameMap.size={}", allWindBaseInfo.size(), windCodeToNameMap.size());
         for (String windCode : allWindCode) {
             // 例如 windCode 是 000001.SZ，截取前缀作为 key
             String prefix = windCode.split("\\.")[0];
@@ -53,5 +64,12 @@ public class StockCache {
      */
     public static String getWindCodeByStockId(String stockId) {
         return stockIdToWindCodeMap.get(stockId);
+    }
+
+    /**
+     * 根据windCode获取股票名称
+     */
+    public static String getWindNameByWindCode(String windCode) {
+        return windCodeToNameMap.get(windCode);
     }
 }

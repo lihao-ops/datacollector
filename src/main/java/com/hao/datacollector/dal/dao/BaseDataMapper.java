@@ -2,6 +2,7 @@ package com.hao.datacollector.dal.dao;
 
 import com.hao.datacollector.dto.param.stock.StockBasicInfoQueryParam;
 import com.hao.datacollector.dto.param.stock.StockMarketDataQueryParam;
+import com.hao.datacollector.dto.table.base.StockBaseDTO;
 import com.hao.datacollector.dto.table.base.StockBasicInfoInsertDTO;
 import com.hao.datacollector.dto.table.base.StockDailyMetricsDTO;
 import com.hao.datacollector.dto.table.base.StockFinancialMetricsInsertDTO;
@@ -35,6 +36,13 @@ public interface BaseDataMapper {
      * @return 包含所有A股票证券代码的列表
      */
     List<String> getAllAStockCode();
+
+    /**
+     * 获取所有股票的股票code+name
+     *
+     * @return 列表
+     */
+    List<StockBaseDTO> getAllStockBaseInfo();
 
     /**
      * 批量插入股票行情数据
