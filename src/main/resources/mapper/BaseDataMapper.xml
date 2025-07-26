@@ -235,7 +235,7 @@
     <!-- 股票基本信息查询结果映射 -->
     <resultMap id="StockBasicInfoResultMap" type="com.hao.datacollector.web.vo.stock.StockBasicInfoQueryResultVO">
         <result column="wind_code" property="windCode"/>
-        <result column="wind_name" property="secName"/>
+        <result column="wind_name" property="windName"/>
         <result column="listing_date" property="listingDate"/>
         <result column="status_existence" property="statusExistence"/>
         <result column="concept_plates" property="conceptPlates"/>
@@ -280,8 +280,8 @@
             <if test="windCode != null and windCode != ''">
                 AND wind_code = #{windCode}
             </if>
-            <if test="secName != null and secName != ''">
-                AND wind_name LIKE CONCAT('%', #{secName}, '%')
+            <if test="windName != null and windName != ''">
+                AND wind_name LIKE CONCAT('%', #{windName}, '%')
             </if>
             <if test="swIndustryName != null and swIndustryName != ''">
                 AND sw_industry_name LIKE CONCAT('%', #{swIndustryName}, '%')

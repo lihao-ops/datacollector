@@ -19,7 +19,7 @@ public class StockBasicInfoQueryResultVO {
     private String windCode;
 
     @Schema(description = "股票名称")
-    private String secName;
+    private String windName;
 
     @Schema(description = "上市日期")
     private LocalDate listingDate;

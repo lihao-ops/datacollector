@@ -71,7 +71,7 @@ public class BaseDataController {
             @Parameter(description = "股票代码", example = "000001.SZ")
             @RequestParam(required = false) String windCode,
             @Parameter(description = "股票名称", example = "平安银行")
-            @RequestParam(required = false) String secName,
+            @RequestParam(required = false) String windName,
             @Parameter(description = "申万行业代码", example = "801780")
             @RequestParam(required = false) String swIndustryCode,
             @Parameter(description = "申万行业名称", example = "银行")
@@ -112,7 +112,7 @@ public class BaseDataController {
             @RequestParam(defaultValue = "20") Integer pageSize) {
         StockBasicInfoQueryParam queryParam = new StockBasicInfoQueryParam();
         queryParam.setWindCode(windCode);
-        queryParam.setSecName(secName);
+        queryParam.setWindName(windName);
         queryParam.setSwIndustryCode(swIndustryCode);
         queryParam.setSwIndustryName(swIndustryName);
         queryParam.setCiticIndustryCode(citicIndustryCode);

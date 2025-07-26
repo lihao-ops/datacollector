@@ -19,7 +19,7 @@ public class StockBasicInfoQueryParam {
     private String windCode;
 
     @Schema(description = "股票名称")
-    private String secName;
+    private String windName;
 
     @Schema(description = "申万行业代码")
     private String swIndustryCode;
