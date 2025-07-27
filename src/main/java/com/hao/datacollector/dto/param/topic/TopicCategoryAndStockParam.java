@@ -24,8 +24,8 @@ public class TopicCategoryAndStockParam {
     private String categoryName;
     @Schema(description = "父类别id", example = "1534")
     private Integer parentCategoryId;
-    @Schema(description = "指数代码", example = "880880")
-    private String zsCode;
+    @Schema(description = "分类表指数代码", example = "880880")
+    private String categoryZsCode;
 
     @Schema(description = "股票代码", example = "300537.SH")
     private String windCode;

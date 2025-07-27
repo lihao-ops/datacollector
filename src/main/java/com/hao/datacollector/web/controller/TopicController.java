@@ -22,7 +22,7 @@ import java.util.List;
  * @description: 题材Controller
  */
 @Slf4j
-@Tag(name = "题材")
+@Tag(name = "题材模块")
 @RestController("topic")
 public class TopicController {
 
@@ -114,7 +114,7 @@ public class TopicController {
             @Parameter(name = "categoryId", description = "类别ID", example = "1001"),
             @Parameter(name = "categoryName", description = "分类名称（模糊）", example = "材料"),
             @Parameter(name = "parentCategoryId", description = "父类别ID", example = "1534"),
-            @Parameter(name = "zsCode", description = "指数代码", example = "880880"),
+            @Parameter(name = "categoryZsCode", description = "类别表指数代码", example = "880880"),
             @Parameter(name = "pageNo", description = "页码", example = "1"),
             @Parameter(name = "pageSize", description = "每页大小", example = "10")
     })
@@ -126,7 +126,7 @@ public class TopicController {
             @RequestParam(required = false) Integer categoryId,
             @RequestParam(required = false) Integer parentCategoryId,
             @RequestParam(required = false) String categoryName,
-            @RequestParam(required = false) String zsCode,
+            @RequestParam(required = false) String categoryZsCode,
             @RequestParam(defaultValue = "1") Integer pageNo,
             @RequestParam(defaultValue = "10") Integer pageSize
     ) {
@@ -138,7 +138,7 @@ public class TopicController {
                 .categoryId(categoryId)
                 .categoryName(categoryName)
                 .parentCategoryId(parentCategoryId)
-                .zsCode(zsCode)
+                .categoryZsCode(categoryZsCode)
                 .pageNo(pageNo)
                 .pageSize(pageSize)
                 .build();

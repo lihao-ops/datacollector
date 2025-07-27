@@ -303,8 +303,8 @@
             <if test="param.parentCategoryId != null">
                 AND c.parent_category_id = #{param.parentCategoryId}
             </if>
-            <if test="param.zsCode != null and param.zsCode != ''">
-                AND c.zs_code = #{param.zsCode}
+            <if test="param.categoryZsCode != null and param.categoryZsCode != ''">
+                AND c.zs_code = #{param.categoryZsCode}
             </if>
             <if test="param.categoryName != null and param.categoryName != ''">
                 AND c.name LIKE CONCAT('%', #{param.categoryName}, '%')
