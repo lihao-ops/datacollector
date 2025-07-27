@@ -63,7 +63,7 @@ public class TopicController {
             @Parameter(name = "minSubscribe", description = "最小订阅数"),
             @Parameter(name = "minGoodNum", description = "最小点赞数"),
             @Parameter(name = "status", description = "状态：0.无效，1.有效"),
-            @Parameter(name = "pageNum", description = "页码", example = "1"),
+            @Parameter(name = "pageNo", description = "页码", example = "1"),
             @Parameter(name = "pageSize", description = "每页大小", example = "10")
     })
     public List<TopicInfoKplVO> getKplTopicInfoList(
