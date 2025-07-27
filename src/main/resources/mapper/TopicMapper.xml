@@ -229,4 +229,97 @@
         SELECT MAX(topic_id)
         FROM tb_topic_info
     </select>
+
+    <resultMap id="TopicCategoryAndStockResultMap" type="com.hao.datacollector.web.vo.topic.TopicCategoryAndStockVO">
+        <result column="total_num" property="totalNum"/>
+
+        <!-- 题材字段 -->
+        <result column="topic_id" property="topicId"/>
+        <result column="topic_name" property="name"/>
+
+        <!-- 分类字段 -->
+        <result column="category_id" property="categoryId"/>
+        <result column="category_name" property="categoryName"/>
+        <result column="zs_code" property="categoryZsCode"/>
+        <result column="category_is_new" property="categoryIsNew"/>
+        <result column="category_first_shelve_time" property="categoryFirstShelveTime"/>
+        <result column="category_update_cache_time" property="categoryUpdateCacheTime"/>
+        <result column="parent_category_id" property="parentId"/>
+
+        <!-- 嵌套 List<InsertStockCategoryMappingDTO> -->
+        <collection property="stockCategoryList"
+                    ofType="com.hao.datacollector.dto.table.topic.InsertStockCategoryMappingDTO"
+                    notNullColumn="wind_code">
+            <result column="wind_code" property="windCode"/>
+            <result column="wind_name" property="windName"/>
+            <result column="category_id" property="categoryId"/>
+            <result column="is_zz" property="isZz"/>
+            <result column="is_hot" property="isHot"/>
+            <result column="reason" property="reason"/>
+            <result column="stock_is_new" property="isNew"/>
+            <result column="hot" property="hot"/>
+            <result column="stock_first_shelve_time" property="firstShelveTime"/>
+            <result column="stock_update_cache_time" property="updateCacheTime"/>
+        </collection>
+    </resultMap>
+
+    <select id="getKplCategoryAndStockList" resultMap="TopicCategoryAndStockResultMap">
+        SELECT
+        t.topic_id,
+        t.name AS topic_name,
+
+        c.category_id,
+        c.name AS category_name,
+        c.zs_code,
+        c.is_new AS category_is_new,
+        c.first_shelve_time AS category_first_shelve_time,
+        c.update_cache_time AS category_update_cache_time,
+        c.parent_category_id,
+
+        s.wind_code,
+        s.wind_name,
+        s.is_zz,
+        s.is_hot,
+        s.reason,
+        s.is_new AS stock_is_new,
+        s.hot,
+        s.first_shelve_time AS stock_first_shelve_time,
+        s.update_cache_time AS stock_update_cache_time,
+
+        COUNT(*) OVER() AS total_num
+
+        FROM tb_topic_category c
+        LEFT JOIN tb_topic_info t ON c.topic_id = t.topic_id
+        LEFT JOIN tb_topic_stock_category_mapping s ON c.category_id = s.category_id
+
+        <where>
+            c.status = 1
+            <if test="param.topicId != null">
+                AND c.topic_id = #{param.topicId}
+            </if>
+            <if test="param.categoryId != null">
+                AND c.category_id = #{param.categoryId}
+            </if>
+            <if test="param.parentCategoryId != null">
+                AND c.parent_category_id = #{param.parentCategoryId}
+            </if>
+            <if test="param.zsCode != null and param.zsCode != ''">
+                AND c.zs_code = #{param.zsCode}
+            </if>
+            <if test="param.categoryName != null and param.categoryName != ''">
+                AND c.name LIKE CONCAT('%', #{param.categoryName}, '%')
+            </if>
+            <if test="param.topicName != null and param.topicName != ''">
+                AND t.name LIKE CONCAT('%', #{param.topicName}, '%')
+            </if>
+            <if test="param.windCode != null and param.windCode != ''">
+                AND s.wind_code = #{param.windCode}
+            </if>
+            <if test="param.windName != null and param.windName != ''">
+                AND s.wind_name LIKE CONCAT('%', #{param.windName}, '%')
+            </if>
+        </where>
+        ORDER BY c.update_cache_time DESC
+        LIMIT #{param.pageNo}, #{param.pageSize}
+    </select>
 </mapper>

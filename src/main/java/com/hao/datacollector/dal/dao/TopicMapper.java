@@ -1,10 +1,12 @@
 package com.hao.datacollector.dal.dao;
 
 
+import com.hao.datacollector.dto.param.topic.TopicCategoryAndStockParam;
 import com.hao.datacollector.dto.param.topic.TopicInfoParam;
 import com.hao.datacollector.dto.table.topic.InsertStockCategoryMappingDTO;
 import com.hao.datacollector.dto.table.topic.InsertTopicCategoryDTO;
 import com.hao.datacollector.dto.table.topic.InsertTopicInfoDTO;
+import com.hao.datacollector.web.vo.topic.TopicCategoryAndStockVO;
 import com.hao.datacollector.web.vo.topic.TopicInfoKplVO;
 import org.apache.ibatis.annotations.Param;
 
@@ -54,4 +56,12 @@ public interface TopicMapper {
      * @return topicId
      */
     Integer getKplTopicMaxId();
+
+    /**
+     * 获取题材分类及股票映射列表
+     *
+     * @param queryDTO 题材分类及股票映射查询参数对象，包含分页、筛选、排序等条件
+     * @return 题材分类及股票映射列表
+     */
+    List<TopicCategoryAndStockVO> getKplCategoryAndStockList(@Param("param") TopicCategoryAndStockParam queryDTO);
 }

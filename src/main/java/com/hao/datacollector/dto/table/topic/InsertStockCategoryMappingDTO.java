@@ -7,7 +7,7 @@ import lombok.Data;
 @Schema(description = "插入股票题材类别映射DTO")
 public class InsertStockCategoryMappingDTO {
 
-    @Schema(description = "股票代码(需转换后缀)", example = "300537", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "股票代码(需转换后缀)", example = "300537.SH", requiredMode = Schema.RequiredMode.REQUIRED)
     private String windCode;
 
     @Schema(description = "股票名称", example = "广信材料")

@@ -44,7 +44,7 @@ class QuotationServiceTest {
         List<String> yearTradeDateList = DateUtil.formatLocalDateList(DateCache.Year2024TradeDateList, DateTimeFormatConstants.EIGHT_DIGIT_DATE_FORMAT);
         //从当年已转档的最大日期(包含),并且剔除最大日期已经转档过的windCode,继续开始转档
         String maxEndDate = quotationMapper.getMaxHistoryTrendEndDate("2024");
-//        String maxEndDate = "20240801";
+//        String maxEndDate = "20240902";
         List<String> completedWindCodes = quotationMapper.getCompletedWindCodes(maxEndDate);
         int tradeDateIndexOf = yearTradeDateList.indexOf(maxEndDate);
         int batchSize = 100;

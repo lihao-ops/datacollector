@@ -1,6 +1,7 @@
 package com.hao.datacollector.web.controller;
 
 import com.hao.datacollector.dal.dao.TopicMapper;
+import com.hao.datacollector.dto.param.topic.TopicCategoryAndStockParam;
 import com.hao.datacollector.dto.param.topic.TopicInfoParam;
 import com.hao.datacollector.service.TopicService;
 import com.hao.datacollector.web.vo.topic.TopicCategoryAndStockVO;
@@ -98,17 +99,49 @@ public class TopicController {
         return topicService.getKplTopicInfoList(queryDTO);
     }
 
-//    @GetMapping("category_stock_list")
-//    @Operation(summary = "获取类别及关联股票列表", description = "查询题材类别信息及其关联的股票映射数据")
-//    public List<TopicCategoryAndStockVO> getKplCategoryAndStockList(
-//            @Parameter(description = "题材ID", example = "25") @RequestParam(required = false) Integer topicId,
-//            @Parameter(description = "类别ID", example = "1534") @RequestParam(required = false) Integer categoryId,
-//            @Parameter(description = "类别名称(模糊查询)", example = "材料") @RequestParam(required = false) String categoryName,
-//            @Parameter(description = "股票代码", example = "300537.SZ") @RequestParam(required = false) String windCode,
-//            @Parameter(description = "是否主做：1.是，0.否", example = "1") @RequestParam(required = false) String isZz,
-//            @Parameter(description = "是否热门：1.是，0.否", example = "1") @RequestParam(required = false) String isHot,
-//            @Parameter(description = "是否新增：1.是，0.否", example = "1") @RequestParam(required = false) Integer isNew,
-//            @Parameter(description = "状态：0.无效,1.有效", example = "1") @RequestParam(required = false, defaultValue = "1") Integer status) {
-//        return topicService.getKplCategoryAndStockList(topicId, categoryId, categoryName, windCode, isZz, isHot, isNew, status);
-//    }
+    @GetMapping("category_stock_list")
+    @Operation(
+            summary = "获取类别及关联股票列表",
+            description = "查询题材类别信息及其关联的股票映射数据，支持分页、股票、分类、题材等多条件筛选"
+    )
+    @Parameters({
+            @Parameter(name = "topicId", description = "所属题材ID", example = "22"),
+            @Parameter(name = "topicName", description = "题材名称（模糊）", example = "BC电池"),
+
+            @Parameter(name = "windCode", description = "股票代码（精确）", example = "300537.SH"),
+            @Parameter(name = "windName", description = "股票名称（模糊）", example = "广信材料"),
+
+            @Parameter(name = "categoryId", description = "类别ID", example = "1001"),
+            @Parameter(name = "categoryName", description = "分类名称（模糊）", example = "材料"),
+            @Parameter(name = "parentCategoryId", description = "父类别ID", example = "1534"),
+            @Parameter(name = "zsCode", description = "指数代码", example = "880880"),
+            @Parameter(name = "pageNo", description = "页码", example = "1"),
+            @Parameter(name = "pageSize", description = "每页大小", example = "10")
+    })
+    public List<TopicCategoryAndStockVO> getKplCategoryAndStockList(
+            @RequestParam(required = false) Integer topicId,
+            @RequestParam(required = false) String topicName,
+            @RequestParam(required = false) String windCode,
+            @RequestParam(required = false) String windName,
+            @RequestParam(required = false) Integer categoryId,
+            @RequestParam(required = false) Integer parentCategoryId,
+            @RequestParam(required = false) String categoryName,
+            @RequestParam(required = false) String zsCode,
+            @RequestParam(defaultValue = "1") Integer pageNo,
+            @RequestParam(defaultValue = "10") Integer pageSize
+    ) {
+        TopicCategoryAndStockParam queryDTO = TopicCategoryAndStockParam.builder()
+                .windCode(windCode)
+                .windName(windName)
+                .topicId(topicId)
+                .topicName(topicName)
+                .categoryId(categoryId)
+                .categoryName(categoryName)
+                .parentCategoryId(parentCategoryId)
+                .zsCode(zsCode)
+                .pageNo(pageNo)
+                .pageSize(pageSize)
+                .build();
+        return topicService.getKplCategoryAndStockList(queryDTO);
+    }
 }

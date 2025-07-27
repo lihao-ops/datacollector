@@ -11,6 +11,7 @@ import com.hao.datacollector.dto.kpl.CategoryLevel;
 import com.hao.datacollector.dto.kpl.HotTopicKpl;
 import com.hao.datacollector.dto.kpl.StockDetail;
 import com.hao.datacollector.dto.kpl.TopicTable;
+import com.hao.datacollector.dto.param.topic.TopicCategoryAndStockParam;
 import com.hao.datacollector.dto.param.topic.TopicInfoParam;
 import com.hao.datacollector.dto.table.topic.InsertStockCategoryMappingDTO;
 import com.hao.datacollector.dto.table.topic.InsertTopicCategoryDTO;
@@ -18,6 +19,7 @@ import com.hao.datacollector.dto.table.topic.InsertTopicInfoDTO;
 import com.hao.datacollector.service.StockProfileService;
 import com.hao.datacollector.service.TopicService;
 import com.hao.datacollector.web.vo.stockProfile.SearchKeyBoardVO;
+import com.hao.datacollector.web.vo.topic.TopicCategoryAndStockVO;
 import com.hao.datacollector.web.vo.topic.TopicInfoKplVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -313,5 +315,20 @@ public class TopicServiceImpl implements TopicService {
         queryDTO.setPageNo(pageParam.getPageNo());
         queryDTO.setPageSize(pageParam.getPageSize());
         return topicMapper.getKplTopicInfoList(queryDTO);
+    }
+
+    /**
+     * 获取题材分类及股票映射列表
+     *
+     * @param queryDTO 题材分类及股票映射查询参数对象，包含分页、筛选、排序等条件
+     * @return 题材分类及股票映射列表
+     */
+    @Override
+    public List<TopicCategoryAndStockVO> getKplCategoryAndStockList(TopicCategoryAndStockParam queryDTO) {
+        // 获取分页参数
+        PageNumDTO pageParam = PageRuleUtil.getPageParam(queryDTO.getPageNo(), queryDTO.getPageSize(), 1);
+        queryDTO.setPageNo(pageParam.getPageNo());
+        queryDTO.setPageSize(pageParam.getPageSize());
+        return topicMapper.getKplCategoryAndStockList(queryDTO);
     }
 }
