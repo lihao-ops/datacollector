@@ -16,6 +16,7 @@ class LimitUpServiceTest {
 
     @Autowired
     private LimitUpService limitUpService;
+
     @Test
     void transferLimitUpDataToDatabase() {
 
@@ -23,7 +24,7 @@ class LimitUpServiceTest {
         yearTradeDateList.forEach(date -> {
             Boolean success = limitUpService.transferLimitUpDataToDatabase(date);
             if (!success) {
-                log.error("Date={} 转移失败", date);
+                log.error("Date={} 转档失败", date);
             }
         });
     }
