@@ -50,7 +50,7 @@ public class BaseDataController {
             summary = "获取交易日历",
             description = "根据时间区间获取交易日历"
     )
-    @PostMapping("/get_trade_date")
+    @GetMapping("/get_trade_date")
     public List<String> getTradeDateListByTime(
             @Parameter(description = "起始日", example = "日历起始日:例如20250614")
             @RequestParam String startTime,

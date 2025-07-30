@@ -21,6 +21,7 @@ import com.wind.api.struct.WindData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
@@ -323,8 +324,10 @@ public class BaseDataServiceImpl implements BaseDataService {
      * @return 交易日历
      */
     @Override
+    @Cacheable(cacheNames = "tradeDateListByTime", key = "#startTime + #endTime", cacheManager = "dateCaffeineCacheManager")
     public List<LocalDate> getTradeDateListByTime(String startTime, String endTime) {
         List<String> listByTime = baseDataMapper.getTradeDateListByTime(startTime, endTime);
+        log.info("getTradeDateListByTime,listByTime.size={}", listByTime.size());
         //转换为通用的LocalDate提供自由日期格式转换
         return listByTime.stream()
                 .map(LocalDate::parse) // 默认是 yyyy-MM-dd 格式
