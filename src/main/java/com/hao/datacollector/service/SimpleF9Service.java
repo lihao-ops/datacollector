@@ -117,4 +117,84 @@ public interface SimpleF9Service {
      * @return 转档结果
      */
     Boolean insertCompanyProfileDataJob(F9Param f9Param);
+
+    /**
+     * 转档资讯信息
+     *
+     * @param f9Param 简版F9参数
+     * @return 转档结果
+     */
+    Boolean insertInformationDataJob(F9Param f9Param);
+
+    /**
+     * 转档关键统计信息
+     *
+     * @param f9Param 简版F9参数
+     * @return 转档结果
+     */
+    Boolean insertKeyStatisticsDataJob(F9Param f9Param);
+
+    /**
+     * 转档公司信息
+     *
+     * @param f9Param 简版F9参数
+     * @return 转档结果
+     */
+    Boolean insertCompanyInfoDataJob(F9Param f9Param);
+
+    /**
+     * 转档公告信息
+     *
+     * @param f9Param 简版F9参数
+     * @return 转档结果
+     */
+    Boolean insertNoticeDataJob(F9Param f9Param);
+
+    /**
+     * 转档大事信息
+     *
+     * @param f9Param 简版F9参数
+     * @return 转档结果
+     */
+    Boolean insertGreatEventDataJob(F9Param f9Param);
+
+    /**
+     * 转档盈利预测信息
+     *
+     * @param f9Param 简版F9参数
+     * @return 转档结果
+     */
+    Boolean insertProfitForecastDataJob(F9Param f9Param);
+
+    /**
+     * 转档市场表现信息
+     *
+     * @param f9Param 简版F9参数
+     * @return 转档结果
+     */
+    Boolean insertMarketPerformanceDataJob(F9Param f9Param);
+
+    /**
+     * 转档PE_BAND信息
+     *
+     * @param f9Param 简版F9参数
+     * @return 转档结果
+     */
+    Boolean insertPeBandDataJob(F9Param f9Param);
+
+    /**
+     * 转档估值指标信息
+     *
+     * @param f9Param 简版F9参数
+     * @return 转档结果
+     */
+    Boolean insertSecurityMarginDataJob(F9Param f9Param);
+
+    /**
+     * 转档成长能力信息
+     *
+     * @param f9Param 简版F9参数
+     * @return 转档结果
+     */
+    Boolean insertFinancialSummaryDataJob(F9Param f9Param);
 }

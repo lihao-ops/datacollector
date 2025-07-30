@@ -369,4 +369,114 @@ public class SimpleF9ServiceImpl implements SimpleF9Service {
         log.info("insertCompanyProfileDataJob.count={}", count);
         return count >= 0;
     }
+
+    /**
+     * 转档资讯信息
+     *
+     * @param f9Param 简版F9参数
+     * @return 转档结果
+     */
+    @Override
+    public Boolean insertInformationDataJob(F9Param f9Param) {
+        return null;
+    }
+
+    /**
+     * 转档关键统计信息
+     *
+     * @param f9Param 简版F9参数
+     * @return 转档结果
+     */
+    @Override
+    public Boolean insertKeyStatisticsDataJob(F9Param f9Param) {
+        return null;
+    }
+
+    /**
+     * 转档公司信息
+     *
+     * @param f9Param 简版F9参数
+     * @return 转档结果
+     */
+    @Override
+    public Boolean insertCompanyInfoDataJob(F9Param f9Param) {
+        return null;
+    }
+
+    /**
+     * 转档公告信息
+     *
+     * @param f9Param 简版F9参数
+     * @return 转档结果
+     */
+    @Override
+    public Boolean insertNoticeDataJob(F9Param f9Param) {
+        return null;
+    }
+
+    /**
+     * 转档大事信息
+     *
+     * @param f9Param 简版F9参数
+     * @return 转档结果
+     */
+    @Override
+    public Boolean insertGreatEventDataJob(F9Param f9Param) {
+        return null;
+    }
+
+    /**
+     * 转档盈利预测信息
+     *
+     * @param f9Param 简版F9参数
+     * @return 转档结果
+     */
+    @Override
+    public Boolean insertProfitForecastDataJob(F9Param f9Param) {
+        return null;
+    }
+
+    /**
+     * 转档市场表现信息
+     *
+     * @param f9Param 简版F9参数
+     * @return 转档结果
+     */
+    @Override
+    public Boolean insertMarketPerformanceDataJob(F9Param f9Param) {
+        return null;
+    }
+
+    /**
+     * 转档PE_BAND信息
+     *
+     * @param f9Param 简版F9参数
+     * @return 转档结果
+     */
+    @Override
+    public Boolean insertPeBandDataJob(F9Param f9Param) {
+        return null;
+    }
+
+    /**
+     * 转档估值指标信息
+     *
+     * @param f9Param 简版F9参数
+     * @return 转档结果
+     */
+    @Override
+    public Boolean insertSecurityMarginDataJob(F9Param f9Param) {
+        return null;
+    }
+
+    /**
+     * 转档成长能力信息
+     *
+     * @param f9Param 简版F9参数
+     * @return 转档结果
+     */
+    @Override
+    public Boolean insertFinancialSummaryDataJob(F9Param f9Param) {
+        return null;
+    }
 }

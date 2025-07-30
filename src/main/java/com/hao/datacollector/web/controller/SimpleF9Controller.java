@@ -143,4 +143,104 @@ public class SimpleF9Controller {
             @RequestBody F9Param f9Param) {
         return simpleF9Service.insertCompanyProfileDataJob(f9Param);
     }
+
+    @Operation(summary = "转档资讯信息",
+            description = "将资讯数据进行转档处理",
+            method = "POST")
+    @PostMapping("/information_job")
+    public Boolean insertInformationDataJob(
+            @Parameter(description = "包含资讯转档所需的参数信息", required = true)
+            @RequestBody F9Param f9Param) {
+        return simpleF9Service.insertInformationDataJob(f9Param);
+    }
+
+    @Operation(summary = "转档关键统计信息",
+            description = "将关键统计数据进行转档处理",
+            method = "POST")
+    @PostMapping("/key_statistics_job")
+    public Boolean insertKeyStatisticsDataJob(
+            @Parameter(description = "包含关键统计转档所需的参数信息", required = true)
+            @RequestBody F9Param f9Param) {
+        return simpleF9Service.insertKeyStatisticsDataJob(f9Param);
+    }
+
+    @Operation(summary = "转档公司信息",
+            description = "将公司信息数据进行转档处理",
+            method = "POST")
+    @PostMapping("/company_info_job")
+    public Boolean insertCompanyInfoDataJob(
+            @Parameter(description = "包含公司信息转档所需的参数信息", required = true)
+            @RequestBody F9Param f9Param) {
+        return simpleF9Service.insertCompanyInfoDataJob(f9Param);
+    }
+
+    @Operation(summary = "转档公告信息",
+            description = "将公告数据进行转档处理",
+            method = "POST")
+    @PostMapping("/notice_job")
+    public Boolean insertNoticeDataJob(
+            @Parameter(description = "包含公告转档所需的参数信息", required = true)
+            @RequestBody F9Param f9Param) {
+        return simpleF9Service.insertNoticeDataJob(f9Param);
+    }
+
+    @Operation(summary = "转档大事信息",
+            description = "将大事数据进行转档处理",
+            method = "POST")
+    @PostMapping("/great_event_job")
+    public Boolean insertGreatEventDataJob(
+            @Parameter(description = "包含大事转档所需的参数信息", required = true)
+            @RequestBody F9Param f9Param) {
+        return simpleF9Service.insertGreatEventDataJob(f9Param);
+    }
+
+    @Operation(summary = "转档盈利预测信息",
+            description = "将盈利预测数据进行转档处理",
+            method = "POST")
+    @PostMapping("/profit_forecast_job")
+    public Boolean insertProfitForecastDataJob(
+            @Parameter(description = "包含盈利预测转档所需的参数信息", required = true)
+            @RequestBody F9Param f9Param) {
+        return simpleF9Service.insertProfitForecastDataJob(f9Param);
+    }
+
+    @Operation(summary = "转档市场表现信息",
+            description = "将市场表现数据进行转档处理",
+            method = "POST")
+    @PostMapping("/market_performance_job")
+    public Boolean insertMarketPerformanceDataJob(
+            @Parameter(description = "包含市场表现转档所需的参数信息", required = true)
+            @RequestBody F9Param f9Param) {
+        return simpleF9Service.insertMarketPerformanceDataJob(f9Param);
+    }
+
+    @Operation(summary = "转档PE_BAND信息",
+            description = "将PE_BAND数据进行转档处理",
+            method = "POST")
+    @PostMapping("/pe_band_job")
+    public Boolean insertPeBandDataJob(
+            @Parameter(description = "包含PE_BAND转档所需的参数信息", required = true)
+            @RequestBody F9Param f9Param) {
+        return simpleF9Service.insertPeBandDataJob(f9Param);
+    }
+
+    @Operation(summary = "转档估值指标信息",
+            description = "将估值指标数据进行转档处理",
+            method = "POST")
+    @PostMapping("/security_margin_job")
+    public Boolean insertSecurityMarginDataJob(
+            @Parameter(description = "包含估值指标转档所需的参数信息", required = true)
+            @RequestBody F9Param f9Param) {
+        return simpleF9Service.insertSecurityMarginDataJob(f9Param);
+    }
+
+    @Operation(summary = "转档成长能力信息",
+            description = "将成长能力数据进行转档处理",
+            method = "POST")
+    @PostMapping("/financial_summary_job")
+    public Boolean insertFinancialSummaryDataJob(
+            @Parameter(description = "包含成长能力转档所需的参数信息", required = true)
+            @RequestBody F9Param f9Param) {
+        return simpleF9Service.insertFinancialSummaryDataJob(f9Param);
+    }
 }
