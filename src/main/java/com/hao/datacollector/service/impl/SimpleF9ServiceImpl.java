@@ -3,12 +3,18 @@ package com.hao.datacollector.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.hao.datacollector.common.constant.DataSourceConstants;
 import com.hao.datacollector.common.utils.HttpUtil;
+import com.hao.datacollector.dal.dao.SimpleF9Mapper;
 import com.hao.datacollector.dto.f9.*;
+import com.hao.datacollector.dto.param.f9.F9Param;
+import com.hao.datacollector.dto.table.f9.InsertCompanyProfileDTO;
 import com.hao.datacollector.service.SimpleF9Service;
 import com.hao.datacollector.web.vo.result.ResultVO;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -36,24 +42,30 @@ public class SimpleF9ServiceImpl implements SimpleF9Service {
     public static String GET_SECURITY_MARGIN = "get_security_margin";
     public static String GET_FINANCIAL_SUMMARY = "get_financial_summary";
 
-    private static String f9BaseUrl = "https://114.80.154.45/wstock_business_service/f9/%s?lan=%s&windCode=%s";
+    @Value("${wind_base.f9.base_url}")
+    private String baseUrl;
 
     @Value("${wind_base.session_id}")
     private String sessionId;
 
+    private static String f9BaseUlr = null;
     private static String windSessionId = null;
 
     @PostConstruct
     private void init() {
         windSessionId = sessionId;
+        f9BaseUlr = baseUrl;
     }
 
     private static final Integer TIME_OUT_NUM = 10000;
 
+    @Autowired
+    private SimpleF9Mapper simpleF9Mapper;
+
     private static ResponseEntity<String> getF9Request(String lan, String windCode, String path) {
-        String url = String.format(f9BaseUrl, path, lan, windCode);
+        String url = DataSourceConstants.WIND_PROD_WGQ + String.format(f9BaseUlr, path, lan, windCode);
         HttpHeaders headers = new HttpHeaders();
-        headers.set("windsessionid", windSessionId);
+        headers.set(DataSourceConstants.WIND_SESSION_NAME, windSessionId);
         return HttpUtil.sendGet(url, headers, TIME_OUT_NUM, TIME_OUT_NUM);
     }
 
@@ -336,5 +348,25 @@ public class SimpleF9ServiceImpl implements SimpleF9Service {
         }
         log.error("quickViewGrowthCapability_error={}", JSON.toJSONString(responseEntity));
         return List.of();
+    }
+
+    /**
+     * 转档公司简介信息
+     *
+     * @param f9Param 简版F9参数
+     * @return 转档结果
+     */
+    @Override
+    public Boolean insertCompanyProfileDataJob(F9Param f9Param) {
+        CompanyProfileDTO companyProfileSource = getCompanyProfileSource(f9Param.getLan(), f9Param.getWindCode());
+        InsertCompanyProfileDTO insertCompanyProfileDTO = new InsertCompanyProfileDTO();
+        BeanUtils.copyProperties(companyProfileSource, insertCompanyProfileDTO);
+        insertCompanyProfileDTO.setLan(f9Param.getLan());
+        insertCompanyProfileDTO.setWindCode(f9Param.getWindCode());
+        List<InsertCompanyProfileDTO> insertList = new ArrayList<>();
+        insertList.add(insertCompanyProfileDTO);
+        int count = simpleF9Mapper.batchInsertCompanyProfileDataJob(insertList);
+        log.info("insertCompanyProfileDataJob.count={}", count);
+        return count >= 0;
     }
 }

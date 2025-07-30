@@ -324,7 +324,7 @@ public class BaseDataServiceImpl implements BaseDataService {
      * @return 交易日历
      */
     @Override
-    @Cacheable(cacheNames = "tradeDateListByTime", key = "#startTime + #endTime", cacheManager = "dateCaffeineCacheManager")
+//    @Cacheable(cacheNames = "tradeDateListByTime", key = "#startTime + #endTime", cacheManager = "dateCaffeineCacheManager")
     public List<LocalDate> getTradeDateListByTime(String startTime, String endTime) {
         List<String> listByTime = baseDataMapper.getTradeDateListByTime(startTime, endTime);
         log.info("getTradeDateListByTime,listByTime.size={}", listByTime.size());

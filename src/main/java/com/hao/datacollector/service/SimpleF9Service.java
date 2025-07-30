@@ -2,6 +2,7 @@ package com.hao.datacollector.service;
 
 
 import com.hao.datacollector.dto.f9.*;
+import com.hao.datacollector.dto.param.f9.F9Param;
 
 import java.util.List;
 
@@ -108,4 +109,12 @@ public interface SimpleF9Service {
      * @return 成长能力数据
      */
     List<QuickViewGrowthDTO> getFinancialSummarySource(String lan, String windCode);
+
+    /**
+     * 转档公司简介信息
+     *
+     * @param f9Param 简版F9参数
+     * @return 转档结果
+     */
+    Boolean insertCompanyProfileDataJob(F9Param f9Param);
 }

@@ -1,16 +1,14 @@
 package com.hao.datacollector.web.controller;
 
 import com.hao.datacollector.dto.f9.*;
+import com.hao.datacollector.dto.param.f9.F9Param;
 import com.hao.datacollector.service.SimpleF9Service;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -134,5 +132,15 @@ public class SimpleF9Controller {
     @GetMapping("/get_financial_summary_source")
     public List<QuickViewGrowthDTO> getFinancialSummarySource(@RequestParam(required = false, defaultValue = "CN") String lan, String windCode) {
         return simpleF9Service.getFinancialSummarySource(lan, windCode);
+    }
+
+    @Operation(summary = "转档公司简介信息",
+            description = "将公司简介数据进行转档处理",
+            method = "POST")
+    @PostMapping("/company_profile_job")
+    public Boolean insertCompanyProfileDataJob(
+            @Parameter(description = "包含公司简介转档所需的参数信息", required = true)
+            @RequestBody F9Param f9Param) {
+        return simpleF9Service.insertCompanyProfileDataJob(f9Param);
     }
 }
