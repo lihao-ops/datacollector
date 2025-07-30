@@ -7,7 +7,9 @@ import com.hao.datacollector.common.utils.HttpUtil;
 import com.hao.datacollector.dto.f9.*;
 import com.hao.datacollector.service.SimpleF9Service;
 import com.hao.datacollector.web.vo.result.ResultVO;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -36,19 +38,27 @@ public class SimpleF9ServiceImpl implements SimpleF9Service {
 
     private static String f9BaseUrl = "https://114.80.154.45/wstock_business_service/f9/%s?lan=%s&windCode=%s";
 
-    private static String sessionId = "51cd2519e6a344f6ac16339cd8f0705d";
+    @Value("${wind_base.session_id}")
+    private String sessionId;
+
+    private static String windSessionId = null;
+
+    @PostConstruct
+    private void init() {
+        windSessionId = sessionId;
+    }
 
     private static final Integer TIME_OUT_NUM = 10000;
 
     private static ResponseEntity<String> getF9Request(String lan, String windCode, String path) {
         String url = String.format(f9BaseUrl, path, lan, windCode);
         HttpHeaders headers = new HttpHeaders();
-        headers.set("windsessionid", sessionId);
+        headers.set("windsessionid", windSessionId);
         return HttpUtil.sendGet(url, headers, TIME_OUT_NUM, TIME_OUT_NUM);
     }
 
     /**
-     * 获取公司简介信息
+     * 获取公司简介信息数据源
      *
      * @param lan      多语言
      * @param windCode 股票代码
@@ -72,7 +82,7 @@ public class SimpleF9ServiceImpl implements SimpleF9Service {
     }
 
     /**
-     * 获取资讯
+     * 获取资讯数据源
      *
      * @param lan      多语言
      * @param windCode 股票代码
@@ -96,7 +106,7 @@ public class SimpleF9ServiceImpl implements SimpleF9Service {
     }
 
     /**
-     * 关键统计
+     * 关键统计数据源
      *
      * @param lan      多语言
      * @param windCode 股票代码
@@ -120,7 +130,7 @@ public class SimpleF9ServiceImpl implements SimpleF9Service {
     }
 
     /**
-     * 获取公司信息
+     * 获取公司信息数据源
      *
      * @param lan      多语言
      * @param windCode 股票代码
@@ -144,7 +154,7 @@ public class SimpleF9ServiceImpl implements SimpleF9Service {
     }
 
     /**
-     * 公告
+     * 公告数据源
      *
      * @param lan      多语言
      * @param windCode 股票代码
@@ -168,7 +178,7 @@ public class SimpleF9ServiceImpl implements SimpleF9Service {
     }
 
     /**
-     * 大事
+     * 大事数据源
      *
      * @param lan      多语言
      * @param windCode 股票代码
@@ -192,7 +202,7 @@ public class SimpleF9ServiceImpl implements SimpleF9Service {
     }
 
     /**
-     * 盈利预测
+     * 盈利预测数据源
      *
      * @param lan      多语言
      * @param windCode 股票代码
@@ -216,7 +226,7 @@ public class SimpleF9ServiceImpl implements SimpleF9Service {
     }
 
     /**
-     * 市场表现
+     * 市场表现数据源
      *
      * @param lan      多语言
      * @param windCode 股票代码
@@ -240,7 +250,7 @@ public class SimpleF9ServiceImpl implements SimpleF9Service {
     }
 
     /**
-     * PE_BAND
+     * PE_BAND数据源
      * 记录A股日、周和月度的市盈率、市净率、市销率和市现率估值通道和估值变化
      *
      * @param lan      多语言
@@ -281,7 +291,7 @@ public class SimpleF9ServiceImpl implements SimpleF9Service {
     }
 
     /**
-     * 估值指标
+     * 估值指标数据源
      *
      * @param lan      多语言
      * @param windCode 股票代码
@@ -305,7 +315,7 @@ public class SimpleF9ServiceImpl implements SimpleF9Service {
     }
 
     /**
-     * 成长能力
+     * 成长能力数据源
      *
      * @param lan      多语言
      * @param windCode 股票代码
