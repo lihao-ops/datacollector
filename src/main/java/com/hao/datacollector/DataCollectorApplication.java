@@ -8,7 +8,7 @@ import org.springframework.retry.annotation.EnableRetry;
 
 @MapperScan("com.hao.datacollector.dal.dao")
 @SpringBootApplication
-@EnableCaching
+@EnableCaching//缓存
 @EnableRetry
 public class DataCollectorApplication {
 

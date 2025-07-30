@@ -1,0 +1,111 @@
+package com.hao.datacollector.service;
+
+
+import com.hao.datacollector.dto.f9.*;
+
+import java.util.List;
+
+/**
+ * @author LiHao
+ * @description: 简版F9service
+ */
+public interface SimpleF9Service {
+    /**
+     * 获取公司简介信息
+     *
+     * @param lan      多语言
+     * @param windCode 股票代码
+     * @return 公司简介信息
+     */
+    CompanyProfileDTO getCompanyProfileSource(String lan, String windCode);
+
+    /**
+     * 获取资讯
+     *
+     * @param lan      多语言
+     * @param windCode 股票代码
+     * @return 资讯信息
+     */
+    List<InformationOceanDTO> getInformationSource(String lan, String windCode);
+
+    /**
+     * 关键统计
+     *
+     * @param lan      多语言
+     * @param windCode 股票代码
+     * @return 关键统计数据
+     */
+    KeyStatisticsDTO getKeyStatisticsSource(String lan, String windCode);
+
+    /**
+     * 获取公司信息
+     *
+     * @param lan      多语言
+     * @param windCode 股票代码
+     * @return 公司信息
+     */
+    CompanyInfo getCompanyInfoSource(String lan, String windCode);
+
+    /**
+     * 公告
+     *
+     * @param lan      多语言
+     * @param windCode 股票代码
+     * @return 公告信息
+     */
+    List<NoticeDTO> getNoticeSource(String lan, String windCode);
+
+    /**
+     * 大事
+     *
+     * @param lan      多语言
+     * @param windCode 股票代码
+     * @return 大事信息
+     */
+    List<GreatEventDTO> getGreatEventSource(String lan, String windCode);
+
+    /**
+     * 盈利预测
+     *
+     * @param lan      多语言
+     * @param windCode 股票代码
+     * @return 盈利预测
+     */
+    ProfitForecastDTO getProfitForecastSource(String lan, String windCode);
+
+    /**
+     * 市场表现
+     *
+     * @param lan      多语言
+     * @param windCode 股票代码
+     * @return 市场表现数据
+     */
+    MarketPerformanceDTO getMarketPerformanceSource(String lan, String windCode);
+
+    /**
+     * PE_BAND
+     *
+     * @param lan      多语言
+     * @param windCode 股票代码
+     * @return PE_BAND数据
+     */
+    List<PeBandVO> getPeBandSource(String lan, String windCode);
+
+    /**
+     * 估值指标
+     *
+     * @param lan      多语言
+     * @param windCode 股票代码
+     * @return 估值指标数据
+     */
+    List<ValuationIndexDTO> getSecurityMarginSource(String lan, String windCode);
+
+    /**
+     * 成长能力
+     *
+     * @param lan      多语言
+     * @param windCode 股票代码
+     * @return 成长能力数据
+     */
+    List<QuickViewGrowthDTO> getFinancialSummarySource(String lan, String windCode);
+}
