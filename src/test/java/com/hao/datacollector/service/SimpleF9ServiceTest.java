@@ -1,12 +1,16 @@
 package com.hao.datacollector.service;
 
 import com.alibaba.fastjson.JSON;
+import com.hao.datacollector.common.cache.StockCache;
+import com.hao.datacollector.dal.dao.SimpleF9Mapper;
 import com.hao.datacollector.dto.f9.*;
+import com.hao.datacollector.dto.param.f9.F9Param;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,6 +22,30 @@ import java.util.List;
 public class SimpleF9ServiceTest {
     @Autowired
     private SimpleF9Service simpleF9Service;
+
+    @Autowired
+    private SimpleF9Mapper simpleF9Mapper;
+
+    @Test
+    void insertCompanyProfileDataJob() {
+        List<String> allWindCode = new ArrayList<>(StockCache.allWindCode);
+        List<String> endWindCodeList = simpleF9Mapper.getInsertFinancialSummaryData();
+        allWindCode.removeAll(endWindCodeList);
+        for (String windCode : allWindCode) {
+            F9Param f9Param = new F9Param();
+            f9Param.setWindCode(windCode);
+            try {
+                Boolean result = simpleF9Service.insertCompanyProfileDataJob(f9Param);
+                log.info("insertCompanyProfileDataJob.windCode={},result={}", windCode, result);
+            } catch (Exception e) {
+                if (e.getMessage().contains("403 Forbidden")) {
+                    throw new RuntimeException(e.getMessage());
+                }
+                log.error("insertCompanyProfileDataJob.windCode={},error={}", windCode, e.getMessage());
+            }
+        }
+    }
+
 
     @Test
     void getCompanyProfileSource() {

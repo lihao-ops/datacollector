@@ -13,4 +13,11 @@ public interface SimpleF9Mapper {
      * @return 操作结果
      */
     int batchInsertCompanyProfileDataJob(@Param("param") List<InsertCompanyProfileDTO> insertCompanyProfileDTO);
+
+    /**
+     * 获取已转档公司简介的windCode
+     *
+     * @return 已转档windCode列表
+     */
+    List<String> getInsertFinancialSummaryData();
 }

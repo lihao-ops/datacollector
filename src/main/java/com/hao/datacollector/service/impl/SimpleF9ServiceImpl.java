@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -359,10 +360,17 @@ public class SimpleF9ServiceImpl implements SimpleF9Service {
     @Override
     public Boolean insertCompanyProfileDataJob(F9Param f9Param) {
         CompanyProfileDTO companyProfileSource = getCompanyProfileSource(f9Param.getLan(), f9Param.getWindCode());
+        if (companyProfileSource == null || !StringUtils.hasLength(companyProfileSource.getCpyIntro())) {
+            return false;
+        }
         InsertCompanyProfileDTO insertCompanyProfileDTO = new InsertCompanyProfileDTO();
         BeanUtils.copyProperties(companyProfileSource, insertCompanyProfileDTO);
         insertCompanyProfileDTO.setLan(f9Param.getLan());
         insertCompanyProfileDTO.setWindCode(f9Param.getWindCode());
+        //处理极大值问题
+        if (insertCompanyProfileDTO.getScore().equals(Double.MAX_VALUE)) {
+            insertCompanyProfileDTO.setScore(null);
+        }
         List<InsertCompanyProfileDTO> insertList = new ArrayList<>();
         insertList.add(insertCompanyProfileDTO);
         int count = simpleF9Mapper.batchInsertCompanyProfileDataJob(insertList);

@@ -39,4 +39,7 @@
         update_time = NOW()
     </insert>
 
+    <select id="getInsertFinancialSummaryData" resultType="string">
+        SELECT DISTINCT wind_code FROM tb_f9_company_profile;
+    </select>
 </mapper>
