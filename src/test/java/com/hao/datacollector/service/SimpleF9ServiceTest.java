@@ -46,7 +46,6 @@ public class SimpleF9ServiceTest {
         }
     }
 
-
     @Test
     void getCompanyProfileSource() {
         CompanyProfileDTO companyProfile = simpleF9Service.getCompanyProfileSource("cn", "600519.SH");
