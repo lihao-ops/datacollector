@@ -64,4 +64,11 @@ public interface TopicMapper {
      * @return 题材分类及股票映射列表
      */
     List<TopicCategoryAndStockVO> getKplCategoryAndStockList(@Param("param") TopicCategoryAndStockParam queryDTO);
+
+    /**
+     * 获取所有题材idList
+     *
+     * @return idList
+     */
+    List<Integer> getKplAllTopicIdList();
 }

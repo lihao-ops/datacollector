@@ -322,4 +322,9 @@
         ORDER BY c.update_cache_time DESC
         LIMIT #{param.pageNo}, #{param.pageSize}
     </select>
+
+    <select id="getKplAllTopicIdList" resultType="int">
+        SELECT `topic_id`
+        FROM `tb_topic_info`
+    </select>
 </mapper>

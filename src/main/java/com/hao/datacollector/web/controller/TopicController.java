@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Hao Li
@@ -143,5 +144,10 @@ public class TopicController {
                 .pageSize(pageSize)
                 .build();
         return topicService.getKplCategoryAndStockList(queryDTO);
+    }
+
+    public Map<Integer, List<String>> getKplTopicIdMappingStockList(@RequestParam(required = false) Integer topicId,
+                                                                    @RequestParam(required = false) String topicName) {
+        return null;
     }
 }
