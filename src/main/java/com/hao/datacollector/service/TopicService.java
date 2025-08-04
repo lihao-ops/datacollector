@@ -3,10 +3,13 @@ package com.hao.datacollector.service;
 
 import com.hao.datacollector.dto.param.topic.TopicCategoryAndStockParam;
 import com.hao.datacollector.dto.param.topic.TopicInfoParam;
+import com.hao.datacollector.dto.param.topic.TopicStockQueryParam;
+import com.hao.datacollector.dto.table.topic.TopicStockDTO;
 import com.hao.datacollector.web.vo.topic.TopicCategoryAndStockVO;
 import com.hao.datacollector.web.vo.topic.TopicInfoKplVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Hao Li
@@ -38,4 +41,12 @@ public interface TopicService {
      * @return 题材分类及股票映射列表
      */
     List<TopicCategoryAndStockVO> getKplCategoryAndStockList(TopicCategoryAndStockParam queryDTO);
+
+    /**
+     * 根据id获取题材Id映射股票列表
+     *
+     * @param query 题材Id映射股票查询参数对象
+     * @return 题材Id映射股票对象列表
+     */
+    Map<Integer, List<TopicStockDTO>> getKplTopicAndStockList(TopicStockQueryParam query);
 }

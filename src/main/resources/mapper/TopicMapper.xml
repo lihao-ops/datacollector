@@ -327,4 +327,29 @@
         SELECT `topic_id`
         FROM `tb_topic_info`
     </select>
+
+    <resultMap id="TopicStockDTOMap" type="com.hao.datacollector.dto.table.topic.TopicStockDTO">
+        <result column="topic_id" property="topicId"/>
+        <result column="wind_code" property="windCode"/>
+        <result column="wind_name" property="windName"/>
+    </resultMap>
+
+    <select id="getKplTopicAndStockList" resultMap="TopicStockDTOMap">
+        SELECT
+        tc.topic_id,
+        tscm.wind_code,
+        tscm.wind_name
+        FROM
+        tb_topic_category tc
+        INNER JOIN tb_topic_stock_category_mapping tscm
+        ON tc.category_id = tscm.category_id
+        <where>
+            <if test="topicIdList != null and topicIdList.size() > 0">
+                AND tc.topic_id IN
+                <foreach collection="topicIdList" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
 </mapper>

@@ -13,9 +13,11 @@ import com.hao.datacollector.dto.kpl.StockDetail;
 import com.hao.datacollector.dto.kpl.TopicTable;
 import com.hao.datacollector.dto.param.topic.TopicCategoryAndStockParam;
 import com.hao.datacollector.dto.param.topic.TopicInfoParam;
+import com.hao.datacollector.dto.param.topic.TopicStockQueryParam;
 import com.hao.datacollector.dto.table.topic.InsertStockCategoryMappingDTO;
 import com.hao.datacollector.dto.table.topic.InsertTopicCategoryDTO;
 import com.hao.datacollector.dto.table.topic.InsertTopicInfoDTO;
+import com.hao.datacollector.dto.table.topic.TopicStockDTO;
 import com.hao.datacollector.service.StockProfileService;
 import com.hao.datacollector.service.TopicService;
 import com.hao.datacollector.web.vo.stockProfile.SearchKeyBoardVO;
@@ -34,8 +36,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Hao Li
@@ -330,5 +331,28 @@ public class TopicServiceImpl implements TopicService {
         queryDTO.setPageNo(pageParam.getPageNo());
         queryDTO.setPageSize(pageParam.getPageSize());
         return topicMapper.getKplCategoryAndStockList(queryDTO);
+    }
+
+    /**
+     * 获取题材Id映射股票列表
+     *
+     * @param query 题材Id映射股票查询参数对象
+     * @return Map<topic_id, List < wind_code, wind_name>>
+     */
+    @Override
+    public Map<Integer, List<TopicStockDTO>> getKplTopicAndStockList(TopicStockQueryParam query) {
+        List<Integer> kplAllTopicIdList = new LinkedList<>();
+        //topicId = null则查询所有
+        if (query.getTopicId() == null) {
+            kplAllTopicIdList = topicMapper.getKplAllTopicIdList();
+        } else {
+            kplAllTopicIdList.add(query.getTopicId());
+        }
+        List<TopicStockDTO> kplTopicAndStockList = topicMapper.getKplTopicAndStockList(kplAllTopicIdList);
+        Map<Integer, List<TopicStockDTO>> resultMap = new HashMap<>();
+        for (TopicStockDTO dto : kplTopicAndStockList) {
+            resultMap.computeIfAbsent(dto.getTopicId(), k -> new ArrayList<>()).add(dto);
+        }
+        return resultMap;
     }
 }

@@ -3,6 +3,8 @@ package com.hao.datacollector.web.controller;
 import com.hao.datacollector.dal.dao.TopicMapper;
 import com.hao.datacollector.dto.param.topic.TopicCategoryAndStockParam;
 import com.hao.datacollector.dto.param.topic.TopicInfoParam;
+import com.hao.datacollector.dto.param.topic.TopicStockQueryParam;
+import com.hao.datacollector.dto.table.topic.TopicStockDTO;
 import com.hao.datacollector.service.TopicService;
 import com.hao.datacollector.web.vo.topic.TopicCategoryAndStockVO;
 import com.hao.datacollector.web.vo.topic.TopicInfoKplVO;
@@ -146,8 +148,23 @@ public class TopicController {
         return topicService.getKplCategoryAndStockList(queryDTO);
     }
 
-    public Map<Integer, List<String>> getKplTopicIdMappingStockList(@RequestParam(required = false) Integer topicId,
-                                                                    @RequestParam(required = false) String topicName) {
-        return null;
+    @GetMapping("topic_stock_list")
+    @Operation(
+            summary = "获取题材及其映射股票列表",
+            description = "支持通过题材ID、名称、股票代码、分类信息等筛选映射关系,key = topicId,value = 股票代码列表"
+    )
+    @Parameters({
+            @Parameter(name = "topicId", description = "所属题材ID", example = "22"),
+            @Parameter(name = "topicName", description = "题材名称（模糊）", example = "BC电池")
+    })
+    public Map<Integer, List<TopicStockDTO>> getTopicAndStockList(
+            @RequestParam(required = false) Integer topicId,
+            @RequestParam(required = false) String topicName
+    ) {
+        TopicStockQueryParam query = TopicStockQueryParam.builder()
+                .topicId(topicId)
+                .topicName(topicName)
+                .build();
+        return topicService.getKplTopicAndStockList(query);
     }
 }

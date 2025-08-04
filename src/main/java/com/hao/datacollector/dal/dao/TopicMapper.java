@@ -6,6 +6,7 @@ import com.hao.datacollector.dto.param.topic.TopicInfoParam;
 import com.hao.datacollector.dto.table.topic.InsertStockCategoryMappingDTO;
 import com.hao.datacollector.dto.table.topic.InsertTopicCategoryDTO;
 import com.hao.datacollector.dto.table.topic.InsertTopicInfoDTO;
+import com.hao.datacollector.dto.table.topic.TopicStockDTO;
 import com.hao.datacollector.web.vo.topic.TopicCategoryAndStockVO;
 import com.hao.datacollector.web.vo.topic.TopicInfoKplVO;
 import org.apache.ibatis.annotations.Param;
@@ -71,4 +72,12 @@ public interface TopicMapper {
      * @return idList
      */
     List<Integer> getKplAllTopicIdList();
+
+    /**
+     * 获取题材及其映射股票列表
+     *
+     * @param topicIdList 题材id列表
+     * @return 题材及其映射股票列表
+     */
+    List<TopicStockDTO> getKplTopicAndStockList(@Param("topicIdList") List<Integer> topicIdList);
 }
