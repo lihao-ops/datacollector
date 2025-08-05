@@ -154,16 +154,11 @@ public class TopicController {
             description = "支持通过题材ID、名称、股票代码、分类信息等筛选映射关系,key = topicId,value = 股票代码列表"
     )
     @Parameters({
-            @Parameter(name = "topicId", description = "所属题材ID", example = "22"),
-            @Parameter(name = "topicName", description = "题材名称（模糊）", example = "BC电池")
+            @Parameter(name = "topicId", description = "所属题材ID", example = "22")
     })
-    public Map<Integer, List<TopicStockDTO>> getTopicAndStockList(
-            @RequestParam(required = false) Integer topicId,
-            @RequestParam(required = false) String topicName
-    ) {
+    public Map<Integer, List<TopicStockDTO>> getTopicAndStockList(@RequestParam(required = false) Integer topicId) {
         TopicStockQueryParam query = TopicStockQueryParam.builder()
                 .topicId(topicId)
-                .topicName(topicName)
                 .build();
         return topicService.getKplTopicAndStockList(query);
     }
