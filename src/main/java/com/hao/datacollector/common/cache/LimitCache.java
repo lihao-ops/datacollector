@@ -29,17 +29,17 @@ public class LimitCache {
      * key:交易日期,value:当天涨停股票代码Set
      */
     public static Map<String, Set<String>> limitUpMappingStockMap = new HashMap<>();
-
-    @PostConstruct
-    public void initLimitUpMappingStockCache() {
-        List<LimitUpStockQueryResultVO> upStockQueryResultVOList = limitUpService.queryLimitUpStockList(new LimitUpStockQueryParam());
-        Map<String, Set<String>> limitUpMappingStockMap = new HashMap<>();
-        for (LimitUpStockQueryResultVO vo : upStockQueryResultVOList) {
-            String tradeDate = DateUtil.formatLocalDate(vo.getTradeDate(), DateTimeFormatConstants.DEFAULT_DATE_FORMAT);
-            limitUpMappingStockMap.computeIfAbsent(tradeDate, k -> new HashSet<>())
-                    .add(vo.getWindCode());
-        }
-        LimitCache.limitUpMappingStockMap = limitUpMappingStockMap;
-        log.info("LimitCache_initLimitUpMappingStockCache_success,limitUpMappingStockMap.size={}", limitUpMappingStockMap.size());
-    }
+    //todo 需优化 加载太慢
+//    @PostConstruct
+//    public void initLimitUpMappingStockCache() {
+//        List<LimitUpStockQueryResultVO> upStockQueryResultVOList = limitUpService.queryLimitUpStockList(new LimitUpStockQueryParam());
+//        Map<String, Set<String>> limitUpMappingStockMap = new HashMap<>();
+//        for (LimitUpStockQueryResultVO vo : upStockQueryResultVOList) {
+//            String tradeDate = DateUtil.formatLocalDate(vo.getTradeDate(), DateTimeFormatConstants.DEFAULT_DATE_FORMAT);
+//            limitUpMappingStockMap.computeIfAbsent(tradeDate, k -> new HashSet<>())
+//                    .add(vo.getWindCode());
+//        }
+//        LimitCache.limitUpMappingStockMap = limitUpMappingStockMap;
+//        log.info("LimitCache_initLimitUpMappingStockCache_success,limitUpMappingStockMap.size={}", limitUpMappingStockMap.size());
+//    }
 }

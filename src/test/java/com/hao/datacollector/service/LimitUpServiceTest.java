@@ -38,7 +38,6 @@ class LimitUpServiceTest {
         for (Map.Entry<String, Set<String>> limit : LimitCache.limitUpMappingStockMap.entrySet()) {
             Set<String> limitCodeByDate = limit.getValue();
             for (Map.Entry<Integer, Set<String>> topicMappingStockMap : TopicCache.topicMappingStockMap.entrySet()) {
-                log.info("topicId={}", topicMappingStockMap.getKey());
                 int containNum = 0;
                 for (String windCode : topicMappingStockMap.getValue()) {
                     if (limitCodeByDate.contains(windCode)) {
@@ -47,7 +46,9 @@ class LimitUpServiceTest {
                 }
                 int total = topicMappingStockMap.getValue().size();
                 double percent = total == 0 ? 0.0 : (containNum * 100.0) / total;
-                log.info("limit_Date={},topicId={},containNum={},percent={}", limit.getKey(), topicMappingStockMap.getKey(), containNum, percent);
+                if (percent >= 30){
+                    log.info("limit_Date={},topicId={},containNum={},percent={}", limit.getKey(), topicMappingStockMap.getKey(), containNum, percent);
+                }
             }
         }
     }
