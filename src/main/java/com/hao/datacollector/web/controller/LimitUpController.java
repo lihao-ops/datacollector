@@ -61,7 +61,7 @@ public class LimitUpController {
 
     @GetMapping("/stock_info_list")
     @Operation(summary = "涨停股票信息列表", description = "根据查询条件获取涨停股票信息列表")
-    public ResponseEntity<List<LimitUpStockQueryResultVO>> queryLimitUpStockList(
+    public List<LimitUpStockQueryResultVO> queryLimitUpStockList(
             @Parameter(description = "股票代码") @RequestParam(required = false) String windCode,
             @Parameter(description = "交易日期开始") @RequestParam(required = false) String tradeDateStart,
             @Parameter(description = "交易日期结束") @RequestParam(required = false) String tradeDateEnd,
@@ -174,6 +174,6 @@ public class LimitUpController {
         log.info("queryLimitUpStockList_start=queryParam={}", queryParam);
         List<LimitUpStockQueryResultVO> resultList = limitUpService.queryLimitUpStockList(queryParam);
         log.info("queryLimitUpStockList_success=result_count={}", resultList.size());
-        return ResponseEntity.ok(resultList);
+        return resultList;
     }
 }
