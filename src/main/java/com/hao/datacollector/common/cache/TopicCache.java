@@ -1,15 +1,13 @@
 package com.hao.datacollector.common.cache;
 
-import com.alibaba.fastjson.JSON;
 import com.hao.datacollector.dal.dao.TopicMapper;
+import com.hao.datacollector.dto.table.topic.TopicStockDTO;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author hli
@@ -31,12 +29,19 @@ public class TopicCache {
      * 1.先查询tb_topic_info表中所有的题材id List
      * 2.遍历查询所有
      */
-    public static Map<String, List<String>> topicMap = new HashMap<>();
+    public static Map<Integer, Set<String>> topicMappingStockMap = new HashMap<>();
 
     @PostConstruct
-    public void initTopicCache() {
-        //获取所有题材idList
-        List<Integer> allTopicIdList = topicMapper.getKplAllTopicIdList();
-        log.info("TopicCache_allTopicIdList.size={}", allTopicIdList.size());
+    public void initTopicMappingStockCache() {
+        List<TopicStockDTO> kplTopicAndStockList = topicMapper.getKplTopicAndStockList(null);
+        Map<Integer, Set<String>> resultMap = new HashMap<>();
+        for (TopicStockDTO dto : kplTopicAndStockList) {
+            Integer topicId = dto.getTopicId();
+            resultMap
+                    .computeIfAbsent(topicId, k -> new HashSet<>())
+                    .add(dto.getWindCode());
+        }
+        topicMappingStockMap = resultMap;
+        log.info("TopicCache_allTopicIdList.size={}", kplTopicAndStockList.size());
     }
 }

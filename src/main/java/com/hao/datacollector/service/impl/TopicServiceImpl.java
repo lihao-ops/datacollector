@@ -343,7 +343,7 @@ public class TopicServiceImpl implements TopicService {
     public Map<Integer, List<TopicStockDTO>> getKplTopicAndStockList(TopicStockQueryParam query) {
         List<Integer> kplAllTopicIdList = new LinkedList<>();
         //topicId = null则查询所有
-        if (query.getTopicId() == null) {
+        if (query == null || query.getTopicId() == null) {
             kplAllTopicIdList = topicMapper.getKplAllTopicIdList();
         } else {
             kplAllTopicIdList.add(query.getTopicId());
