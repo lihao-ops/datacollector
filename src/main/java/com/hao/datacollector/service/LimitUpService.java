@@ -6,6 +6,8 @@ import com.hao.datacollector.web.vo.limitup.LimitUpStockQueryResultVO;
 import com.hao.datacollector.web.vo.limitup.ResultObjectVO;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author hli
@@ -38,4 +40,13 @@ public interface LimitUpService {
      * @return 结果列表
      */
     List<LimitUpStockQueryResultVO> queryLimitUpStockList(LimitUpStockQueryParam queryParam);
+
+    /**
+     * 获取交易日涨停股票代码列表
+     *
+     * @param tradeDateStart 交易日期开始
+     * @param tradeDateEnd   交易日期结束
+     * @return 交易日涨停股票代码列表
+     */
+    Map<String, Set<String>> getLimitUpTradeDateMap(String tradeDateStart, String tradeDateEnd);
 }

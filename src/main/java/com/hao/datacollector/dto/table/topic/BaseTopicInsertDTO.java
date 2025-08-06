@@ -1,10 +1,9 @@
-package com.hao.datacollector.dto.table.limitup;
+package com.hao.datacollector.dto.table.topic;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 
 @Data
 @Schema(name = "基础标签表对象")

@@ -10,9 +10,10 @@ import com.hao.datacollector.common.utils.HttpUtil;
 import com.hao.datacollector.common.utils.PageUtil;
 import com.hao.datacollector.dal.dao.LimitUpMapper;
 import com.hao.datacollector.dto.param.limitup.LimitUpStockQueryParam;
-import com.hao.datacollector.dto.table.limitup.BaseTopicInsertDTO;
 import com.hao.datacollector.dto.table.limitup.LimitUpStockInfoInsertDTO;
 import com.hao.datacollector.dto.table.limitup.LimitUpStockTopicRelationInsertDTO;
+import com.hao.datacollector.dto.table.limitup.LimitUpStockTradeDTO;
+import com.hao.datacollector.dto.table.topic.BaseTopicInsertDTO;
 import com.hao.datacollector.service.LimitUpService;
 import com.hao.datacollector.web.vo.limitup.*;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,8 @@ import org.springframework.util.StringUtils;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -205,5 +208,22 @@ public class LimitUpServiceImpl implements LimitUpService {
         List<LimitUpStockQueryResultVO> result = limitUpMapper.queryLimitUpStockList(queryParam);
         log.info("LimitUpServiceImpl_queryLimitUpStockList_success=result_count={}", result.size());
         return result;
+    }
+
+    /**
+     * 获取交易日涨停股票代码列表
+     *
+     * @param tradeDateStart 交易日期开始
+     * @param tradeDateEnd   交易日期结束
+     * @return 交易日涨停股票代码列表
+     */
+    @Override
+    public Map<String, Set<String>> getLimitUpTradeDateMap(String tradeDateStart, String tradeDateEnd) {
+        List<LimitUpStockTradeDTO> stockByTradeDateList = limitUpMapper.getLimitCodeByTradeDate(tradeDateStart, tradeDateEnd);
+        return stockByTradeDateList.stream()
+                .collect(Collectors.groupingBy(
+                        vo -> DateUtil.formatLocalDate(vo.getTradeDate(), DateTimeFormatConstants.DEFAULT_DATE_FORMAT),
+                        Collectors.mapping(LimitUpStockTradeDTO::getWindCode, Collectors.toSet())
+                ));
     }
 }

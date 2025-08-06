@@ -1,9 +1,10 @@
 package com.hao.datacollector.dal.dao;
 
 import com.hao.datacollector.dto.param.limitup.LimitUpStockQueryParam;
-import com.hao.datacollector.dto.table.limitup.BaseTopicInsertDTO;
 import com.hao.datacollector.dto.table.limitup.LimitUpStockInfoInsertDTO;
 import com.hao.datacollector.dto.table.limitup.LimitUpStockTopicRelationInsertDTO;
+import com.hao.datacollector.dto.table.limitup.LimitUpStockTradeDTO;
+import com.hao.datacollector.dto.table.topic.BaseTopicInsertDTO;
 import com.hao.datacollector.web.vo.limitup.LimitUpStockQueryResultVO;
 import org.apache.ibatis.annotations.Param;
 
@@ -56,4 +57,13 @@ public interface LimitUpMapper {
      * @return 结果列表
      */
     List<LimitUpStockQueryResultVO> queryLimitUpStockList(@Param("queryParam") LimitUpStockQueryParam queryParam);
+
+    /**
+     * 查询涨停股票对应交易日映射关系
+     *
+     * @param tradeDateStart 开始交易日
+     * @param tradeDateEnd   结束交易日
+     * @return 结果列表
+     */
+    List<LimitUpStockTradeDTO> getLimitCodeByTradeDate(@Param("tradeDateStart") String tradeDateStart, @Param("tradeDateEnd") String tradeDateEnd);
 }

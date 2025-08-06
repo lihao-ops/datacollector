@@ -303,4 +303,20 @@
         </if>
     </select>
 
+    <resultMap id="LimitCodeByTradeDateMap" type="com.hao.datacollector.dto.table.limitup.LimitUpStockTradeDTO">
+    <result property="windCode" column="wind_code"/>
+    <result property="tradeDate" column="trade_date"/>
+    </resultMap>
+
+    <select id="getLimitCodeByTradeDate" resultMap="LimitCodeByTradeDateMap">
+        SELECT `wind_code`,`trade_date`
+        FROM `tb_limit_up_stock_info`
+        WHERE 1 = 1
+        <if test="tradeDateStart != null and tradeDateStart != ''">
+            AND trade_date <![CDATA[ >= ]]> #{tradeDateStart}
+        </if>
+        <if test="tradeDateEnd != null and tradeDateEnd != ''">
+            AND trade_date <![CDATA[ <= ]]> #{tradeDateEnd}
+        </if>
+    </select>
 </mapper>

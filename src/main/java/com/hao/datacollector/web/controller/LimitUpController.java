@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author hli
@@ -175,5 +177,12 @@ public class LimitUpController {
         List<LimitUpStockQueryResultVO> resultList = limitUpService.queryLimitUpStockList(queryParam);
         log.info("queryLimitUpStockList_success=result_count={}", resultList.size());
         return resultList;
+    }
+
+    @GetMapping("trade_limit_list")
+    @Operation(summary = "交易日涨停映射列表", description = "根据查询条件获取交易日涨停股票代码列表")
+    public Map<String, Set<String>> getLimitUpTradeDateMap(@Parameter(description = "交易日期开始") @RequestParam(required = false) String tradeDateStart,
+                                                           @Parameter(description = "交易日期结束") @RequestParam(required = false) String tradeDateEnd) {
+        return limitUpService.getLimitUpTradeDateMap(tradeDateStart, tradeDateEnd);
     }
 }
