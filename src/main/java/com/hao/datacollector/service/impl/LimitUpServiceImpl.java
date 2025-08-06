@@ -24,10 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -223,6 +220,9 @@ public class LimitUpServiceImpl implements LimitUpService {
         return stockByTradeDateList.stream()
                 .collect(Collectors.groupingBy(
                         vo -> DateUtil.formatLocalDate(vo.getTradeDate(), DateTimeFormatConstants.DEFAULT_DATE_FORMAT),
+                        //TreeMap 基于红黑树实现，插入和查找为稳定的 O(logN)，在 key 数量为几千以内时仅需十几次比较即可完成排序结构维护，性能影响极小，
+                        //反而比 HashMap,O(1) 均摊，最坏情况 O(N)（哈希冲突严重时） 后续手动排序更高效，是一种在小规模有序需求场景下结构与性能的最佳平衡方案。
+                        TreeMap::new, //指定使用 TreeMap（自动按 key 排序）
                         Collectors.mapping(LimitUpStockTradeDTO::getWindCode, Collectors.toSet())
                 ));
     }

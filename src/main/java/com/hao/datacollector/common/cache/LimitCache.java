@@ -6,9 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * @author hli
@@ -26,7 +26,7 @@ public class LimitCache {
      * 涨停股票映射股票Set
      * key:交易日期,value:当天涨停股票代码Set
      */
-    public static Map<String, Set<String>> limitUpMappingStockMap = new HashMap<>();
+    public static Map<String, Set<String>> limitUpMappingStockMap = new TreeMap<>();
 
     @PostConstruct
     public void initLimitUpMappingStockCache() {
