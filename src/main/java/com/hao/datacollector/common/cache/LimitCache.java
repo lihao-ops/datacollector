@@ -1,5 +1,8 @@
 package com.hao.datacollector.common.cache;
 
+import com.alibaba.fastjson.JSON;
+import com.hao.datacollector.common.constant.RedisKeyConstants;
+import com.hao.datacollector.integration.redis.RedisClient;
 import com.hao.datacollector.service.LimitUpService;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 /**
  * @author hli
@@ -22,15 +24,14 @@ public class LimitCache {
     @Autowired
     private LimitUpService limitUpService;
 
-    /**
-     * 涨停股票映射股票Set
-     * key:交易日期,value:当天涨停股票代码Set
-     */
-    public static Map<String, Set<String>> limitUpMappingStockMap = new TreeMap<>();
+    @Autowired
+    private RedisClient redisClient;
 
     @PostConstruct
     public void initLimitUpMappingStockCache() {
-        LimitCache.limitUpMappingStockMap = limitUpService.getLimitUpTradeDateMap(null, null);
-        log.info("LimitCache_initLimitUpMappingStockCache_success,limitUpMappingStockMap.size={}", limitUpMappingStockMap.size());
+        //key:交易日期,value:当天涨停股票代码Set
+        Map<String, Set<String>> limitUpMappingStockMap = limitUpService.getLimitUpTradeDateMap(null, null);
+        redisClient.set(RedisKeyConstants.DATA_LIMIT_UP_TRADING_DATE_MAPPING_STOCK_MAP, JSON.toJSONString(limitUpMappingStockMap));
+        log.info("LimitCache_initLimitUpMappingStockCache_success,RedisKey={},limitUpMappingStockMap.size={}", RedisKeyConstants.DATA_LIMIT_UP_TRADING_DATE_MAPPING_STOCK_MAP, limitUpMappingStockMap.size());
     }
 }
